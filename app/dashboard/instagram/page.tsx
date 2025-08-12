@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Image from "next/image"
 import {
   Instagram,
   Bot,
@@ -260,9 +261,11 @@ export default function InstagramAutomation() {
                   className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}
                 >
                   <CardHeader className="p-0">
-                    <img
+                    <Image
                       src={post.image || "/placeholder.svg"}
                       alt="Post preview"
+                      width={400}
+                      height={200}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                   </CardHeader>

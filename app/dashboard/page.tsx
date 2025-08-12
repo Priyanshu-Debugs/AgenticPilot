@@ -118,7 +118,7 @@ export default function Dashboard() {
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                           {getAutomationDetails(automation.id)?.description}
                         </p>
-                        <div className="space-y-2">
+                        <div className="space-y-2 mb-3">
                           <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Features</h4>
                           <ul className="text-xs space-y-1">
                             {getAutomationDetails(automation.id)?.features.map((feature, index) => (
@@ -128,6 +128,27 @@ export default function Dashboard() {
                             ))}
                           </ul>
                         </div>
+                        {automation.id === "gmail" && (
+                          <Link href="/dashboard/gmail-automation">
+                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+                              Go to Gmail Automation
+                            </Button>
+                          </Link>
+                        )}
+                        {automation.id === "inventory" && (
+                          <Link href="/dashboard/inventory">
+                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+                              Go to Inventory Management
+                            </Button>
+                          </Link>
+                        )}
+                        {automation.id === "instagram" && (
+                          <Link href="/dashboard/instagram">
+                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+                              Go to Instagram Automation
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
@@ -180,12 +201,35 @@ export default function Dashboard() {
 
                 return (
                   <>
-                    <div className="flex items-center space-x-3 mb-6">
-                      <automation.icon className="h-8 w-8" />
-                      <div>
-                        <h2 className="text-2xl font-bold">{automation.title}</h2>
-                        <p className="text-gray-600 dark:text-gray-400">{details.description}</p>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-3">
+                        <automation.icon className="h-8 w-8" />
+                        <div>
+                          <h2 className="text-2xl font-bold">{automation.title}</h2>
+                          <p className="text-gray-600 dark:text-gray-400">{details.description}</p>
+                        </div>
                       </div>
+                      {automation.id === "gmail" && (
+                        <Link href="/dashboard/gmail-automation">
+                          <Button className="bg-blue-600 hover:bg-blue-700">
+                            Open Gmail Automation
+                          </Button>
+                        </Link>
+                      )}
+                      {automation.id === "inventory" && (
+                        <Link href="/dashboard/inventory">
+                          <Button className="bg-blue-600 hover:bg-blue-700">
+                            Open Inventory Management
+                          </Button>
+                        </Link>
+                      )}
+                      {automation.id === "instagram" && (
+                        <Link href="/dashboard/instagram">
+                          <Button className="bg-blue-600 hover:bg-blue-700">
+                            Open Instagram Automation
+                          </Button>
+                        </Link>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

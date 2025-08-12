@@ -142,7 +142,7 @@ export default function NotificationsPage() {
               <Bell className="h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-medium mb-2">No notifications</h3>
               <p className="text-gray-500 dark:text-gray-400 text-center">
-                You're all caught up! New notifications will appear here.
+                You&apos;re all caught up! New notifications will appear here.
               </p>
             </CardContent>
           </Card>

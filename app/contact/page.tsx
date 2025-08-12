@@ -36,7 +36,7 @@ export default function ContactPage() {
             Get in <span className="underline decoration-2">Touch</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">
-            Have questions about AgenticPilot? We'd love to hear from you.
+            Have questions about AgenticPilot? We&apos;d love to hear from you.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function ContactPage() {
                 <MessageSquare className="h-5 w-5" />
                 <span>Send us a message</span>
               </CardTitle>
-              <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
+              <CardDescription>Fill out the form below and we&apos;ll get back to you as soon as possible.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

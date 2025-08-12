@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Mail, Package, Instagram, Bot, Bell } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function LandingPage() {
   const [showSignIn, setShowSignIn] = useState(false)
@@ -117,9 +118,11 @@ export default function LandingPage() {
             </div>
             <div className="relative">
               <div className="relative z-10">
-                <img
+                <Image
                   src="/ai-automation-dashboard.png"
                   alt="AI Automation Dashboard"
+                  width={800}
+                  height={600}
                   className="rounded-lg border border-gray-200 dark:border-gray-800"
                 />
               </div>

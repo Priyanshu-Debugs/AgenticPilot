@@ -4,10 +4,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
 import { 
   Mail, 
   Settings, 
@@ -17,10 +13,7 @@ import {
   Power, 
   Clock, 
   Bot, 
-  ArrowLeft,
-  CheckCircle,
-  Users,
-  MessageSquare
+  ArrowLeft
 } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -56,16 +49,9 @@ export default function GmailAutomation() {
   ]
 
   const stats = [
-    { label: 'Total Responses Sent', value: '2,847', icon: Mail, change: '+89 today' },
-    { label: 'Average Response Time', value: '2.3 sec', icon: Clock, change: '-0.5s from last week' },
-    { label: 'Customer Satisfaction', value: '94.5%', icon: CheckCircle, change: '+2.1% this month' }
-  ]
-
-  const recentReplies = [
-    { email: 'customer@example.com', template: 'Customer Support', time: '2 minutes ago' },
-    { email: 'john.doe@email.com', template: 'Order Confirmation', time: '15 minutes ago' },
-    { email: 'support@client.com', template: 'Customer Support', time: '32 minutes ago' },
-    { email: 'orders@business.com', template: 'Refund Request', time: '1 hour ago' }
+    { label: 'Total Responses Sent', value: '2,847', icon: Mail },
+    { label: 'Average Response Time', value: '2.3 sec', icon: Clock },
+    { label: 'Customer Satisfaction', value: '94.5%', icon: Settings }
   ]
 
   return (
@@ -105,10 +91,16 @@ export default function GmailAutomation() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-muted-foreground">Automation Status:</span>
-              <Switch 
-                checked={isEnabled}
-                onCheckedChange={setIsEnabled}
-              />
+              <button
+                onClick={() => setIsEnabled(!isEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isEnabled ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </button>
               <Power className={`w-4 h-4 ${isEnabled ? 'text-green-500' : 'text-muted-foreground'}`} />
             </div>
             <Button className="bg-blue-600 hover:bg-blue-700">
@@ -123,14 +115,15 @@ export default function GmailAutomation() {
           {stats.map((stat, index) => {
             const IconComponent = stat.icon
             return (
-              <Card key={index} className="bg-card/50 border-border">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{stat.label}</CardTitle>
-                  <IconComponent className="w-5 h-5 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.change}</p>
+              <Card key={index} className="bg-card border-border shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                    </div>
+                    <IconComponent className="w-8 h-8 text-blue-600" />
+                  </div>
                 </CardContent>
               </Card>
             )
@@ -138,7 +131,7 @@ export default function GmailAutomation() {
         </div>
 
         {/* Email Templates */}
-        <Card className="bg-card/50 border-border mb-8">
+        <Card className="bg-card border-border shadow-lg mb-8">
           <CardHeader>
             <CardTitle className="text-xl font-semibold">Email Templates</CardTitle>
             <CardDescription>Manage your automated email response templates</CardDescription>
@@ -154,10 +147,10 @@ export default function GmailAutomation() {
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="p-2 hover:bg-muted rounded-lg">
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950">
+                    <Button variant="ghost" size="sm" className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -174,13 +167,18 @@ export default function GmailAutomation() {
         </Card>
 
         {/* Recent Activity */}
-        <Card className="bg-card/50 border-border">
+        <Card className="bg-card border-border shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl font-semibold">Recent Auto-Replies</CardTitle>
             <CardDescription>Latest automated email responses sent by the system</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {recentReplies.map((reply, index) => (
+            {[
+              { email: 'customer@example.com', template: 'Customer Support', time: '2 minutes ago' },
+              { email: 'john.doe@email.com', template: 'Order Confirmation', time: '15 minutes ago' },
+              { email: 'support@client.com', template: 'Customer Support', time: '32 minutes ago' },
+              { email: 'orders@business.com', template: 'Refund Request', time: '1 hour ago' }
+            ].map((reply, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <Mail className="w-4 h-4 text-blue-600" />
