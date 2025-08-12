@@ -2,15 +2,18 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Package, Instagram, Bot, Menu, X, BarChart3, Settings, Zap, Bell } from "lucide-react"
+import { Mail, Package, Instagram, Bot, Menu, X, BarChart3, Settings, Zap, Bell, Clock, Plus, Edit, Trash2, Power } from "lucide-react"
 import Link from "next/link"
+// dynamic import removed; gmail UI inlined
 import { ModeToggle } from "@/components/mode-toggle"
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedAutomation, setSelectedAutomation] = useState<string | null>(null)
+
+  // Embedded Gmail UI will render inline when selected
 
   const automations = [
     {
@@ -129,11 +132,13 @@ export default function Dashboard() {
                           </ul>
                         </div>
                         {automation.id === "gmail" && (
-                          <Link href="/dashboard/gmail-automation">
-                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
-                              Go to Gmail Automation
-                            </Button>
-                          </Link>
+                          <Button
+                            size="sm"
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-xs"
+                            onClick={() => setSelectedAutomation("gmail")}
+                          >
+                            Open Gmail Automation
+                          </Button>
                         )}
                         {automation.id === "inventory" && (
                           <Link href="/dashboard/inventory">
@@ -210,11 +215,12 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {automation.id === "gmail" && (
-                        <Link href="/dashboard/gmail-automation">
-                          <Button className="bg-blue-600 hover:bg-blue-700">
-                            Open Gmail Automation
-                          </Button>
-                        </Link>
+                        <Button
+                          className="bg-blue-600 hover:bg-blue-700"
+                          onClick={() => setSelectedAutomation("gmail")}
+                        >
+                          Open Gmail Automation
+                        </Button>
                       )}
                       {automation.id === "inventory" && (
                         <Link href="/dashboard/inventory">
@@ -232,34 +238,182 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {Object.entries(details.stats).map(([key, value]) => (
-                        <Card key={key} className="border-gray-200 dark:border-gray-800">
-                          <CardContent className="p-6">
-                            <div className="text-2xl font-bold">{value}</div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
-                              {key.replace(/([A-Z])/g, " $1")}
-                            </p>
+                    {automation.id === "gmail" ? (
+                      <div className="mt-2 space-y-8">
+                        {/* Gmail Automation - inlined UI */}
+                        <div className="flex items-center justify-between">
+                          <h1 className="text-2xl font-bold">Gmail Automation</h1>
+                          <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-muted-foreground">Automation Status:</span>
+                              <button
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors bg-blue-600`}
+                              >
+                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6`} />
+                              </button>
+                              <Power className={`w-4 h-4 text-green-500`} />
+                            </div>
+                            <Button className="bg-blue-600 hover:bg-blue-700">
+                              <Plus className="w-4 h-4 mr-2" />
+                              New Template
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {[
+                            { label: "Total Responses Sent", value: "2,847", icon: Mail },
+                            { label: "Average Response Time", value: "2.3 sec", icon: Clock },
+                            { label: "Customer Satisfaction", value: "94.5%", icon: Settings },
+                          ].map((stat, index) => {
+                            const IconComponent = stat.icon
+                            return (
+                              <Card key={index} className="border-gray-200 dark:border-gray-800">
+                                <CardContent className="p-6">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
+                                      <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                                    </div>
+                                    <IconComponent className="w-8 h-8 text-blue-600" />
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )
+                          })}
+                        </div>
+
+                        {/* Email Templates */}
+                        <Card className="border-gray-200 dark:border-gray-800">
+                          <CardHeader>
+                            <CardTitle className="text-xl font-semibold">Email Templates</CardTitle>
+                            <CardDescription>Manage your automated email response templates</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {[
+                              {
+                                id: 1,
+                                name: "Customer Support",
+                                subject: "Thank you for contacting us",
+                                preview:
+                                  "Thank you for reaching out. We have received your inquiry and will respond within 24 hours...",
+                                isActive: true,
+                                responses: 1247,
+                              },
+                              {
+                                id: 2,
+                                name: "Order Confirmation",
+                                subject: "Order Received - #{order_number}",
+                                preview:
+                                  "We have successfully received your order. You will receive a tracking number once...",
+                                isActive: true,
+                                responses: 892,
+                              },
+                              {
+                                id: 3,
+                                name: "Refund Request",
+                                subject: "Refund Request Received",
+                                preview:
+                                  "We are processing your refund request. Please allow 5-7 business days...",
+                                isActive: false,
+                                responses: 156,
+                              },
+                            ].map((template) => (
+                              <div
+                                key={template.id}
+                                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:bg-muted/50 transition-colors"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center space-x-3">
+                                    <h3 className="font-semibold">{template.name}</h3>
+                                    <Badge variant={template.isActive ? "default" : "secondary"}>
+                                      {template.isActive ? "Active" : "Inactive"}
+                                    </Badge>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <Button variant="ghost" size="sm" className="p-2 hover:bg-muted rounded-lg">
+                                      <Edit className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Subject: {template.subject}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{template.preview}</p>
+                                <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                                  <span>{template.responses} responses sent</span>
+                                  <span>Last used: 2 hours ago</span>
+                                </div>
+                              </div>
+                            ))}
                           </CardContent>
                         </Card>
-                      ))}
-                    </div>
 
-                    <Card className="border-gray-200 dark:border-gray-800">
-                      <CardHeader>
-                        <CardTitle>Features</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {details.features.map((feature, index) => (
-                            <div key={index} className="flex items-center space-x-2">
-                              <div className="w-2 h-2 bg-black dark:bg-white rounded-full"></div>
-                              <span className="text-sm">{feature}</span>
-                            </div>
+                        {/* Recent Activity */}
+                        <Card className="border-gray-200 dark:border-gray-800">
+                          <CardHeader>
+                            <CardTitle className="text-xl font-semibold">Recent Auto-Replies</CardTitle>
+                            <CardDescription>Latest automated email responses sent by the system</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {[
+                              { email: "customer@example.com", template: "Customer Support", time: "2 minutes ago" },
+                              { email: "john.doe@email.com", template: "Order Confirmation", time: "15 minutes ago" },
+                              { email: "support@client.com", template: "Customer Support", time: "32 minutes ago" },
+                              { email: "orders@business.com", template: "Refund Request", time: "1 hour ago" },
+                            ].map((reply, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <Mail className="w-4 h-4 text-blue-600" />
+                                  <div>
+                                    <p className="text-sm font-medium">{reply.email}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Template: {reply.template}</p>
+                                  </div>
+                                </div>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{reply.time}</span>
+                              </div>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {Object.entries(details.stats).map(([key, value]) => (
+                            <Card key={key} className="border-gray-200 dark:border-gray-800">
+                              <CardContent className="p-6">
+                                <div className="text-2xl font-bold">{value}</div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                                  {key.replace(/([A-Z])/g, " $1")}
+                                </p>
+                              </CardContent>
+                            </Card>
                           ))}
                         </div>
-                      </CardContent>
-                    </Card>
+
+                        <Card className="border-gray-200 dark:border-gray-800">
+                          <CardHeader>
+                            <CardTitle>Features</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              {details.features.map((feature, index) => (
+                                <div key={index} className="flex items-center space-x-2">
+                                  <div className="w-2 h-2 bg-black dark:bg-white rounded-full"></div>
+                                  <span className="text-sm">{feature}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </>
+                    )}
                   </>
                 )
               })()}

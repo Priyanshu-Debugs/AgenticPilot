@@ -4,112 +4,68 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { 
-  Mail, 
-  Settings, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Power, 
-  Clock, 
-  Bot, 
-  ArrowLeft,
-  CheckCircle,
-  Users,
-  MessageSquare
-} from "lucide-react"
-import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
+import { Mail, Settings, Plus, Edit, Trash2, Power, Clock } from "lucide-react"
 
 export default function GmailAutomation() {
   const [isEnabled, setIsEnabled] = useState(true)
-  
+
   const templates = [
     {
       id: 1,
-      name: 'Customer Support',
-      subject: 'Thank you for contacting us',
-      preview: 'Thank you for reaching out. We have received your inquiry and will respond within 24 hours...',
+      name: "Customer Support",
+      subject: "Thank you for contacting us",
+      preview:
+        "Thank you for reaching out. We have received your inquiry and will respond within 24 hours...",
       isActive: true,
-      responses: 1247
+      responses: 1247,
     },
     {
       id: 2,
-      name: 'Order Confirmation',
-      subject: 'Order Received - #{order_number}',
-      preview: 'We have successfully received your order. You will receive a tracking number once...',
+      name: "Order Confirmation",
+      subject: "Order Received - #{order_number}",
+      preview:
+        "We have successfully received your order. You will receive a tracking number once...",
       isActive: true,
-      responses: 892
+      responses: 892,
     },
     {
       id: 3,
-      name: 'Refund Request',
-      subject: 'Refund Request Received',
-      preview: 'We are processing your refund request. Please allow 5-7 business days...',
+      name: "Refund Request",
+      subject: "Refund Request Received",
+      preview: "We are processing your refund request. Please allow 5-7 business days...",
       isActive: false,
-      responses: 156
-    }
+      responses: 156,
+    },
   ]
 
   const stats = [
-    { label: 'Total Responses Sent', value: '2,847', icon: Mail, change: '+89 today' },
-    { label: 'Average Response Time', value: '2.3 sec', icon: Clock, change: '-0.5s from last week' },
-    { label: 'Customer Satisfaction', value: '94.5%', icon: CheckCircle, change: '+2.1% this month' }
-  ]
-
-  const recentReplies = [
-    { email: 'customer@example.com', template: 'Customer Support', time: '2 minutes ago' },
-    { email: 'john.doe@email.com', template: 'Order Confirmation', time: '15 minutes ago' },
-    { email: 'support@client.com', template: 'Customer Support', time: '32 minutes ago' },
-    { email: 'orders@business.com', template: 'Refund Request', time: '1 hour ago' }
+    { label: "Total Responses Sent", value: "2,847", icon: Mail },
+    { label: "Average Response Time", value: "2.3 sec", icon: Clock },
+    { label: "Customer Satisfaction", value: "94.5%", icon: Settings },
   ]
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/dashboard"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Dashboard</span>
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-blue-500" />
-              <Link href="/" className="text-xl font-bold">
-                AgenticPilot
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <ModeToggle />
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Gmail Automation</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Gmail Automation</h1>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-muted-foreground">Automation Status:</span>
-              <Switch 
-                checked={isEnabled}
-                onCheckedChange={setIsEnabled}
-              />
-              <Power className={`w-4 h-4 ${isEnabled ? 'text-green-500' : 'text-muted-foreground'}`} />
+              <button
+                onClick={() => setIsEnabled(!isEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isEnabled ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isEnabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+              <Power className={`w-4 h-4 ${isEnabled ? "text-green-500" : "text-muted-foreground"}`} />
             </div>
             <Button className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
@@ -119,18 +75,19 @@ export default function GmailAutomation() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon
             return (
-              <Card key={index} className="bg-card/50 border-border">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{stat.label}</CardTitle>
-                  <IconComponent className="w-5 h-5 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.change}</p>
+              <Card key={index} className="bg-card border-border shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                    </div>
+                    <IconComponent className="w-8 h-8 text-blue-600" />
+                  </div>
                 </CardContent>
               </Card>
             )
@@ -138,26 +95,33 @@ export default function GmailAutomation() {
         </div>
 
         {/* Email Templates */}
-        <Card className="bg-card/50 border-border mb-8">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl font-semibold">Email Templates</CardTitle>
             <CardDescription>Manage your automated email response templates</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {templates.map((template) => (
-              <div key={template.id} className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+              <div
+                key={template.id}
+                className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-3">
                     <h3 className="font-semibold">{template.name}</h3>
                     <Badge variant={template.isActive ? "default" : "secondary"}>
-                      {template.isActive ? 'Active' : 'Inactive'}
+                      {template.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="p-2 hover:bg-muted rounded-lg">
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -174,26 +138,31 @@ export default function GmailAutomation() {
         </Card>
 
         {/* Recent Activity */}
-        <Card className="bg-card/50 border-border">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl font-semibold">Recent Auto-Replies</CardTitle>
             <CardDescription>Latest automated email responses sent by the system</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {recentReplies.map((reply, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-medium">{reply.email}</p>
-                    <p className="text-xs text-muted-foreground">Template: {reply.template}</p>
-                  </div>
+        <CardContent className="space-y-3">
+          {[
+            { email: "customer@example.com", template: "Customer Support", time: "2 minutes ago" },
+            { email: "john.doe@email.com", template: "Order Confirmation", time: "15 minutes ago" },
+            { email: "support@client.com", template: "Customer Support", time: "32 minutes ago" },
+            { email: "orders@business.com", template: "Refund Request", time: "1 hour ago" },
+          ].map((reply, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <Mail className="w-4 h-4 text-blue-600" />
+                <div>
+                  <p className="text-sm font-medium">{reply.email}</p>
+                  <p className="text-xs text-muted-foreground">Template: {reply.template}</p>
                 </div>
-                <span className="text-xs text-muted-foreground">{reply.time}</span>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <span className="text-xs text-muted-foreground">{reply.time}</span>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
       </div>
     </div>
   )
