@@ -12,9 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   Package,
   Bot,
-  Sun,
-  Moon,
-  ArrowLeft,
+  Menu,
+  X,
+  Mail,
+  Instagram,
   Play,
   Pause,
   AlertTriangle,
@@ -24,18 +25,40 @@ import {
   Search,
   Filter,
   Download,
+  Bell,
 } from "lucide-react"
 import Link from "next/link"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export default function InventoryManagement() {
-  const [isDarkMode, setIsDarkMode] = useState(true)
   const [isAutomationActive, setIsAutomationActive] = useState(true)
   const [autoReorderEnabled, setAutoReorderEnabled] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
-    document.documentElement.classList.toggle("dark")
+  const automations = [
+    {
+      id: "gmail",
+      title: "Gmail Auto Reply",
+      icon: Mail,
+      status: "Active",
+    },
+    {
+      id: "inventory",
+      title: "Inventory Management",
+      icon: Package,
+      status: "Active",
+    },
+    {
+      id: "instagram",
+      title: "Instagram Automation",
+      icon: Instagram,
+      status: "Soon",
+    },
+  ]
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev)
   }
 
   const inventoryItems = [
@@ -50,491 +73,549 @@ export default function InventoryManagement() {
       supplier: "TechSupply Co.",
       lastOrdered: "2024-01-15",
       status: "In Stock",
-      trend: "up",
+      value: 2250.0,
     },
     {
       id: 2,
-      name: "Bluetooth Speaker",
-      sku: "BS-002",
+      name: "Gaming Mouse",
+      sku: "GM-002",
       category: "Electronics",
-      currentStock: 8,
-      reorderPoint: 15,
-      maxStock: 50,
-      supplier: "AudioTech Ltd.",
+      currentStock: 15,
+      reorderPoint: 25,
+      maxStock: 75,
+      supplier: "GameGear Ltd.",
       lastOrdered: "2024-01-10",
       status: "Low Stock",
-      trend: "down",
+      value: 750.0,
     },
     {
       id: 3,
-      name: "USB-C Cable",
-      sku: "UC-003",
-      category: "Accessories",
-      currentStock: 150,
-      reorderPoint: 50,
-      maxStock: 200,
-      supplier: "CableCorp",
-      lastOrdered: "2024-01-20",
-      status: "In Stock",
-      trend: "up",
+      name: "Office Chair",
+      sku: "OC-003",
+      category: "Furniture",
+      currentStock: 8,
+      reorderPoint: 10,
+      maxStock: 30,
+      supplier: "ComfortSeating Inc.",
+      lastOrdered: "2024-01-12",
+      status: "Low Stock",
+      value: 1600.0,
     },
     {
       id: 4,
-      name: "Phone Case",
-      sku: "PC-004",
+      name: "Laptop Stand",
+      sku: "LS-004",
       category: "Accessories",
-      currentStock: 3,
-      reorderPoint: 10,
-      maxStock: 75,
-      supplier: "ProtectTech",
-      lastOrdered: "2024-01-05",
-      status: "Critical",
-      trend: "down",
+      currentStock: 32,
+      reorderPoint: 15,
+      maxStock: 50,
+      supplier: "DeskTech Solutions",
+      lastOrdered: "2024-01-08",
+      status: "In Stock",
+      value: 960.0,
     },
     {
       id: 5,
-      name: "Laptop Stand",
-      sku: "LS-005",
-      category: "Office",
-      currentStock: 25,
-      reorderPoint: 15,
-      maxStock: 40,
-      supplier: "OfficeSupply Inc.",
-      lastOrdered: "2024-01-18",
-      status: "In Stock",
-      trend: "up",
+      name: "Bluetooth Speaker",
+      sku: "BS-005",
+      category: "Electronics",
+      currentStock: 0,
+      reorderPoint: 20,
+      maxStock: 60,
+      supplier: "AudioPro Systems",
+      lastOrdered: "2024-01-05",
+      status: "Out of Stock",
+      value: 0.0,
     },
   ]
 
-  const recentAlerts = [
+  const analytics = [
+    { metric: "Total Items", value: "1,247", change: "+23 this month" },
+    { metric: "Low Stock Items", value: "23", change: "-5 from last week" },
+    { metric: "Total Value", value: "$127,500", change: "+8.2% from last month" },
+    { metric: "Auto Orders", value: "45", change: "This month" },
+  ]
+
+  const recentOrders = [
     {
       id: 1,
-      type: "Low Stock",
-      item: "Bluetooth Speaker",
-      message: "Stock level below reorder point (8/15)",
-      time: "5 minutes ago",
-      severity: "warning",
+      item: "Wireless Headphones",
+      quantity: 50,
+      supplier: "TechSupply Co.",
+      orderDate: "2024-01-15",
+      expectedDelivery: "2024-01-22",
+      status: "In Transit",
+      total: 2500.0,
     },
     {
       id: 2,
-      type: "Critical Stock",
-      item: "Phone Case",
-      message: "Critical stock level reached (3/10)",
-      time: "15 minutes ago",
-      severity: "critical",
+      item: "Gaming Mouse",
+      quantity: 30,
+      supplier: "GameGear Ltd.",
+      orderDate: "2024-01-10",
+      expectedDelivery: "2024-01-18",
+      status: "Delivered",
+      total: 1500.0,
     },
     {
       id: 3,
-      type: "Auto Reorder",
-      item: "USB-C Cable",
-      message: "Automatic reorder placed for 50 units",
-      time: "2 hours ago",
-      severity: "info",
-    },
-    {
-      id: 4,
-      type: "Stock Updated",
-      item: "Wireless Headphones",
-      message: "Stock level updated: +20 units received",
-      time: "1 day ago",
-      severity: "success",
+      item: "Office Chair",
+      quantity: 15,
+      supplier: "ComfortSeating Inc.",
+      orderDate: "2024-01-12",
+      expectedDelivery: "2024-01-25",
+      status: "Processing",
+      total: 3000.0,
     },
   ]
 
-  const filteredItems = inventoryItems.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.sku.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const getStockStatus = (current: number, reorderPoint: number) => {
+    if (current === 0) return { status: "Out of Stock", color: "bg-red-600/20 text-red-400 border-red-600/30" }
+    if (current <= reorderPoint) return { status: "Low Stock", color: "bg-yellow-600/20 text-yellow-400 border-yellow-600/30" }
+    return { status: "In Stock", color: "bg-green-600/20 text-green-400 border-green-600/30" }
+  }
 
-  const getStatusColor = (status: string) => {
+  const getOrderStatus = (status: string) => {
     switch (status) {
-      case "In Stock":
+      case "Delivered":
         return "bg-green-600/20 text-green-400 border-green-600/30"
-      case "Low Stock":
+      case "In Transit":
+        return "bg-blue-600/20 text-blue-400 border-blue-600/30"
+      case "Processing":
         return "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
-      case "Critical":
-        return "bg-red-600/20 text-red-400 border-red-600/30"
       default:
         return "bg-gray-600/20 text-gray-400 border-gray-600/30"
     }
   }
 
-  const getAlertColor = (severity: string) => {
-    switch (severity) {
-      case "critical":
-        return "border-l-red-500"
-      case "warning":
-        return "border-l-yellow-500"
-      case "info":
-        return "border-l-blue-500"
-      case "success":
-        return "border-l-green-500"
-      default:
-        return "border-l-gray-500"
-    }
-  }
+  const filteredItems = inventoryItems.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-900"}`}>
-      {/* Navigation */}
-      <nav
-        className={`border-b ${isDarkMode ? "border-gray-800 bg-gray-950/80" : "border-gray-200 bg-white/80"} backdrop-blur-sm sticky top-0 z-50`}
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex">
+      {/* Sidebar - Same as dashboard */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:inset-0`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/dashboard"
-                className={`flex items-center space-x-2 ${isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors`}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Dashboard</span>
-              </Link>
-            </div>
-
+        <div className="flex flex-col h-full">
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-blue-500" />
+              <Bot className="h-8 w-8 text-black dark:text-white" />
               <Link href="/" className="text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
+            <Button variant="ghost" size="sm" className="lg:hidden" onClick={toggleSidebar}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Sidebar Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+                Automations
+              </h3>
+
+              {automations.map((automation) => {
+                const IconComponent = automation.icon
+
+                return (
+                  <div key={automation.id} className="space-y-2">
+                    {automation.id === "inventory" ? (
+                      <div className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all bg-black/5 dark:bg-white/5`}>
+                        <div className="flex items-center space-x-3">
+                          <IconComponent className="h-5 w-5" />
+                          <span className="font-medium">{automation.title}</span>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={`text-xs ${
+                            automation.status === "Active"
+                              ? "border-green-500 text-green-600 dark:text-green-400"
+                              : automation.status === "Paused"
+                                ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
+                                : "border-gray-500 text-gray-600 dark:text-gray-400"
+                          }`}
+                        >
+                          {automation.status}
+                        </Badge>
+                      </div>
+                    ) : (
+                      <Link href={automation.id === "gmail" ? "/dashboard/gmail" : automation.id === "instagram" ? "/dashboard/instagram" : "/dashboard"}>
+                        <div className="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5">
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="h-5 w-5" />
+                            <span className="font-medium">{automation.title}</span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${
+                              automation.status === "Active"
+                                ? "border-green-500 text-green-600 dark:text-green-400"
+                                : automation.status === "Paused"
+                                  ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
+                                  : "border-gray-500 text-gray-600 dark:text-gray-400"
+                            }`}
+                          >
+                            {automation.status}
+                          </Badge>
+                        </div>
+                      </Link>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 lg:ml-0">
+        {/* Top Navigation - Same as dashboard */}
+        <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-40">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleSidebar}
+                  className="lg:hidden transition-all duration-200 hover:scale-105 hover:bg-black/5 dark:hover:bg-white/5"
+                  aria-label="Toggle sidebar"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <h1 className="text-xl font-semibold">Inventory Management</h1>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Link href="/notifications">
+                  <Button variant="ghost" size="sm">
+                    <Bell className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <ModeToggle />
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Inventory Content */}
+        <div className="p-4 sm:p-6 lg:p-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <Package className="h-6 w-6 text-blue-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Inventory Management</h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Real-time inventory tracking and automated reordering
+                </p>
+              </div>
+            </div>
 
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleTheme}
-                className={`${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
+              <Badge
+                variant={isAutomationActive ? "default" : "secondary"}
+                className={
+                  isAutomationActive
+                    ? "bg-green-600/20 text-green-400 border-green-600/30"
+                    : "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+                }
               >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {isAutomationActive ? "Active" : "Paused"}
+              </Badge>
+              <Button
+                onClick={() => setIsAutomationActive(!isAutomationActive)}
+                className={isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+              >
+                {isAutomationActive ? (
+                  <>
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4 mr-2" />
+                    Start
+                  </>
+                )}
               </Button>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center">
-              <Package className="h-6 w-6 text-green-400" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">Inventory Management</h1>
-              <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Automated inventory tracking and reorder management
-              </p>
-            </div>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {analytics.map((stat, index) => {
+              const icons = [Package, AlertTriangle, TrendingUp, TrendingDown]
+              const colors = ["text-blue-500", "text-yellow-500", "text-green-500", "text-purple-500"]
+              const IconComponent = icons[index]
+
+              return (
+                <Card key={stat.metric} className="border-gray-200 dark:border-gray-800">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{stat.metric}</CardTitle>
+                    <IconComponent className={`h-4 w-4 ${colors[index]}`} />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Badge
-              variant={isAutomationActive ? "default" : "secondary"}
-              className={isAutomationActive ? "bg-green-600/20 text-green-400 border-green-600/30" : ""}
-            >
-              {isAutomationActive ? "Active" : "Paused"}
-            </Badge>
-            <Button
-              onClick={() => setIsAutomationActive(!isAutomationActive)}
-              className={isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
-            >
-              {isAutomationActive ? (
-                <>
-                  <Pause className="h-4 w-4 mr-2" />
-                  Pause
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4 mr-2" />
-                  Start
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="inventory" className="space-y-6">
+            <TabsList className="bg-gray-100 dark:bg-gray-800">
+              <TabsTrigger value="inventory">Inventory</TabsTrigger>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Items</CardTitle>
-              <Package className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">342</div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>+12 from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Low Stock Alerts</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">5</div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>2 critical items</p>
-            </CardContent>
-          </Card>
-
-          <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Auto Reorders</CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">23</div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>This month</p>
-            </CardContent>
-          </Card>
-
-          <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Inventory Value</CardTitle>
-              <TrendingUp className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$47.2K</div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>+8.2% from last month</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content */}
-        <Tabs defaultValue="inventory" className="space-y-6">
-          <TabsList className={`${isDarkMode ? "bg-gray-800" : "bg-gray-100"}`}>
-            <TabsTrigger value="inventory">Inventory</TabsTrigger>
-            <TabsTrigger value="alerts">Alerts</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="inventory" className="space-y-6">
-            {/* Search and Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex items-center space-x-4 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-80">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`pl-10 ${isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-300"}`}
-                  />
+            <TabsContent value="inventory" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Current Inventory</h2>
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Search items..."
+                      className="pl-10 w-64"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <Button variant="outline">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filter
+                  </Button>
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Item
+                  </Button>
                 </div>
-                <Button variant="outline" className={`${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter
-                </Button>
               </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" className={`${isDarkMode ? "border-gray-700" : "border-gray-300"}`}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
+
+              <Card className="border-gray-200 dark:border-gray-800">
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Item</TableHead>
+                        <TableHead>SKU</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Stock</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Value</TableHead>
+                        <TableHead>Supplier</TableHead>
+                        <TableHead>Last Ordered</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredItems.map((item) => {
+                        const stockStatus = getStockStatus(item.currentStock, item.reorderPoint)
+                        return (
+                          <TableRow key={item.id}>
+                            <TableCell className="font-medium">{item.name}</TableCell>
+                            <TableCell>{item.sku}</TableCell>
+                            <TableCell>{item.category}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <span>{item.currentStock}</span>
+                                <span className="text-xs text-gray-500">/ {item.maxStock}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={stockStatus.color}>{stockStatus.status}</Badge>
+                            </TableCell>
+                            <TableCell>${item.value.toFixed(2)}</TableCell>
+                            <TableCell>{item.supplier}</TableCell>
+                            <TableCell>{item.lastOrdered}</TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="orders" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Recent Orders</h2>
                 <Button className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Item
+                  New Order
                 </Button>
               </div>
-            </div>
 
-            {/* Inventory Table */}
-            <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-              <CardHeader>
-                <CardTitle>Inventory Items</CardTitle>
-                <CardDescription>Manage your product inventory and stock levels</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow className={`${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
-                      <TableHead>Product</TableHead>
-                      <TableHead>SKU</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Stock</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Supplier</TableHead>
-                      <TableHead>Trend</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredItems.map((item) => (
-                      <TableRow key={item.id} className={`${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                          {item.sku}
-                        </TableCell>
-                        <TableCell className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                          {item.category}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{item.currentStock}</span>
-                            <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
-                              Reorder: {item.reorderPoint}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(item.status)}>{item.status}</Badge>
-                        </TableCell>
-                        <TableCell className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                          {item.supplier}
-                        </TableCell>
-                        <TableCell>
-                          {item.trend === "up" ? (
-                            <TrendingUp className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4 text-red-500" />
-                          )}
-                        </TableCell>
+              <Card className="border-gray-200 dark:border-gray-800">
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Item</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Supplier</TableHead>
+                        <TableHead>Order Date</TableHead>
+                        <TableHead>Expected Delivery</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Total</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                    </TableHeader>
+                    <TableBody>
+                      {recentOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-medium">{order.item}</TableCell>
+                          <TableCell>{order.quantity}</TableCell>
+                          <TableCell>{order.supplier}</TableCell>
+                          <TableCell>{order.orderDate}</TableCell>
+                          <TableCell>{order.expectedDelivery}</TableCell>
+                          <TableCell>
+                            <Badge className={getOrderStatus(order.status)}>{order.status}</Badge>
+                          </TableCell>
+                          <TableCell>${order.total.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="alerts" className="space-y-6">
-            <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-              <CardHeader>
-                <CardTitle>Recent Alerts</CardTitle>
-                <CardDescription>Inventory alerts and notifications</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recentAlerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`flex items-start space-x-3 p-4 rounded-lg border-l-4 ${getAlertColor(alert.severity)} ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50"}`}
-                  >
-                    <div className="flex-shrink-0 mt-1">
-                      <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <TabsContent value="suppliers" className="space-y-6">
+              <Card className="border-gray-200 dark:border-gray-800">
+                <CardHeader>
+                  <CardTitle>Supplier Information</CardTitle>
+                  <CardDescription>Manage your supplier relationships and contact information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {["TechSupply Co.", "GameGear Ltd.", "ComfortSeating Inc.", "DeskTech Solutions", "AudioPro Systems"].map((supplier, index) => (
+                        <Card key={supplier} className="border-gray-200 dark:border-gray-800">
+                          <CardContent className="p-4">
+                            <h3 className="font-semibold mb-2">{supplier}</h3>
+                            <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                              <p>Contact: supplier{index + 1}@email.com</p>
+                              <p>Phone: +1 (555) {123 + index}-{4567 + index}</p>
+                              <p>Rating: 4.{8 - index}/5</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
-                    <div className="flex-1 min-w-0">
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="border-gray-200 dark:border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Inventory Turnover</CardTitle>
+                    <CardDescription>How quickly inventory is sold and replaced</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{alert.type}</p>
-                        <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>{alert.time}</p>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Electronics</span>
+                        <span className="text-sm font-medium">12.3x/year</span>
                       </div>
-                      <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{alert.item}</p>
-                      <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"} mt-1`}>
-                        {alert.message}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Furniture</span>
+                        <span className="text-sm font-medium">8.7x/year</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Accessories</span>
+                        <span className="text-sm font-medium">15.2x/year</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  </CardContent>
+                </Card>
 
-          <TabsContent value="settings" className="space-y-6">
-            <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-              <CardHeader>
-                <CardTitle>Automation Settings</CardTitle>
-                <CardDescription>Configure inventory automation preferences</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Auto Reorder</Label>
-                    <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Automatically place orders when stock reaches reorder point
+                <Card className="border-gray-200 dark:border-gray-800">
+                  <CardHeader>
+                    <CardTitle>Cost Analysis</CardTitle>
+                    <CardDescription>Breakdown of inventory costs</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Holding Cost</span>
+                        <span className="text-sm font-medium">$2,340/month</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Ordering Cost</span>
+                        <span className="text-sm font-medium">$890/month</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Shortage Cost</span>
+                        <span className="text-sm font-medium">$156/month</span>
+                      </div>
                     </div>
-                  </div>
-                  <Switch checked={autoReorderEnabled} onCheckedChange={setAutoReorderEnabled} />
-                </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
-                <div className="space-y-2">
-                  <Label htmlFor="reorder-buffer">Reorder Buffer (%)</Label>
-                  <Input
-                    id="reorder-buffer"
-                    type="number"
-                    defaultValue="20"
-                    className={`${isDarkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
-                  />
-                  <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                    Additional buffer percentage for reorder calculations
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="alert-threshold">Low Stock Alert Threshold</Label>
-                  <Input
-                    id="alert-threshold"
-                    type="number"
-                    defaultValue="10"
-                    className={`${isDarkMode ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}`}
-                  />
-                  <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                    Days of stock remaining before low stock alert
-                  </p>
-                </div>
-
-                <Button className="bg-blue-600 hover:bg-blue-700">Save Settings</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
+            <TabsContent value="settings" className="space-y-6">
+              <Card className="border-gray-200 dark:border-gray-800">
                 <CardHeader>
-                  <CardTitle>Inventory Turnover</CardTitle>
-                  <CardDescription>Product movement and turnover rates</CardDescription>
+                  <CardTitle>Automation Settings</CardTitle>
+                  <CardDescription>Configure your inventory management automation</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Electronics</span>
-                      <span className="text-sm font-medium">8.2x/year</span>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Auto Reordering</Label>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Automatically reorder items when they reach reorder point
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Accessories</span>
-                      <span className="text-sm font-medium">12.5x/year</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Office Supplies
-                      </span>
-                      <span className="text-sm font-medium">6.1x/year</span>
-                    </div>
+                    <Switch checked={autoReorderEnabled} onCheckedChange={setAutoReorderEnabled} />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label>Default Reorder Quantity</Label>
+                    <Input
+                      type="number"
+                      placeholder="50"
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Low Stock Alert Threshold</Label>
+                    <Input
+                      type="number"
+                      placeholder="20"
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  <Button className="bg-blue-600 hover:bg-blue-700">Save Settings</Button>
                 </CardContent>
               </Card>
-
-              <Card className={`${isDarkMode ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
-                <CardHeader>
-                  <CardTitle>Cost Savings</CardTitle>
-                  <CardDescription>Automation benefits and cost reduction</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Reduced Stockouts
-                      </span>
-                      <span className="text-sm font-medium">$12,450</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        Optimized Orders
-                      </span>
-                      <span className="text-sm font-medium">$8,320</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Time Saved</span>
-                      <span className="text-sm font-medium">89 hours</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
+
+      {isSidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={toggleSidebar} />}
     </div>
   )
 }

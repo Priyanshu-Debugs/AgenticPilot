@@ -92,69 +92,85 @@ export default function Dashboard() {
 
                 return (
                   <div key={automation.id} className="space-y-2">
-                    <div
-                      className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all ${
-                        isSelected ? "bg-black/5 dark:bg-white/5" : "hover:bg-black/5 dark:hover:bg-white/5"
-                      }`}
-                      onClick={() => setSelectedAutomation(isSelected ? null : automation.id)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <IconComponent className="h-5 w-5" />
-                        <span className="font-medium">{automation.title}</span>
-                      </div>
-                      <Badge
-                        variant="outline"
-                        className={`text-xs ${
-                          automation.status === "Active"
-                            ? "border-green-500 text-green-600 dark:text-green-400"
-                            : automation.status === "Paused"
-                              ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
-                              : "border-gray-500 text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
-                        {automation.status}
-                      </Badge>
-                    </div>
-
-                    {isSelected && (
-                      <div className="ml-8 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          {getAutomationDetails(automation.id)?.description}
-                        </p>
-                        <div className="space-y-2 mb-3">
-                          <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Features</h4>
-                          <ul className="text-xs space-y-1">
-                            {getAutomationDetails(automation.id)?.features.map((feature, index) => (
-                              <li key={index} className="text-gray-600 dark:text-gray-400">
-                                • {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        {automation.id === "gmail" && (
-                          <Button
-                            size="sm"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-xs"
-                            onClick={() => setSelectedAutomation("gmail")}
+                    {automation.id === "gmail" ? (
+                      <Link href="/dashboard/gmail">
+                        <div className="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5">
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="h-5 w-5" />
+                            <span className="font-medium">{automation.title}</span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${
+                              automation.status === "Active"
+                                ? "border-green-500 text-green-600 dark:text-green-400"
+                                : automation.status === "Paused"
+                                  ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
+                                  : "border-gray-500 text-gray-600 dark:text-gray-400"
+                            }`}
                           >
-                            Open Gmail Automation
-                          </Button>
+                            {automation.status}
+                          </Badge>
+                        </div>
+                      </Link>
+                    ) : (
+                      <>
+                        <div
+                          className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all ${
+                            isSelected ? "bg-black/5 dark:bg-white/5" : "hover:bg-black/5 dark:hover:bg-white/5"
+                          }`}
+                          onClick={() => setSelectedAutomation(isSelected ? null : automation.id)}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="h-5 w-5" />
+                            <span className="font-medium">{automation.title}</span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${
+                              automation.status === "Active"
+                                ? "border-green-500 text-green-600 dark:text-green-400"
+                                : automation.status === "Paused"
+                                  ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
+                                  : "border-gray-500 text-gray-600 dark:text-gray-400"
+                            }`}
+                          >
+                            {automation.status}
+                          </Badge>
+                        </div>
+
+                        {isSelected && (
+                          <div className="ml-8 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                              {getAutomationDetails(automation.id)?.description}
+                            </p>
+                            <div className="space-y-2 mb-3">
+                              <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Features</h4>
+                              <ul className="text-xs space-y-1">
+                                {getAutomationDetails(automation.id)?.features.map((feature, index) => (
+                                  <li key={index} className="text-gray-600 dark:text-gray-400">
+                                    • {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            {automation.id === "inventory" && (
+                              <Link href="/dashboard/inventory">
+                                <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+                                  Go to Inventory Management
+                                </Button>
+                              </Link>
+                            )}
+                            {automation.id === "instagram" && (
+                              <Link href="/dashboard/instagram">
+                                <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
+                                  Go to Instagram Automation
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
                         )}
-                        {automation.id === "inventory" && (
-                          <Link href="/dashboard/inventory">
-                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
-                              Go to Inventory Management
-                            </Button>
-                          </Link>
-                        )}
-                        {automation.id === "instagram" && (
-                          <Link href="/dashboard/instagram">
-                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-xs">
-                              Go to Instagram Automation
-                            </Button>
-                          </Link>
-                        )}
-                      </div>
+                      </>
                     )}
                   </div>
                 )
@@ -214,14 +230,6 @@ export default function Dashboard() {
                           <p className="text-gray-600 dark:text-gray-400">{details.description}</p>
                         </div>
                       </div>
-                      {automation.id === "gmail" && (
-                        <Button
-                          className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => setSelectedAutomation("gmail")}
-                        >
-                          Open Gmail Automation
-                        </Button>
-                      )}
                       {automation.id === "inventory" && (
                         <Link href="/dashboard/inventory">
                           <Button className="bg-blue-600 hover:bg-blue-700">
