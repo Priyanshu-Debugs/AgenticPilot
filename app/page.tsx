@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Mail, Package, Instagram, Bot, Bell, Menu, X } from "lucide-react"
+import { ArrowRight, Mail, Package, Instagram, Bot, Bell, Menu, X, Star, Users, Zap, Shield } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import Link from "next/link"
 import Image from "next/image"
@@ -36,10 +36,13 @@ export default function LandingPage() {
                 variant="ghost"
                 size="sm"
                 onClick={toggleMobileMenu}
-                className="md:hidden transition-all duration-200 hover:scale-105 hover:bg-black/5 dark:hover:bg-white/5"
-                aria-label="Toggle menu"
+                className="md:hidden transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-800 relative z-50 p-2"
+                aria-label="Toggle navigation menu"
               >
-                <Menu className="h-5 w-5" />
+                <div className="relative w-5 h-5">
+                  <Menu className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`} />
+                  <X className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`} />
+                </div>
               </Button>
               <div className="flex items-center space-x-2">
                 <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
@@ -106,69 +109,129 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Side Drawer Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
-              <Link
-                href="#features"
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                onClick={toggleMobileMenu}
-              >
-                Features
-              </Link>
-              <Link
-                href="/dashboard"
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                onClick={toggleMobileMenu}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/pricing"
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                onClick={toggleMobileMenu}
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/contact"
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                onClick={toggleMobileMenu}
-              >
-                Contact
-              </Link>
-              <Link
-                href="/notifications"
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                onClick={toggleMobileMenu}
-              >
-                Notifications
-              </Link>
-              <div className="px-3 py-2 space-y-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    handleSignIn()
-                    toggleMobileMenu()
-                  }}
-                  disabled={showSignIn}
-                  className="w-full border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
+          <>
+            {/* Backdrop Overlay */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"
+              onClick={toggleMobileMenu}
+            />
+            
+            {/* Side Drawer - Full Height */}
+            <div className={`fixed top-0 left-0 h-screen w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 z-50 md:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
+              isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}>
+              
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                <Link href="/" className="flex items-center space-x-2" onClick={toggleMobileMenu}>
+                  <Bot className="h-8 w-8 text-black dark:text-white" />
+                  <span className="text-xl font-bold text-black dark:text-white">AgenticPilot</span>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={toggleMobileMenu}
+                  className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors p-2"
+                  aria-label="Close menu"
                 >
-                  {showSignIn ? "Signing In..." : "Sign In"}
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleGetStarted()
-                    toggleMobileMenu()
-                  }}
-                  className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                >
-                  Get Started
+                  <X className="h-5 w-5 text-black dark:text-white" />
                 </Button>
               </div>
+
+              {/* Drawer Content */}
+              <div className="flex flex-col h-full">
+                {/* Navigation Links */}
+                <div className="flex-1 px-6 py-6 space-y-2">
+                  <div className="space-y-1">
+                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 px-4">
+                      Navigation
+                    </h3>
+                    
+                    <Link
+                      href="#features"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Bot className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Features
+                    </Link>
+                    
+                    <Link
+                      href="#benefits"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Star className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Benefits
+                    </Link>
+                    
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Bot className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Dashboard
+                    </Link>
+                    
+                    <Link
+                      href="/pricing"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Package className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Pricing
+                    </Link>
+                    
+                    <Link
+                      href="/contact"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Mail className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Contact
+                    </Link>
+
+                    <Link
+                      href="/notifications"
+                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Bell className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                      Notifications
+                    </Link>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="px-6 py-6 border-t border-gray-200 dark:border-gray-800 space-y-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      handleSignIn()
+                      toggleMobileMenu()
+                    }}
+                    disabled={showSignIn}
+                    className="w-full border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent transition-all duration-200"
+                  >
+                    {showSignIn ? "Signing In..." : "Sign In"}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleGetStarted()
+                      toggleMobileMenu()
+                    }}
+                    className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-all duration-200"
+                  >
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </nav>
 
