@@ -182,27 +182,28 @@ export default function InventoryManagement() {
 
   const handleReorderAll = () => {
     const itemsNeedingReorder = inventoryItems.filter(item => item.currentStock <= item.reorderPoint)
-    console.log("Reordering items:", itemsNeedingReorder)
-    // Here you would integrate with your ordering system
+    // TODO: Integrate with ordering system API to reorder items
+    // For now, show alert with items that need reordering
+    alert(`${itemsNeedingReorder.length} items need reordering`)
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
-            <Package className="h-6 w-6 text-blue-400" />
+      <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-600/20 rounded-lg flex items-center justify-center">
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Inventory Management</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold">Inventory Management</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
               AI-powered inventory tracking and automated reordering
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <Badge
             variant={isAutomationActive ? "default" : "secondary"}
             className={
@@ -233,10 +234,10 @@ export default function InventoryManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {analytics.map((stat, index) => {
           const IconComponent = stat.icon
-          const colors = ["text-blue-500", "text-yellow-500", "text-green-500", "text-red-500"]
+          const colors = ["text-gray-500", "text-yellow-500", "text-green-500", "text-red-500"]
 
           return (
             <Card
@@ -248,7 +249,7 @@ export default function InventoryManagement() {
                 <IconComponent className={`h-4 w-4 ${colors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
               </CardContent>
             </Card>
@@ -289,7 +290,7 @@ export default function InventoryManagement() {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Item
               </Button>
@@ -299,19 +300,20 @@ export default function InventoryManagement() {
           {/* Inventory Table */}
           <Card className="border-gray-200 dark:border-gray-800">
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Stock Level</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Unit Price</TableHead>
-                    <TableHead>Last Restocked</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap">Product</TableHead>
+                      <TableHead className="whitespace-nowrap">SKU</TableHead>
+                      <TableHead className="whitespace-nowrap">Category</TableHead>
+                      <TableHead className="whitespace-nowrap">Stock Level</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                      <TableHead className="whitespace-nowrap">Unit Price</TableHead>
+                      <TableHead className="whitespace-nowrap">Last Restocked</TableHead>
+                      <TableHead className="whitespace-nowrap">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {filteredItems.map((item) => {
                     const stockLevel = getStockLevel(item.currentStock, item.minStock, item.maxStock)
@@ -358,7 +360,7 @@ export default function InventoryManagement() {
                               Edit
                             </Button>
                             {item.currentStock <= item.reorderPoint && (
-                              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                              <Button size="sm">
                                 Reorder
                               </Button>
                             )}
@@ -369,6 +371,7 @@ export default function InventoryManagement() {
                   })}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -417,7 +420,7 @@ export default function InventoryManagement() {
                           <Badge className={getStatusColor(item.status)}>
                             {item.status}
                           </Badge>
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                          <Button size="sm">
                             Reorder Now
                           </Button>
                         </div>
@@ -426,7 +429,7 @@ export default function InventoryManagement() {
                 </div>
 
                 {inventoryItems.filter(item => item.currentStock <= item.reorderPoint).length > 0 && (
-                  <Button onClick={handleReorderAll} className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button onClick={handleReorderAll} className="w-full">
                     Reorder All Items
                   </Button>
                 )}
@@ -438,7 +441,7 @@ export default function InventoryManagement() {
         <TabsContent value="orders" className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Recent Orders</h2>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               New Order
             </Button>
@@ -446,16 +449,17 @@ export default function InventoryManagement() {
 
           <Card className="border-gray-200 dark:border-gray-800">
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Item</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Supplier</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Expected Delivery</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Total</TableHead>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap">Item</TableHead>
+                      <TableHead className="whitespace-nowrap">Quantity</TableHead>
+                      <TableHead className="whitespace-nowrap">Supplier</TableHead>
+                      <TableHead className="whitespace-nowrap">Order Date</TableHead>
+                      <TableHead className="whitespace-nowrap">Expected Delivery</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                      <TableHead className="whitespace-nowrap">Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -474,6 +478,7 @@ export default function InventoryManagement() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -595,7 +600,7 @@ export default function InventoryManagement() {
                 </div>
               </div>
 
-              <Button className="bg-blue-600 hover:bg-blue-700">Save Settings</Button>
+              <Button>Save Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>

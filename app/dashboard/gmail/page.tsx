@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Settings, Plus, Edit, Trash2, Power, Clock } from "lucide-react"
+import { Mail, Settings, Plus, Edit, Trash2, Power, Clock, Play, Pause } from "lucide-react"
 
 export default function GmailAutomation() {
   const [isEnabled, setIsEnabled] = useState(true)
@@ -45,28 +45,49 @@ export default function GmailAutomation() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Gmail Automation</h1>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">Automation Status:</span>
-            <button
-              onClick={() => setIsEnabled(!isEnabled)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                isEnabled ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  isEnabled ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
-            <Power className={`w-4 h-4 ${isEnabled ? "text-green-500" : "text-muted-foreground"}`} />
+      <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600/20 rounded-lg flex items-center justify-center">
+            <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">Gmail Automation</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+              AI-powered email automation and response management
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <Badge
+            variant={isEnabled ? "default" : "secondary"}
+            className={
+              isEnabled
+                ? "bg-green-600/20 text-green-400 border-green-600/30"
+                : "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+            }
+          >
+            {isEnabled ? "Active" : "Paused"}
+          </Badge>
+          <Button
+            onClick={() => setIsEnabled(!isEnabled)}
+            className={isEnabled ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+          >
+            {isEnabled ? (
+              <>
+                <Pause className="h-4 w-4 mr-2" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4 mr-2" />
+                Start
+              </>
+            )}
+          </Button>
+          <Button>
             <Plus className="w-4 h-4 mr-2" />
             New Template
           </Button>
@@ -74,16 +95,16 @@ export default function GmailAutomation() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat, index) => {
           const IconComponent = stat.icon
           return (
             <Card key={index} className="border-gray-200 dark:border-gray-800">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                    <p className="text-xl sm:text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
                   <IconComponent className="w-8 h-8 text-blue-600" />
                 </div>

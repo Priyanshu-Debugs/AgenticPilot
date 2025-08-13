@@ -1,115 +1,332 @@
 "use client"
 
+import { useState } from "react"
+import { StatsCard, ActionCard } from "@/components/shared/Cards"
+import { AutomationController } from "@/components/shared/AutomationController"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Package, Instagram, BarChart3, Zap } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock } from "lucide-react"
 import Link from "next/link"
 
 export default function Dashboard() {
-  const automations = [
+  const [automationTasks, setAutomationTasks] = useState([
     {
-      id: "gmail",
-      title: "Gmail Auto Reply",
-      icon: Mail,
-      status: "Active",
+      id: "gmail-1",
+      name: "Customer Support Emails",
+      description: "Automatically respond to customer inquiries in Gmail",
+      status: "running" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 85,
+      lastRun: "2 hours ago",
+      nextRun: "In 10 minutes",
+      executionTime: "1.2s avg",
+      tasksProcessed: 247,
+      successRate: 96
     },
     {
-      id: "inventory",
-      title: "Inventory Management",
-      icon: Package,
-      status: "Active",
+      id: "inventory-1", 
+      name: "Stock Level Monitor",
+      description: "Monitor inventory levels and send alerts for low stock",
+      status: "paused" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 45,
+      lastRun: "1 day ago",
+      nextRun: "Manual trigger",
+      executionTime: "0.8s avg",
+      tasksProcessed: 1891,
+      successRate: 99
     },
     {
-      id: "instagram",
-      title: "Instagram Automation",
-      icon: Instagram,
-      status: "Soon",
+      id: "instagram-1",
+      name: "Social Media Scheduler",
+      description: "Schedule and post content to Instagram automatically",
+      status: "completed" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 100,
+      lastRun: "30 minutes ago",
+      nextRun: "Tomorrow 9 AM",
+      executionTime: "2.1s avg",
+      tasksProcessed: 89,
+      successRate: 94
+    }
+  ])
+
+  const handleStartTask = (taskId: string) => {
+    setAutomationTasks(prev => 
+      prev.map(task => 
+        task.id === taskId ? { ...task, status: "running" as "running" | "paused" | "stopped" | "error" | "completed" } : task
+      )
+    )
+  }
+
+  const handlePauseTask = (taskId: string) => {
+    setAutomationTasks(prev => 
+      prev.map(task => 
+        task.id === taskId ? { ...task, status: "paused" as "running" | "paused" | "stopped" | "error" | "completed" } : task
+      )
+    )
+  }
+
+  const handleStopTask = (taskId: string) => {
+    setAutomationTasks(prev => 
+      prev.map(task => 
+        task.id === taskId ? { ...task, status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed", progress: 0 } : task
+      )
+    )
+  }
+
+  const handleConfigureTask = (taskId: string) => {
+    // Navigate to specific task configuration
+    const task = automationTasks.find(t => t.id === taskId)
+    if (task?.id.includes('gmail')) {
+      window.location.href = '/dashboard/gmail'
+    } else if (task?.id.includes('inventory')) {
+      window.location.href = '/dashboard/inventory'
+    } else if (task?.id.includes('instagram')) {
+      window.location.href = '/dashboard/instagram'
+    }
+  }
+
+  const statsData = [
+    {
+      title: "Active Automations",
+      value: automationTasks.filter(t => t.status === "running").length,
+      change: "+1 from last month",
+      changeType: "positive" as const,
+      icon: Zap,
+      trend: 75
     },
+    {
+      title: "Tasks Processed",
+      value: "2,247",
+      change: "+12% from yesterday", 
+      changeType: "positive" as const,
+      icon: BarChart3,
+      trend: 88
+    },
+    {
+      title: "Efficiency Score",
+      value: "98.5%",
+      change: "+2% from last week",
+      changeType: "positive" as const,
+      icon: TrendingUp,
+      trend: 98
+    },
+    {
+      title: "Response Time",
+      value: "1.2s",
+      change: "-0.3s improvement",
+      changeType: "positive" as const,
+      icon: Clock,
+      trend: 92
+    }
+  ]
+
+  const quickActions = [
+    {
+      title: "Create New Automation",
+      description: "Set up a new AI automation workflow",
+      icon: Plus,
+      buttonText: "Create",
+      onAction: () => window.location.href = "/dashboard"
+    },
+    {
+      title: "System Settings",
+      description: "Configure global automation settings",
+      icon: Settings,
+      buttonText: "Configure",
+      onAction: () => window.location.href = "/settings"
+    },
+    {
+      title: "Notifications",
+      description: "Manage alerts and notification preferences",
+      icon: Bell,
+      buttonText: "Manage",
+      onAction: () => window.location.href = "/notifications"
+    }
   ]
 
   return (
-    <>
+    <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
+      {/* Dashboard Header */}
+      <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Monitor and control your AI automation workflows
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Automation
+          </Button>
+        </div>
+      </div>
+
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <Card className="border-gray-200 dark:border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Automations</CardTitle>
-            <Zap className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">+1 from last month</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-gray-200 dark:border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tasks Processed</CardTitle>
-            <BarChart3 className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,247</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">+12% from yesterday</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-gray-200 dark:border-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Efficiency Score</CardTitle>
-            <BarChart3 className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">98.5%</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">+2% from last week</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        {statsData.map((stat) => (
+          <StatsCard
+            key={stat.title}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            changeType={stat.changeType}
+            icon={stat.icon}
+            trend={stat.trend}
+          />
+        ))}
       </div>
 
-      {/* Automation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {automations.map((automation) => {
-          const IconComponent = automation.icon
-          const href = `/dashboard/${automation.id}`
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="automations" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-1 md:grid-cols-4">
+          <TabsTrigger value="automations">Automations</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="integrations">Integrations</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
 
-          return (
-            <Link key={automation.id} href={href}>
-              <Card className="border-gray-200 dark:border-gray-800 hover:shadow-lg transition-all duration-200 cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black/10 dark:bg-white/10 rounded-lg flex items-center justify-center">
-                        <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-base sm:text-lg">{automation.title}</CardTitle>
-                      </div>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={`text-xs ${
-                        automation.status === "Active"
-                          ? "border-green-500 text-green-600 dark:text-green-400"
-                          : automation.status === "Paused"
-                            ? "border-yellow-500 text-yellow-600 dark:text-yellow-400"
-                            : "border-gray-500 text-gray-600 dark:text-gray-400"
-                      }`}
-                    >
-                      {automation.status}
-                    </Badge>
+        <TabsContent value="automations" className="space-y-6">
+          <AutomationController
+            tasks={automationTasks}
+            onStartTask={handleStartTask}
+            onPauseTask={handlePauseTask}
+            onStopTask={handleStopTask}
+            onConfigureTask={handleConfigureTask}
+          />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <BarChart3 className="h-5 w-5" />
+                  <span>Performance Analytics</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">2,247</div>
+                    <p className="text-sm text-muted-foreground">Total Tasks Processed</p>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {automation.id === "gmail" && "Automatically reply to customer emails with personalized responses"}
-                    {automation.id === "inventory" && "Track stock levels and automate reordering processes"}
-                    {automation.id === "instagram" && "Schedule posts and manage your Instagram presence automatically"}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          )
-        })}
-      </div>
-    </>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">96.8%</div>
+                    <p className="text-sm text-muted-foreground">Success Rate</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">1.2s</div>
+                    <p className="text-sm text-muted-foreground">Avg Response Time</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Usage Trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Analytics dashboard would show detailed charts and graphs here.
+                  Integration with charts library like Recharts would provide visual insights.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="integrations" className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <ActionCard
+              title="Gmail Integration"
+              description="Connect and manage Gmail automation"
+              icon={Mail}
+              buttonText="Configure"
+              onAction={() => window.location.href = "/dashboard/gmail"}
+            />
+            <ActionCard
+              title="Inventory System"
+              description="Manage inventory automation workflows"
+              icon={Package}
+              buttonText="Setup"
+              onAction={() => window.location.href = "/dashboard/inventory"}
+            />
+            <ActionCard
+              title="Instagram Integration"
+              description="Automate social media posting"
+              icon={Instagram}
+              buttonText="Connect"
+              onAction={() => window.location.href = "/dashboard/instagram"}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            {quickActions.map((action) => (
+              <ActionCard
+                key={action.title}
+                title={action.title}
+                description={action.description}
+                icon={action.icon}
+                buttonText={action.buttonText}
+                onAction={action.onAction}
+              />
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Clock className="h-5 w-5" />
+            <span>Recent Activity</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[
+              {
+                action: "Gmail automation processed 45 emails",
+                time: "2 minutes ago",
+                status: "success"
+              },
+              {
+                action: "Inventory check completed - 3 items need restock",
+                time: "15 minutes ago", 
+                status: "warning"
+              },
+              {
+                action: "Instagram post scheduled successfully",
+                time: "1 hour ago",
+                status: "success"
+              },
+              {
+                action: "New automation workflow created",
+                time: "3 hours ago",
+                status: "info"
+              }
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className={`w-2 h-2 rounded-full ${
+                  activity.status === "success" ? "bg-green-500" :
+                  activity.status === "warning" ? "bg-yellow-500" :
+                  "bg-gray-500"
+                }`} />
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{activity.action}</p>
+                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

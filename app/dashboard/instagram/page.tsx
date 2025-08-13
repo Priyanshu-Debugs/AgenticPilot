@@ -113,22 +113,22 @@ export default function InstagramAutomation() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-pink-600/20 rounded-lg flex items-center justify-center">
-            <Instagram className="h-6 w-6 text-pink-400" />
+      <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-600/20 rounded-lg flex items-center justify-center">
+            <Instagram className="h-5 w-5 sm:h-6 sm:w-6 text-pink-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Instagram Automation</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold">Instagram Automation</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
               AI-powered Instagram post scheduling and management
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <Badge
             variant={isAutomationActive ? "default" : "secondary"}
             className={
@@ -159,7 +159,7 @@ export default function InstagramAutomation() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {analytics.map((stat, index) => {
           const icons = [Instagram, TrendingUp, Heart, Eye]
           const colors = ["text-pink-500", "text-green-500", "text-red-500", "text-blue-500"]
@@ -175,7 +175,7 @@ export default function InstagramAutomation() {
                 <IconComponent className={`h-4 w-4 ${colors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
               </CardContent>
             </Card>
@@ -301,9 +301,9 @@ export default function InstagramAutomation() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Upload Media</Label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center border-gray-300 dark:border-gray-700">
-                    <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 dark:text-gray-400">
+                  <div className="border-2 border-dashed rounded-lg p-4 sm:p-6 lg:p-8 text-center border-gray-300 dark:border-gray-700">
+                    <Upload className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 mx-auto mb-4 text-gray-400" />
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                       Drag and drop your image or video here, or click to browse
                     </p>
                     <Button variant="outline" className="mt-4 bg-transparent">

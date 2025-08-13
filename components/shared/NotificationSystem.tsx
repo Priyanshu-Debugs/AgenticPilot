@@ -1,0 +1,325 @@
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Bell, CheckCircle, AlertTriangle, Info, X, Settings, Archive } from "lucide-react"
+
+interface Notification {
+  id: string
+  type: "success" | "warning" | "info" | "error"
+  title: string
+  message: string
+  timestamp: string
+  read: boolean
+  actionUrl?: string
+  category: "system" | "automation" | "alert" | "update"
+}
+
+interface NotificationSystemProps {
+  notifications?: Notification[]
+  onMarkAsRead?: (id: string) => void
+  onMarkAllAsRead?: () => void
+  onDismiss?: (id: string) => void
+  onAction?: (notification: Notification) => void
+}
+
+const defaultNotifications: Notification[] = [
+  {
+    id: "1",
+    type: "warning",
+    title: "Low Stock Alert",
+    message: "USB-C Cable inventory is running low (5 units remaining)",
+    timestamp: "2 minutes ago",
+    read: false,
+    category: "alert",
+    actionUrl: "/dashboard/inventory"
+  },
+  {
+    id: "2",
+    type: "success",
+    title: "Gmail Automation Active",
+    message: "Successfully processed 45 emails in the last hour",
+    timestamp: "15 minutes ago",
+    read: false,
+    category: "automation"
+  },
+  {
+    id: "3",
+    type: "info",
+    title: "Instagram Post Scheduled",
+    message: "Your post about new product launch has been scheduled for tomorrow at 9 AM",
+    timestamp: "1 hour ago",
+    read: true,
+    category: "automation"
+  },
+  {
+    id: "4",
+    type: "error",
+    title: "API Limit Warning",
+    message: "You've used 80% of your monthly API calls. Consider upgrading your plan.",
+    timestamp: "3 hours ago",
+    read: false,
+    category: "system"
+  },
+  {
+    id: "5",
+    type: "info",
+    title: "System Update",
+    message: "New automation features are now available in your dashboard",
+    timestamp: "1 day ago",
+    read: true,
+    category: "update"
+  }
+]
+
+export function NotificationSystem({ 
+  notifications = defaultNotifications,
+  onMarkAsRead = () => {},
+  onMarkAllAsRead = () => {},
+  onDismiss = () => {},
+  onAction = () => {}
+}: NotificationSystemProps) {
+  const [localNotifications, setLocalNotifications] = useState(notifications)
+  const [filter, setFilter] = useState<"all" | "unread" | "system" | "automation" | "alert">("all")
+
+  const getIcon = (type: Notification["type"]) => {
+    switch (type) {
+      case "success":
+        return <CheckCircle className="h-5 w-5 text-green-500" />
+      case "warning":
+        return <AlertTriangle className="h-5 w-5 text-yellow-500" />
+      case "error":
+        return <AlertTriangle className="h-5 w-5 text-red-500" />
+      case "info":
+      default:
+        return <Info className="h-5 w-5 text-gray-500" />
+    }
+  }
+
+  const getBorderColor = (type: Notification["type"]) => {
+    switch (type) {
+      case "success":
+        return "border-l-green-500"
+      case "warning":
+        return "border-l-yellow-500"
+      case "error":
+        return "border-l-red-500"
+      case "info":
+      default:
+        return "border-l-blue-500"
+    }
+  }
+
+  const getCategoryBadgeColor = (category: Notification["category"]) => {
+    switch (category) {
+      case "system":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+      case "automation":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+      case "alert":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+      case "update":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const handleMarkAsRead = (id: string) => {
+    setLocalNotifications(prev => 
+      prev.map(notif => 
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    )
+    onMarkAsRead(id)
+  }
+
+  const handleDismiss = (id: string) => {
+    setLocalNotifications(prev => prev.filter(notif => notif.id !== id))
+    onDismiss(id)
+  }
+
+  const handleMarkAllAsRead = () => {
+    setLocalNotifications(prev => 
+      prev.map(notif => ({ ...notif, read: true }))
+    )
+    onMarkAllAsRead()
+  }
+
+  const filteredNotifications = localNotifications.filter(notif => {
+    switch (filter) {
+      case "unread":
+        return !notif.read
+      case "system":
+      case "automation":
+      case "alert":
+        return notif.category === filter
+      default:
+        return true
+    }
+  })
+
+  const unreadCount = localNotifications.filter(n => !n.read).length
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <Bell className="h-6 w-6" />
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center p-0">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Badge>
+            )}
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
+            <p className="text-muted-foreground">
+              Stay updated with your automation activities
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Mark All Read
+          </Button>
+          <Button variant="outline">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex flex-wrap gap-2">
+        {[
+          { key: "all", label: "All", count: localNotifications.length },
+          { key: "unread", label: "Unread", count: unreadCount },
+          { key: "system", label: "System", count: localNotifications.filter(n => n.category === "system").length },
+          { key: "automation", label: "Automation", count: localNotifications.filter(n => n.category === "automation").length },
+          { key: "alert", label: "Alerts", count: localNotifications.filter(n => n.category === "alert").length }
+        ].map(({ key, label, count }) => (
+          <Button
+            key={key}
+            variant={filter === key ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter(key as any)}
+            className="relative"
+          >
+            {label}
+            {count > 0 && (
+              <Badge variant="secondary" className="ml-2 text-xs">
+                {count}
+              </Badge>
+            )}
+          </Button>
+        ))}
+      </div>
+
+      {/* Notifications List */}
+      <div className="space-y-4">
+        {filteredNotifications.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8">
+              <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No notifications</h3>
+              <p className="text-muted-foreground">
+                {filter === "unread" ? "All caught up! No unread notifications." : "You have no notifications to display."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredNotifications.map((notification) => (
+            <Card
+              key={notification.id}
+              className={`border-l-4 ${getBorderColor(notification.type)} ${
+                !notification.read ? "bg-gray-50 dark:bg-gray-900/50" : ""
+              } transition-all hover:shadow-md`}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 mt-1">
+                    {getIcon(notification.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className={`text-sm font-medium ${!notification.read ? "font-semibold" : ""}`}>
+                            {notification.title}
+                          </h3>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {notification.message}
+                        </p>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-xs text-muted-foreground">
+                            {notification.timestamp}
+                          </span>
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${getCategoryBadgeColor(notification.category)}`}
+                          >
+                            {notification.category}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 ml-4">
+                        {!notification.read && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleMarkAsRead(notification.id)}
+                            className="text-xs"
+                          >
+                            Mark as read
+                          </Button>
+                        )}
+                        {notification.actionUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onAction(notification)}
+                            className="text-xs"
+                          >
+                            View
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDismiss(notification.id)}
+                          className="text-xs p-1"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Load More */}
+      {filteredNotifications.length > 0 && (
+        <div className="text-center">
+          <Button variant="outline">
+            <Archive className="h-4 w-4 mr-2" />
+            Load Older Notifications
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
