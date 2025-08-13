@@ -187,22 +187,22 @@ export default function InventoryManagement() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
-            <Package className="h-6 w-6 text-blue-400" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Inventory Management</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold">Inventory Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
               AI-powered inventory tracking and automated reordering
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
           <Badge
             variant={isAutomationActive ? "default" : "secondary"}
             className={
@@ -215,17 +215,19 @@ export default function InventoryManagement() {
           </Badge>
           <Button
             onClick={() => setIsAutomationActive(!isAutomationActive)}
-            className={isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+            className={`w-full sm:w-auto ${isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
           >
             {isAutomationActive ? (
               <>
                 <Pause className="h-4 w-4 mr-2" />
-                Pause
+                <span className="hidden sm:inline">Pause</span>
+                <span className="sm:hidden">Pause</span>
               </>
             ) : (
               <>
                 <Play className="h-4 w-4 mr-2" />
-                Start
+                <span className="hidden sm:inline">Start</span>
+                <span className="sm:hidden">Start</span>
               </>
             )}
           </Button>
@@ -233,7 +235,7 @@ export default function InventoryManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {analytics.map((stat, index) => {
           const IconComponent = stat.icon
           const colors = ["text-blue-500", "text-yellow-500", "text-green-500", "text-red-500"]
@@ -248,7 +250,7 @@ export default function InventoryManagement() {
                 <IconComponent className={`h-4 w-4 ${colors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
               </CardContent>
             </Card>
@@ -257,19 +259,19 @@ export default function InventoryManagement() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="inventory" className="space-y-6">
-        <TabsList className="bg-gray-100 dark:bg-gray-800">
-          <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          <TabsTrigger value="reorder">Auto Reorder</TabsTrigger>
-          <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+      <Tabs defaultValue="inventory" className="space-y-4 sm:space-y-6">
+        <TabsList className="bg-gray-100 dark:bg-gray-800 grid grid-cols-3 sm:grid-cols-5 w-full sm:w-auto">
+          <TabsTrigger value="inventory" className="text-xs sm:text-sm">Inventory</TabsTrigger>
+          <TabsTrigger value="reorder" className="text-xs sm:text-sm">Auto Reorder</TabsTrigger>
+          <TabsTrigger value="orders" className="text-xs sm:text-sm">Orders</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm hidden sm:block">Analytics</TabsTrigger>
+          <TabsTrigger value="settings" className="text-xs sm:text-sm hidden sm:block">Settings</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="inventory" className="space-y-6">
+        <TabsContent value="inventory" className="space-y-4 sm:space-y-6">
           {/* Search and Actions */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 flex-1">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 flex-1">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -279,19 +281,21 @@ export default function InventoryManagement() {
                   className="pl-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
                 />
               </div>
-              <Button variant="outline" className="bg-transparent">
+              <Button variant="outline" className="bg-transparent w-full sm:w-auto">
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" className="bg-transparent">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <Button variant="outline" className="bg-transparent w-full sm:w-auto">
                 <Download className="h-4 w-4 mr-2" />
-                Export
+                <span className="hidden sm:inline">Export</span>
+                <span className="sm:hidden">Export</span>
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Item
+                <span className="hidden sm:inline">Add Item</span>
+                <span className="sm:hidden">Add</span>
               </Button>
             </div>
           </div>
@@ -299,76 +303,81 @@ export default function InventoryManagement() {
           {/* Inventory Table */}
           <Card className="border-gray-200 dark:border-gray-800">
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Stock Level</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Unit Price</TableHead>
-                    <TableHead>Last Restocked</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredItems.map((item) => {
-                    const stockLevel = getStockLevel(item.currentStock, item.minStock, item.maxStock)
-                    const stockPercentage = (item.currentStock / item.maxStock) * 100
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[200px]">Product</TableHead>
+                      <TableHead className="hidden sm:table-cell">SKU</TableHead>
+                      <TableHead className="hidden md:table-cell">Category</TableHead>
+                      <TableHead className="min-w-[120px]">Stock Level</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden lg:table-cell">Unit Price</TableHead>
+                      <TableHead className="hidden xl:table-cell">Last Restocked</TableHead>
+                      <TableHead className="min-w-[100px]">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredItems.map((item) => {
+                      const stockLevel = getStockLevel(item.currentStock, item.minStock, item.maxStock)
+                      const stockPercentage = (item.currentStock / item.maxStock) * 100
 
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium">
-                          <div>
-                            <div className="font-medium">{item.name}</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {item.supplier}
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">
+                            <div>
+                              <div className="font-medium text-sm sm:text-base">{item.name}</div>
+                              <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {item.supplier}
+                              </div>
+                              <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                SKU: {item.sku} • {item.category}
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{item.sku}</TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>{item.currentStock} / {item.maxStock}</span>
-                              <span className="text-gray-500 dark:text-gray-400">
-                                {stockPercentage.toFixed(0)}%
-                              </span>
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell text-sm">{item.sku}</TableCell>
+                          <TableCell className="hidden md:table-cell text-sm">{item.category}</TableCell>
+                          <TableCell>
+                            <div className="space-y-1 sm:space-y-2">
+                              <div className="flex items-center justify-between text-xs sm:text-sm">
+                                <span>{item.currentStock} / {item.maxStock}</span>
+                                <span className="text-gray-500 dark:text-gray-400">
+                                  {stockPercentage.toFixed(0)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2">
+                                <div
+                                  className={`h-1.5 sm:h-2 rounded-full ${stockLevel.color}`}
+                                  style={{ width: `${Math.max(stockPercentage, 5)}%` }}
+                                />
+                              </div>
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div
-                                className={`h-2 rounded-full ${stockLevel.color}`}
-                                style={{ width: `${Math.max(stockPercentage, 5)}%` }}
-                              />
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(item.status)}>
-                            {item.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>${item.unitPrice}</TableCell>
-                        <TableCell>{item.lastRestocked}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm" className="bg-transparent">
-                              Edit
-                            </Button>
-                            {item.currentStock <= item.reorderPoint && (
-                              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                                Reorder
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={`${getStatusColor(item.status)} text-xs`}>
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="hidden lg:table-cell text-sm">${item.unitPrice}</TableCell>
+                          <TableCell className="hidden xl:table-cell text-sm">{item.lastRestocked}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                              <Button variant="outline" size="sm" className="bg-transparent text-xs w-full sm:w-auto">
+                                Edit
                               </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                              {item.currentStock <= item.reorderPoint && (
+                                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-xs w-full sm:w-auto">
+                                  Reorder
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

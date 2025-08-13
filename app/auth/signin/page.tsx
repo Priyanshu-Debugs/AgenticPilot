@@ -35,8 +35,8 @@ export default function SignIn() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <span className="text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
+              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
@@ -44,16 +44,16 @@ export default function SignIn() {
       </nav>
 
       {/* Sign In Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
-            <p className="text-gray-600 dark:text-gray-400">Welcome back to AgenticPilot</p>
+            <CardTitle className="text-xl sm:text-2xl font-bold">Sign In</CardTitle>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Welcome back to AgenticPilot</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -66,7 +66,7 @@ export default function SignIn() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"

@@ -113,22 +113,22 @@ export default function InstagramAutomation() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-pink-600/20 rounded-lg flex items-center justify-center">
-            <Instagram className="h-6 w-6 text-pink-400" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-600/20 rounded-lg flex items-center justify-center">
+            <Instagram className="h-5 w-5 sm:h-6 sm:w-6 text-pink-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Instagram Automation</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold">Instagram Automation</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
               AI-powered Instagram post scheduling and management
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
           <Badge
             variant={isAutomationActive ? "default" : "secondary"}
             className={
@@ -141,17 +141,19 @@ export default function InstagramAutomation() {
           </Badge>
           <Button
             onClick={() => setIsAutomationActive(!isAutomationActive)}
-            className={isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+            className={`w-full sm:w-auto ${isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
           >
             {isAutomationActive ? (
               <>
                 <Pause className="h-4 w-4 mr-2" />
-                Pause
+                <span className="hidden sm:inline">Pause</span>
+                <span className="sm:hidden">Pause</span>
               </>
             ) : (
               <>
                 <Play className="h-4 w-4 mr-2" />
-                Start
+                <span className="hidden sm:inline">Start</span>
+                <span className="sm:hidden">Start</span>
               </>
             )}
           </Button>
@@ -159,7 +161,7 @@ export default function InstagramAutomation() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {analytics.map((stat, index) => {
           const icons = [Instagram, TrendingUp, Heart, Eye]
           const colors = ["text-pink-500", "text-green-500", "text-red-500", "text-blue-500"]
@@ -175,7 +177,7 @@ export default function InstagramAutomation() {
                 <IconComponent className={`h-4 w-4 ${colors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
               </CardContent>
             </Card>
@@ -184,25 +186,26 @@ export default function InstagramAutomation() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="posts" className="space-y-6">
-        <TabsList className="bg-gray-100 dark:bg-gray-800">
-          <TabsTrigger value="posts">Posts</TabsTrigger>
-          <TabsTrigger value="schedule">Schedule</TabsTrigger>
-          <TabsTrigger value="create">Create Post</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+      <Tabs defaultValue="posts" className="space-y-4 sm:space-y-6">
+        <TabsList className="bg-gray-100 dark:bg-gray-800 grid grid-cols-3 sm:grid-cols-5 w-full sm:w-auto">
+          <TabsTrigger value="posts" className="text-xs sm:text-sm">Posts</TabsTrigger>
+          <TabsTrigger value="schedule" className="text-xs sm:text-sm">Schedule</TabsTrigger>
+          <TabsTrigger value="create" className="text-xs sm:text-sm">Create</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm hidden sm:block">Analytics</TabsTrigger>
+          <TabsTrigger value="settings" className="text-xs sm:text-sm hidden sm:block">Settings</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="posts" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Recent Posts</h2>
-            <Button className="bg-pink-600 hover:bg-pink-700">
+        <TabsContent value="posts" className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+            <h2 className="text-xl sm:text-2xl font-bold">Recent Posts</h2>
+            <Button className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              New Post
+              <span className="hidden sm:inline">New Post</span>
+              <span className="sm:hidden">New</span>
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {scheduledPosts.map((post) => (
               <Card
                 key={post.id}
@@ -217,8 +220,8 @@ export default function InstagramAutomation() {
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                 </CardHeader>
-                <CardContent className="p-4 space-y-4">
-                  <div className="flex items-center justify-between">
+                <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
                     <Badge className={getStatusColor(post.status)}>
                       {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                     </Badge>
@@ -244,18 +247,18 @@ export default function InstagramAutomation() {
 
                   {post.status === "posted" && (
                     <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-3 sm:space-x-4">
                         <div className="flex items-center space-x-1">
-                          <Heart className="h-4 w-4 text-red-500" />
-                          <span>{post.engagement.likes}</span>
+                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
+                          <span className="text-xs sm:text-sm">{post.engagement.likes}</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <MessageCircle className="h-4 w-4 text-blue-500" />
-                          <span>{post.engagement.comments}</span>
+                          <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
+                          <span className="text-xs sm:text-sm">{post.engagement.comments}</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <Share className="h-4 w-4 text-green-500" />
-                          <span>{post.engagement.shares}</span>
+                          <Share className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+                          <span className="text-xs sm:text-sm">{post.engagement.shares}</span>
                         </div>
                       </div>
                     </div>
@@ -291,22 +294,22 @@ export default function InstagramAutomation() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="create" className="space-y-6">
+        <TabsContent value="create" className="space-y-4 sm:space-y-6">
           <Card className="border-gray-200 dark:border-gray-800">
             <CardHeader>
-              <CardTitle>Create New Post</CardTitle>
-              <CardDescription>Upload media and create engaging content with AI assistance</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Create New Post</CardTitle>
+              <CardDescription className="text-sm sm:text-base">Upload media and create engaging content with AI assistance</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Upload Media</Label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center border-gray-300 dark:border-gray-700">
-                    <Upload className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 dark:text-gray-400">
+                  <Label className="text-sm sm:text-base">Upload Media</Label>
+                  <div className="border-2 border-dashed rounded-lg p-6 sm:p-8 text-center border-gray-300 dark:border-gray-700">
+                    <Upload className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-gray-400" />
+                    <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
                       Drag and drop your image or video here, or click to browse
                     </p>
-                    <Button variant="outline" className="mt-4 bg-transparent">
+                    <Button variant="outline" className="mt-3 sm:mt-4 bg-transparent w-full sm:w-auto">
                       <ImageIcon className="h-4 w-4 mr-2" />
                       Choose File
                     </Button>
@@ -314,7 +317,7 @@ export default function InstagramAutomation() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="caption">Caption</Label>
+                  <Label htmlFor="caption" className="text-sm sm:text-base">Caption</Label>
                   <Textarea
                     id="caption"
                     placeholder="Write your caption here..."
@@ -322,12 +325,13 @@ export default function InstagramAutomation() {
                   />
                   <Button variant="outline" className="w-full bg-transparent">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Generate AI Caption
+                    <span className="hidden sm:inline">Generate AI Caption</span>
+                    <span className="sm:hidden">AI Caption</span>
                   </Button>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="hashtags">Hashtags</Label>
+                  <Label htmlFor="hashtags" className="text-sm sm:text-base">Hashtags</Label>
                   <Input
                     id="hashtags"
                     placeholder="#hashtag1 #hashtag2 #hashtag3"
@@ -335,20 +339,21 @@ export default function InstagramAutomation() {
                   />
                   <Button variant="outline" className="w-full bg-transparent">
                     <Hash className="h-4 w-4 mr-2" />
-                    Suggest Hashtags
+                    <span className="hidden sm:inline">Suggest Hashtags</span>
+                    <span className="sm:hidden">Suggest</span>
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Post Date</Label>
+                    <Label className="text-sm sm:text-base">Post Date</Label>
                     <Input
                       type="date"
                       className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Post Time</Label>
+                    <Label className="text-sm sm:text-base">Post Time</Label>
                     <Input
                       type="time"
                       className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
@@ -357,13 +362,15 @@ export default function InstagramAutomation() {
                 </div>
               </div>
 
-              <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                 <Button className="flex-1 bg-pink-600 hover:bg-pink-700">
                   <Calendar className="h-4 w-4 mr-2" />
-                  Schedule Post
+                  <span className="hidden sm:inline">Schedule Post</span>
+                  <span className="sm:hidden">Schedule</span>
                 </Button>
                 <Button variant="outline" className="flex-1 bg-transparent">
-                  Save as Draft
+                  <span className="hidden sm:inline">Save as Draft</span>
+                  <span className="sm:hidden">Draft</span>
                 </Button>
               </div>
             </CardContent>

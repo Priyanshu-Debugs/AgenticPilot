@@ -52,15 +52,18 @@ export default function NotificationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <Link href="/" className="text-xl font-bold">
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
+              <Link href="/" className="text-lg sm:text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <ModeToggle />
-              <Button variant="outline" asChild className="border-black dark:border-white bg-transparent">
-                <Link href="/dashboard">Back to Dashboard</Link>
+              <Button variant="outline" asChild className="border-black dark:border-white bg-transparent text-sm sm:text-base">
+                <Link href="/dashboard">
+                  <span className="hidden sm:inline">Back to Dashboard</span>
+                  <span className="sm:hidden">Dashboard</span>
+                </Link>
               </Button>
             </div>
           </div>
@@ -68,18 +71,19 @@ export default function NotificationsPage() {
       </nav>
 
       {/* Notifications Content */}
-      <div className="max-w-4xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-4xl mx-auto py-8 sm:py-12 lg:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Notifications</h1>
-            <p className="text-gray-600 dark:text-gray-400">Stay updated with your automation activities</p>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Notifications</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Stay updated with your automation activities</p>
           </div>
-          <Button variant="outline" className="border-black dark:border-white bg-transparent">
-            Mark All as Read
+          <Button variant="outline" className="border-black dark:border-white bg-transparent text-sm sm:text-base">
+            <span className="hidden sm:inline">Mark All as Read</span>
+            <span className="sm:hidden">Mark Read</span>
           </Button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {notifications.map((notification) => {
             const IconComponent = notification.icon
 
@@ -90,10 +94,10 @@ export default function NotificationsPage() {
                   !notification.read ? "bg-black/5 dark:bg-white/5" : ""
                 }`}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
                     <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         notification.type === "success"
                           ? "bg-green-100 dark:bg-green-900/20"
                           : notification.type === "warning"
@@ -102,7 +106,7 @@ export default function NotificationsPage() {
                       }`}
                     >
                       <IconComponent
-                        className={`h-5 w-5 ${
+                        className={`h-4 w-4 sm:h-5 sm:w-5 ${
                           notification.type === "success"
                             ? "text-green-600 dark:text-green-400"
                             : notification.type === "warning"
@@ -112,22 +116,22 @@ export default function NotificationsPage() {
                       />
                     </div>
 
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium">{notification.title}</h3>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-1 space-y-2 sm:space-y-0">
+                        <h3 className="font-medium text-sm sm:text-base">{notification.title}</h3>
                         <div className="flex items-center space-x-2">
                           {!notification.read && (
                             <Badge
                               variant="outline"
-                              className="bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800"
+                              className="bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 text-xs"
                             >
                               New
                             </Badge>
                           )}
-                          <span className="text-sm text-gray-500 dark:text-gray-400">{notification.time}</span>
+                          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{notification.time}</span>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-400">{notification.message}</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">{notification.message}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -138,10 +142,10 @@ export default function NotificationsPage() {
 
         {notifications.length === 0 && (
           <Card className="border-gray-200 dark:border-gray-800">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Bell className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2">No notifications</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-center">
+            <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+              <Bell className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-medium mb-2">No notifications</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-center text-sm sm:text-base">
                 You&apos;re all caught up! New notifications will appear here.
               </p>
             </CardContent>
