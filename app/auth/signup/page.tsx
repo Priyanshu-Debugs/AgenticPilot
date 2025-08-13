@@ -53,8 +53,8 @@ export default function SignUp() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
-              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-8 w-8 text-black dark:text-white" />
+              <span className="text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
@@ -62,16 +62,16 @@ export default function SignUp() {
       </nav>
 
       {/* Sign Up Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl sm:text-2xl font-bold">Get Started</CardTitle>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Create your AgenticPilot account</p>
+            <CardTitle className="text-2xl font-bold">Get Started</CardTitle>
+            <p className="text-gray-600 dark:text-gray-400">Create your AgenticPilot account</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm sm:text-base">Full Name</Label>
+                <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   name="name"
@@ -85,7 +85,7 @@ export default function SignUp() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -99,7 +99,7 @@ export default function SignUp() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -128,7 +128,7 @@ export default function SignUp() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm sm:text-base">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"

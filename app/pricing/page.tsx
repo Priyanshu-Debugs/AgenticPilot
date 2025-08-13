@@ -65,8 +65,8 @@ export default function Pricing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
-              <Link href="/" className="text-lg sm:text-xl font-bold">
+              <Bot className="h-8 w-8 text-black dark:text-white" />
+              <Link href="/" className="text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
@@ -98,22 +98,21 @@ export default function Pricing() {
               </Link>
             </div>
 
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <Link href="/notifications" className="hidden sm:block">
+            <div className="flex items-center space-x-4">
+              <Link href="/notifications">
                 <Button variant="ghost" size="sm">
                   <Bell className="h-4 w-4" />
                 </Button>
               </Link>
               <ModeToggle />
-              <Button variant="outline" size="sm" className="hidden sm:block">
+              <Button variant="outline" size="sm">
                 Sign In
               </Button>
               <Button
                 size="sm"
-                className="bg-black text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 text-xs sm:text-sm px-2 sm:px-4"
+                className="bg-black text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
               >
-                <span className="hidden sm:inline">Get Started</span>
-                <span className="sm:hidden">Start</span>
+                Get Started
               </Button>
             </div>
           </div>
@@ -121,18 +120,19 @@ export default function Pricing() {
       </nav>
 
       {/* Pricing Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">Simple, Transparent Pricing</h1>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Simple, Transparent Pricing</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Choose the perfect plan for your business automation needs. All plans include our core features with no
             hidden fees.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">{plans.map((plan, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {plans.map((plan, index) => (
             <Card
               key={index}
               className={`relative border-gray-200 dark:border-gray-800 ${plan.popular ? "ring-2 ring-black dark:ring-white" : ""}`}
@@ -143,21 +143,21 @@ export default function Pricing() {
                 </Badge>
               )}
 
-              <CardHeader className="text-center pb-6 sm:pb-8">
-                <CardTitle className="text-xl sm:text-2xl font-bold mb-2">{plan.name}</CardTitle>
-                <div className="mb-3 sm:mb-4">
-                  <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
+              <CardHeader className="text-center pb-8">
+                <CardTitle className="text-2xl font-bold mb-2">{plan.name}</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-gray-600 dark:text-gray-400">{plan.period}</span>
                 </div>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{plan.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{plan.description}</p>
               </CardHeader>
 
-              <CardContent className="space-y-4 sm:space-y-6">
-                <ul className="space-y-2 sm:space-y-3">
+              <CardContent className="space-y-6">
+                <ul className="space-y-3">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start space-x-3">
-                      <Check className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">{feature}</span>
+                      <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -179,8 +179,8 @@ export default function Pricing() {
 
         {/* FAQ Section */}
         <div className="text-center">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8">Frequently Asked Questions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold mb-8">Frequently Asked Questions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="text-left">
               <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
@@ -210,13 +210,13 @@ export default function Pricing() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-6 sm:py-8">
+      <footer className="border-t border-gray-200 dark:border-gray-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400">
             Contact us:{" "}
             <a
               href="mailto:agenticpilot.team@gmail.com"
-              className="hover:text-black dark:hover:text-white transition-colors break-all sm:break-normal"
+              className="hover:text-black dark:hover:text-white transition-colors"
             >
               agenticpilot.team@gmail.com
             </a>
