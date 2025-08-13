@@ -1,9 +1,25 @@
+"use client"
+
+// Core UI components
 import { Button } from "@/components/ui/button"
 import { Bot, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { SettingsPage } from "@/components/shared/SettingsPage"
 
+/**
+ * Settings Component
+ * 
+ * Standalone page for application settings and preferences.
+ * Uses "use client" directive because it passes event handlers to child components.
+ * 
+ * Features:
+ * - Comprehensive settings interface with tabs
+ * - Profile, notifications, automation, security, and integration settings
+ * - Save/reset functionality
+ * - Import/export capabilities
+ * - Back to dashboard navigation
+ */
 export default function Settings() {
   const handleSave = (settings: any) => {
     // Save settings - would integrate with backend API

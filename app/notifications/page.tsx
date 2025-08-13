@@ -1,9 +1,25 @@
+"use client"
+
+// Core UI components
 import { Button } from "@/components/ui/button"
 import { Bot } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { NotificationSystem } from "@/components/shared/NotificationSystem"
 
+/**
+ * NotificationsPage Component
+ * 
+ * Standalone page for viewing and managing notifications.
+ * Uses "use client" directive because it passes event handlers to child components.
+ * 
+ * Features:
+ * - Full-page notification interface
+ * - Mark as read functionality
+ * - Notification filtering and categorization
+ * - Action buttons for notification responses
+ * - Back to dashboard navigation
+ */
 export default function NotificationsPage() {
   const handleMarkAsRead = (id: string) => {
     // Mark notification as read - would integrate with backend API
