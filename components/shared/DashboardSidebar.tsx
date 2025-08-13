@@ -1,18 +1,39 @@
 "use client"
 
+// Core UI components
 import { Button } from "@/components/ui/button"
+// Icon imports for navigation items
 import { Mail, Package, Instagram, Bot } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+// Props interface for type safety
 interface DashboardSidebarProps {
-  isSidebarOpen: boolean
-  toggleSidebar: () => void
+  isSidebarOpen: boolean   // Controls mobile sidebar visibility
+  toggleSidebar: () => void // Function to close sidebar when item is clicked
 }
 
+/**
+ * DashboardSidebar Component
+ * 
+ * A responsive sidebar navigation for the dashboard with:
+ * - Fixed positioning with top offset for navbar
+ * - Mobile slide-in/out animation
+ * - Overview section for main dashboard
+ * - Agent automation sections (Gmail, Inventory, Instagram)
+ * - Active page highlighting with gray background
+ * - Responsive width and spacing
+ * 
+ * Features:
+ * - Hidden on desktop (lg) when not needed
+ * - Backdrop blur effect for modern appearance  
+ * - Smooth transitions and hover effects
+ * - Organized navigation hierarchy
+ */
 export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSidebarProps) {
   const pathname = usePathname()
 
+  // Overview/main dashboard navigation item
   const overviewItem = {
     id: "dashboard",
     title: "Overview",
@@ -20,6 +41,7 @@ export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSide
     href: "/dashboard"
   }
 
+  // Agent automation navigation items
   const agentItems = [
     {
       id: "gmail",
@@ -28,25 +50,27 @@ export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSide
       href: "/dashboard/gmail"
     },
     {
-      id: "inventory",
+      id: "inventory", 
       title: "Inventory Management",
       icon: Package,
       href: "/dashboard/inventory"
     },
     {
       id: "instagram",
-      title: "Instagram Automation",
+      title: "Instagram Automation", 
       icon: Instagram,
       href: "/dashboard/instagram"
     }
   ]
 
   return (
+    // Fixed sidebar with responsive positioning and backdrop blur
     <div
       className={`fixed top-14 sm:top-16 left-0 bottom-0 z-40 w-64 sm:w-72 lg:w-80 bg-white/95 dark:bg-black/95 backdrop-blur-md border-r border-t border-gray-200/60 dark:border-gray-800/60 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 shadow-lg lg:shadow-none`}
     >
       <div className="flex flex-col h-full">
-        {/* Sidebar Header */}
+        
+        {/* Sidebar Header with navigation label */}
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200/60 dark:border-gray-800/60">
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
             Navigation

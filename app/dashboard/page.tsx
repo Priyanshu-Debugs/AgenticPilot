@@ -1,16 +1,38 @@
 "use client"
 
+// React hooks
 import { useState } from "react"
+// Custom components
 import { StatsCard, ActionCard } from "@/components/shared/Cards"
 import { AutomationController } from "@/components/shared/AutomationController"
+// shadcn/ui components
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+// Icons from Lucide React
 import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock } from "lucide-react"
 import Link from "next/link"
 
+/**
+ * Dashboard Component
+ * 
+ * Main dashboard page that provides:
+ * - Quick stats overview cards
+ * - Active automation management
+ * - Recent activity feed
+ * - Navigation shortcuts to automation pages
+ * - Performance metrics and monitoring
+ * 
+ * Features:
+ * - Real-time automation status display
+ * - Progress tracking for running tasks
+ * - Success rate and performance metrics
+ * - Responsive layout with mobile optimization
+ * - Quick access to all automation modules
+ */
 export default function Dashboard() {
+  // Mock automation task data with type safety
   const [automationTasks, setAutomationTasks] = useState([
     {
       id: "gmail-1",
