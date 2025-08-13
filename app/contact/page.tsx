@@ -14,18 +14,15 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
-              <Link href="/" className="text-lg sm:text-xl font-bold">
+              <Bot className="h-8 w-8 text-black dark:text-white" />
+              <Link href="/" className="text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center space-x-4">
               <ModeToggle />
-              <Button variant="outline" asChild className="border-black dark:border-white bg-transparent text-sm">
-                <Link href="/">
-                  <span className="hidden sm:inline">Back to Home</span>
-                  <span className="sm:hidden">Home</span>
-                </Link>
+              <Button variant="outline" asChild className="border-black dark:border-white bg-transparent">
+                <Link href="/">Back to Home</Link>
               </Button>
             </div>
           </div>
@@ -33,17 +30,17 @@ export default function ContactPage() {
       </nav>
 
       {/* Contact Content */}
-      <div className="max-w-4xl mx-auto py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+      <div className="max-w-4xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Get in <span className="underline decoration-2">Touch</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
             Have questions about AgenticPilot? We&apos;d love to hear from you.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {/* Contact Form */}
           <Card className="border-gray-200 dark:border-gray-800">
             <CardHeader>
@@ -54,26 +51,26 @@ export default function ContactPage() {
               <CardDescription>Fill out the form below and we&apos;ll get back to you as soon as possible.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs sm:text-sm font-medium mb-2 block">First Name</label>
+                  <label className="text-sm font-medium mb-2 block">First Name</label>
                   <Input placeholder="John" className="border-gray-200 dark:border-gray-800" />
                 </div>
                 <div>
-                  <label className="text-xs sm:text-sm font-medium mb-2 block">Last Name</label>
+                  <label className="text-sm font-medium mb-2 block">Last Name</label>
                   <Input placeholder="Doe" className="border-gray-200 dark:border-gray-800" />
                 </div>
               </div>
               <div>
-                <label className="text-xs sm:text-sm font-medium mb-2 block">Email</label>
+                <label className="text-sm font-medium mb-2 block">Email</label>
                 <Input type="email" placeholder="john@example.com" className="border-gray-200 dark:border-gray-800" />
               </div>
               <div>
-                <label className="text-xs sm:text-sm font-medium mb-2 block">Subject</label>
+                <label className="text-sm font-medium mb-2 block">Subject</label>
                 <Input placeholder="How can we help?" className="border-gray-200 dark:border-gray-800" />
               </div>
               <div>
-                <label className="text-xs sm:text-sm font-medium mb-2 block">Message</label>
+                <label className="text-sm font-medium mb-2 block">Message</label>
                 <Textarea
                   placeholder="Tell us more about your inquiry..."
                   rows={4}
@@ -88,17 +85,17 @@ export default function ContactPage() {
           </Card>
 
           {/* Contact Information */}
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-6">
             <Card className="border-gray-200 dark:border-gray-800">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
+                <CardTitle className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5" />
                   <span>Email Us</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-2">For general inquiries and support:</p>
-                <a href="mailto:agenticpilot.team@gmail.com" className="text-base sm:text-lg font-medium hover:underline break-all">
+                <p className="text-gray-600 dark:text-gray-400 mb-2">For general inquiries and support:</p>
+                <a href="mailto:agenticpilot.team@gmail.com" className="text-lg font-medium hover:underline">
                   agenticpilot.team@gmail.com
                 </a>
               </CardContent>
@@ -106,10 +103,10 @@ export default function ContactPage() {
 
             <Card className="border-gray-200 dark:border-gray-800">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Response Time</CardTitle>
+                <CardTitle>Response Time</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600 dark:text-gray-400">
                   We typically respond to all inquiries within 24 hours during business days.
                 </p>
               </CardContent>
@@ -117,10 +114,10 @@ export default function ContactPage() {
 
             <Card className="border-gray-200 dark:border-gray-800">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg">Support Hours</CardTitle>
+                <CardTitle>Support Hours</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Monday - Friday: 9:00 AM - 6:00 PM (EST)</p>
+                <p className="text-gray-600 dark:text-gray-400">Monday - Friday: 9:00 AM - 6:00 PM (EST)</p>
               </CardContent>
             </Card>
           </div>

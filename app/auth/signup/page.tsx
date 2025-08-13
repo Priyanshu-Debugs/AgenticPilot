@@ -53,8 +53,8 @@ export default function SignUp() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
-              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-8 w-8 text-black dark:text-white" />
+              <span className="text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
@@ -116,7 +116,7 @@ export default function SignUp() {
                     variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-gray-400" />
