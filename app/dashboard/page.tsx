@@ -63,14 +63,14 @@ export default function Dashboard() {
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex">
       {/* Sidebar - Simplified burger menu with minimal design */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:inset-0`}
+        className={`fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:inset-0`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <Link href="/" className="text-xl font-bold">
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
+              <Link href="/" className="text-lg sm:text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
@@ -80,9 +80,9 @@ export default function Dashboard() {
           </div>
 
           {/* Sidebar Content - Removed buttons and details, made names sleek */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             <div className="space-y-1">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+              <h3 className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
                 Automations
               </h3>
 
@@ -94,10 +94,10 @@ export default function Dashboard() {
                   <div key={automation.id} className="space-y-2">
                     {automation.id === "gmail" ? (
                       <Link href="/dashboard/gmail">
-                        <div className="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5">
-                          <div className="flex items-center space-x-3">
-                            <IconComponent className="h-5 w-5" />
-                            <span className="font-medium">{automation.title}</span>
+                        <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5">
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="text-sm sm:text-base font-medium">{automation.title}</span>
                           </div>
                           <Badge
                             variant="outline"
@@ -116,14 +116,14 @@ export default function Dashboard() {
                     ) : (
                       <>
                         <div
-                          className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all ${
+                          className={`flex items-center justify-between p-3 sm:p-4 rounded-lg cursor-pointer transition-all ${
                             isSelected ? "bg-black/5 dark:bg-white/5" : "hover:bg-black/5 dark:hover:bg-white/5"
                           }`}
                           onClick={() => setSelectedAutomation(isSelected ? null : automation.id)}
                         >
-                          <div className="flex items-center space-x-3">
-                            <IconComponent className="h-5 w-5" />
-                            <span className="font-medium">{automation.title}</span>
+                          <div className="flex items-center space-x-2 sm:space-x-3">
+                            <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="text-sm sm:text-base font-medium">{automation.title}</span>
                           </div>
                           <Badge
                             variant="outline"
@@ -140,8 +140,8 @@ export default function Dashboard() {
                         </div>
 
                         {isSelected && (
-                          <div className="ml-8 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          <div className="ml-6 sm:ml-8 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3">
                               {getAutomationDetails(automation.id)?.description}
                             </p>
                             <div className="space-y-2 mb-3">
@@ -185,7 +185,7 @@ export default function Dashboard() {
         {/* Top Navigation - Added notification icon */}
         <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-40">
           <div className="px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+            <div className="flex justify-between items-center h-14 sm:h-16">
               <div className="flex items-center space-x-4">
                 <Button
                   variant="ghost"
@@ -196,10 +196,10 @@ export default function Dashboard() {
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
-                <h1 className="text-xl font-semibold">Dashboard</h1>
+                <h1 className="text-lg sm:text-xl font-semibold">Dashboard</h1>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                 <Link href="/notifications">
                   <Button variant="ghost" size="sm">
                     <Bell className="h-4 w-4" />
@@ -429,36 +429,36 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Stats Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 lg:mb-8">
                 <Card className="border-gray-200 dark:border-gray-800">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Automations</CardTitle>
-                    <Zap className="h-4 w-4" />
+                    <CardTitle className="text-xs sm:text-sm font-medium">Active Automations</CardTitle>
+                    <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">2</div>
+                    <div className="text-xl sm:text-2xl font-bold">2</div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">+1 from last month</p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-gray-200 dark:border-gray-800">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Tasks Processed</CardTitle>
-                    <BarChart3 className="h-4 w-4" />
+                    <CardTitle className="text-xs sm:text-sm font-medium">Tasks Processed</CardTitle>
+                    <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">1,678</div>
+                    <div className="text-xl sm:text-2xl font-bold">1,678</div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">+12% from last week</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-gray-200 dark:border-gray-800">
+                <Card className="border-gray-200 dark:border-gray-800 sm:col-span-2 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-                    <Settings className="h-4 w-4" />
+                    <CardTitle className="text-xs sm:text-sm font-medium">Success Rate</CardTitle>
+                    <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">98.2%</div>
+                    <div className="text-xl sm:text-2xl font-bold">98.2%</div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">+0.3% from yesterday</p>
                   </CardContent>
                 </Card>
@@ -466,10 +466,10 @@ export default function Dashboard() {
 
               {/* Welcome Message */}
               <Card className="border-gray-200 dark:border-gray-800">
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Bot className="h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Welcome to AgenticPilot</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+                <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+                  <Bot className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium mb-2">Welcome to AgenticPilot</h3>
+                  <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 text-center max-w-md px-4">
                     Select an automation from the sidebar to view detailed information and manage its settings.
                   </p>
                 </CardContent>

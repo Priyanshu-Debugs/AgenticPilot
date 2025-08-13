@@ -35,8 +35,8 @@ export default function SignIn() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <span className="text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
+              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
@@ -44,16 +44,16 @@ export default function SignIn() {
       </nav>
 
       {/* Sign In Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
         <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
-            <p className="text-gray-600 dark:text-gray-400">Welcome back to AgenticPilot</p>
+          <CardHeader className="text-center px-4 sm:px-6">
+            <CardTitle className="text-xl sm:text-2xl font-bold">Sign In</CardTitle>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Welcome back to AgenticPilot</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -66,7 +66,7 @@ export default function SignIn() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -95,7 +95,7 @@ export default function SignIn() {
 
               <Button
                 type="submit"
-                className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-sm sm:text-base"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing In..." : "Sign In"}
@@ -103,7 +103,7 @@ export default function SignIn() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 Don&apos;t have an account?{" "}
                 <Link href="/auth/signup" className="font-medium hover:underline">
                   Sign up

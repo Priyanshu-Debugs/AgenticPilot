@@ -45,13 +45,13 @@ export default function GmailAutomationPanel() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Gmail Automation</h1>
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold">Gmail Automation</h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">Automation Status:</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Automation Status:</span>
             <button
               onClick={() => setIsEnabled(!isEnabled)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -66,7 +66,7 @@ export default function GmailAutomationPanel() {
             </button>
             <Power className={`w-4 h-4 ${isEnabled ? "text-green-500" : "text-muted-foreground"}`} />
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" size="sm">
             <Plus className="w-4 h-4 mr-2" />
             New Template
           </Button>
@@ -74,18 +74,18 @@ export default function GmailAutomationPanel() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat, index) => {
           const IconComponent = stat.icon
           return (
             <Card key={index} className="bg-card border-border shadow-sm">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.label}</p>
+                    <p className="text-xl sm:text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
-                  <IconComponent className="w-8 h-8 text-blue-600" />
+                  <IconComponent className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                 </div>
               </CardContent>
             </Card>
@@ -96,38 +96,38 @@ export default function GmailAutomationPanel() {
       {/* Email Templates */}
       <Card className="bg-card border-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold">Email Templates</CardTitle>
-          <CardDescription>Manage your automated email response templates</CardDescription>
+          <CardTitle className="text-lg sm:text-xl font-semibold">Email Templates</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Manage your automated email response templates</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           {templates.map((template) => (
             <div
               key={template.id}
-              className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors"
+              className="border border-border rounded-lg p-3 sm:p-4 hover:bg-muted/50 transition-colors"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-3">
-                  <h3 className="font-semibold">{template.name}</h3>
-                  <Badge variant={template.isActive ? "default" : "secondary"}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <h3 className="text-sm sm:text-base font-semibold">{template.name}</h3>
+                  <Badge variant={template.isActive ? "default" : "secondary"} className="text-xs">
                     {template.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button variant="ghost" size="sm" className="p-2 hover:bg-muted rounded-lg">
-                    <Edit className="w-4 h-4" />
+                    <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </div>
               </div>
-              <p className="text-sm font-medium text-muted-foreground mb-1">Subject: {template.subject}</p>
-              <p className="text-sm text-muted-foreground mb-3">{template.preview}</p>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Subject: {template.subject}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3">{template.preview}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-muted-foreground gap-1">
                 <span>{template.responses} responses sent</span>
                 <span>Last used: 2 hours ago</span>
               </div>
@@ -139,25 +139,25 @@ export default function GmailAutomationPanel() {
       {/* Recent Activity */}
       <Card className="bg-card border-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold">Recent Auto-Replies</CardTitle>
-          <CardDescription>Latest automated email responses sent by the system</CardDescription>
+          <CardTitle className="text-lg sm:text-xl font-semibold">Recent Auto-Replies</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Latest automated email responses sent by the system</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2 sm:space-y-3">
           {[
             { email: "customer@example.com", template: "Customer Support", time: "2 minutes ago" },
             { email: "john.doe@email.com", template: "Order Confirmation", time: "15 minutes ago" },
             { email: "support@client.com", template: "Customer Support", time: "32 minutes ago" },
             { email: "orders@business.com", template: "Refund Request", time: "1 hour ago" },
           ].map((reply, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 text-blue-600" />
-                <div>
-                  <p className="text-sm font-medium">{reply.email}</p>
+            <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-muted/50 rounded-lg gap-2">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-medium truncate">{reply.email}</p>
                   <p className="text-xs text-muted-foreground">Template: {reply.template}</p>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground">{reply.time}</span>
+              <span className="text-xs text-muted-foreground flex-shrink-0">{reply.time}</span>
             </div>
           ))}
         </CardContent>
