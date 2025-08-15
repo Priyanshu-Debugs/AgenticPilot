@@ -34,6 +34,7 @@ function ResetPasswordForm() {
     // Check for URL parameters with error messages from callback
     const urlError = searchParams.get('error')
     const urlMessage = searchParams.get('message')
+    const sessionValid = searchParams.get('session_valid')
     
     if (urlError && urlMessage) {
       switch (urlError) {
@@ -58,11 +59,12 @@ function ResetPasswordForm() {
     if (process.env.NODE_ENV === 'development') {
       console.log('Reset password page - Password reset detected:', isPasswordReset)
       console.log('Reset password page - Has access token:', hasAccessToken)
+      console.log('Reset password page - Session valid flag:', sessionValid)
       console.log('Reset password page - User present:', !!user)
     }
     
     const handlePasswordResetSession = async () => {
-      if (isPasswordReset || hasAccessToken) {
+      if (isPasswordReset || hasAccessToken || sessionValid === 'true') {
         // This is a valid password reset session
         setIsValidSession(true)
         
@@ -78,21 +80,21 @@ function ResetPasswordForm() {
         setTimeout(() => {
           const cleanUrl = window.location.pathname
           window.history.replaceState({}, document.title, cleanUrl)
-        }, 2000) // Increased timeout to ensure session establishment
+        }, 1000) // Reduced timeout since session should be established
       } else if (user) {
         // User has a valid session but no reset parameters
         setIsValidSession(true)
       } else {
         // If no user session and no reset parameters, redirect to forgot password page
         const timer = setTimeout(() => {
-          router.push('/auth/forgot-password')
+          router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
         }, 3000)
         return () => clearTimeout(timer)
       }
     }
 
     handlePasswordResetSession()
-  }, [user, router, refreshSession])
+  }, [user, router, refreshSession, searchParams])
 
   const handleRefreshSession = async () => {
     setIsRefreshing(true)

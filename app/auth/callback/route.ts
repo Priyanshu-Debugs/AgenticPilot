@@ -38,8 +38,24 @@ export async function GET(request: NextRequest) {
       if (data.session) {
         // Check if this is a password recovery session
         if (type === 'recovery') {
-          // Redirect to reset password page for password recovery
-          return NextResponse.redirect(`${origin}/auth/reset-password?type=recovery`)
+          // Create response with proper redirect and session persistence
+          const response = NextResponse.redirect(`${origin}/auth/reset-password?type=recovery&session_valid=true`)
+          
+          // Set session cookies manually to ensure persistence for password reset
+          if (data.session.access_token && data.session.refresh_token) {
+            const cookieOptions = {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax' as const,
+              maxAge: 60 * 60, // 1 hour for password reset
+              path: '/',
+            }
+            
+            response.cookies.set('sb-access-token', data.session.access_token, cookieOptions)
+            response.cookies.set('sb-refresh-token', data.session.refresh_token, cookieOptions)
+          }
+          
+          return response
         }
         
         // For regular email verification, redirect to dashboard

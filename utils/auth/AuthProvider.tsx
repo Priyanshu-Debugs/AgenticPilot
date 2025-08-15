@@ -252,16 +252,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updatePassword = async (newPassword: string) => {
     try {
-      // First, check if we have a valid session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      // First, try to refresh session to ensure we have the latest tokens
+      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
       
-      if (sessionError || !session) {
+      if (refreshError) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('No valid session for password update')
+          console.error('Session refresh failed:', refreshError.message)
         }
-        return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
+        // If refresh fails, try to get current session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError || !session) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('No valid session for password update')
+          }
+          return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
+        }
       }
 
+      // Now attempt to update password with refreshed/current session
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       })
@@ -270,6 +279,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Update password error:', error.message)
         }
+        
+        // Handle specific session errors
+        if (error.message?.includes('Auth session missing') || 
+            error.message?.includes('session_not_found') ||
+            error.message?.includes('invalid_token')) {
+          return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
+        }
+        
         return { error }
       }
 
