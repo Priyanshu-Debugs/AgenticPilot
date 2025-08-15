@@ -11,6 +11,7 @@ import { Bot, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
+import { validatePassword } from "@/lib/password-validation"
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -37,8 +38,10 @@ export default function SignUp() {
       return
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long")
+    // Enhanced password validation
+    const passwordValidation = validatePassword(formData.password)
+    if (!passwordValidation.isValid) {
+      setError(`Password requirements not met: ${passwordValidation.errors.join(', ')}`)
       return
     }
 
@@ -140,6 +143,7 @@ export default function SignUp() {
                     onChange={handleInputChange}
                     required
                     className="border-gray-200 dark:border-gray-800 pr-10"
+                    minLength={8}
                   />
                   <Button
                     type="button"
@@ -169,6 +173,7 @@ export default function SignUp() {
                     onChange={handleInputChange}
                     required
                     className="border-gray-200 dark:border-gray-800 pr-10"
+                    minLength={8}
                   />
                   <Button
                     type="button"
@@ -184,6 +189,17 @@ export default function SignUp() {
                     )}
                   </Button>
                 </div>
+              </div>
+
+              <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                <div>Password requirements:</div>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>At least 8 characters long</li>
+                  <li>Contains uppercase and lowercase letters</li>
+                  <li>Contains at least one number</li>
+                  <li>Contains at least one special character</li>
+                  <li>Not a commonly used password</li>
+                </ul>
               </div>
 
               <Button

@@ -11,30 +11,49 @@ import { Bot, ArrowLeft, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
+import { RateLimitDisplay } from "@/components/ui/rate-limit-display"
+import { RateLimitResult } from "@/lib/rate-limiting"
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
 
-  const { resetPassword } = useAuth()
+  const { resetPassword, checkPasswordResetRateLimit } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
+    // Check rate limit before attempting
+    const rateLimitCheck = checkPasswordResetRateLimit()
+    setRateLimitResult(rateLimitCheck)
+
+    if (!rateLimitCheck.allowed) {
+      setError("Too many password reset attempts. Please wait before trying again.")
+      setIsLoading(false)
+      return
+    }
+
     try {
-      const { error } = await resetPassword(email)
+      const { error, rateLimitExceeded } = await resetPassword(email)
       
-      if (error) {
+      if (rateLimitExceeded) {
+        setError("Too many password reset attempts. Please wait before trying again.")
+        setRateLimitResult(checkPasswordResetRateLimit())
+      } else if (error) {
         setError(error.message || "An error occurred while sending reset email")
+        setRateLimitResult(checkPasswordResetRateLimit())
       } else {
         setSuccess(true)
+        setRateLimitResult(checkPasswordResetRateLimit())
       }
     } catch (err) {
       setError("An unexpected error occurred")
+      setRateLimitResult(checkPasswordResetRateLimit())
     } finally {
       setIsLoading(false)
     }
@@ -77,14 +96,23 @@ export default function ForgotPassword() {
                   Please check your email and click the reset link to continue.
                   If you don't see the email, check your spam folder.
                 </p>
+                {rateLimitResult && (
+                  <RateLimitDisplay 
+                    result={rateLimitResult} 
+                    action="password reset requests"
+                    className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                  />
+                )}
                 <div className="space-y-2">
                   <Button
                     onClick={() => {
                       setSuccess(false)
                       setEmail("")
+                      setRateLimitResult(null)
                     }}
                     variant="outline"
                     className="w-full"
+                    disabled={rateLimitResult?.isBlocked}
                   >
                     Send Another Email
                   </Button>
@@ -98,6 +126,13 @@ export default function ForgotPassword() {
               </div>
             ) : (
               <>
+                {rateLimitResult && (
+                  <RateLimitDisplay 
+                    result={rateLimitResult} 
+                    action="password reset requests"
+                    className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
+                  />
+                )}
                 {error && (
                   <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
                     {error}
@@ -120,7 +155,7 @@ export default function ForgotPassword() {
                   <Button
                     type="submit"
                     className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                    disabled={isLoading}
+                    disabled={isLoading || rateLimitResult?.isBlocked}
                   >
                     {isLoading ? "Sending..." : "Send Reset Link"}
                   </Button>

@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { passwordResetLimiter, signInLimiter, RateLimitResult } from '@/lib/rate-limiting'
 
 interface AuthContextType {
   user: User | null
@@ -11,9 +12,11 @@ interface AuthContextType {
   signOut: () => Promise<void>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>
-  resetPassword: (email: string) => Promise<{ error: any }>
+  resetPassword: (email: string) => Promise<{ error: any, rateLimitExceeded?: boolean }>
   updatePassword: (newPassword: string) => Promise<{ error: any }>
   refreshSession: () => Promise<{ error: any }>
+  checkPasswordResetRateLimit: () => RateLimitResult
+  checkSignInRateLimit: () => RateLimitResult
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,6 +28,8 @@ const AuthContext = createContext<AuthContextType>({
   resetPassword: async () => ({ error: null }),
   updatePassword: async () => ({ error: null }),
   refreshSession: async () => ({ error: null }),
+  checkPasswordResetRateLimit: () => ({ allowed: true, remaining: 3, resetTime: 0, isBlocked: false }),
+  checkSignInRateLimit: () => ({ allowed: true, remaining: 5, resetTime: 0, isBlocked: false }),
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -50,11 +55,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error) {
-          console.error('Error getting session:', error)
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error getting session')
+          }
         }
         setUser(session?.user ?? null)
       } catch (error) {
-        console.error('Error in getInitialSession:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error in getInitialSession')
+        }
       } finally {
         setLoading(false)
       }
@@ -65,7 +74,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email)
+        // Only log non-sensitive information in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state changed:', event)
+        }
         setUser(session?.user ?? null)
         setLoading(false)
         
@@ -106,6 +118,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, router])
 
   const signIn = async (email: string, password: string) => {
+    // Check rate limit before attempting sign in
+    const rateLimitCheck = signInLimiter.checkLimit(email)
+    if (!rateLimitCheck.allowed) {
+      return { 
+        error: { 
+          message: 'Too many sign in attempts. Please wait before trying again.',
+          rateLimitExceeded: true 
+        } 
+      }
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -113,13 +136,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        console.error('Sign in error:', error)
+        // Record failed attempt for rate limiting
+        signInLimiter.recordAttempt()
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Sign in error:', error.message)
+        }
         return { error }
       }
 
+      // Reset rate limit on successful sign in
+      signInLimiter.reset()
       return { error: null }
     } catch (error) {
-      console.error('Unexpected sign in error:', error)
+      // Record failed attempt for rate limiting
+      signInLimiter.recordAttempt()
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected sign in error')
+      }
       return { error }
     }
   }
@@ -137,14 +172,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        console.error('Sign up error:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Sign up error:', error.message)
+        }
         return { error }
       }
 
       // Note: User will need to confirm email before they can sign in
       return { error: null }
     } catch (error) {
-      console.error('Unexpected sign up error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected sign up error')
+      }
       return { error }
     }
   }
@@ -152,28 +191,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Sign out error:', error)
+      if (error && process.env.NODE_ENV === 'development') {
+        console.error('Sign out error:', error.message)
       }
     } catch (error) {
-      console.error('Unexpected sign out error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected sign out error')
+      }
     }
   }
 
   const resetPassword = async (email: string) => {
+    // Check rate limit before attempting password reset
+    const rateLimitCheck = passwordResetLimiter.checkLimit(email)
+    if (!rateLimitCheck.allowed) {
+      return { 
+        error: { 
+          message: 'Too many password reset attempts. Please wait before trying again.',
+          rateLimitExceeded: true 
+        },
+        rateLimitExceeded: true
+      }
+    }
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password?type=recovery`,
       })
 
       if (error) {
-        console.error('Reset password error:', error)
+        // Record failed attempt for rate limiting
+        passwordResetLimiter.recordAttempt()
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Reset password error:', error.message)
+        }
         return { error }
       }
 
+      // Record successful attempt for rate limiting (still counts toward limit)
+      passwordResetLimiter.recordAttempt()
       return { error: null }
     } catch (error) {
-      console.error('Unexpected reset password error:', error)
+      // Record failed attempt for rate limiting
+      passwordResetLimiter.recordAttempt()
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected reset password error')
+      }
       return { error }
     }
   }
@@ -184,7 +249,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
       if (sessionError || !session) {
-        console.error('No valid session for password update:', sessionError)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('No valid session for password update')
+        }
         return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
       }
 
@@ -193,7 +260,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        console.error('Update password error:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Update password error:', error.message)
+        }
         return { error }
       }
 
@@ -202,7 +271,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { error: null }
     } catch (error) {
-      console.error('Unexpected update password error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected update password error')
+      }
       return { error }
     }
   }
@@ -212,16 +283,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { session }, error } = await supabase.auth.refreshSession()
       
       if (error) {
-        console.error('Refresh session error:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Refresh session error:', error.message)
+        }
         return { error }
       }
 
       setUser(session?.user ?? null)
       return { error: null }
     } catch (error) {
-      console.error('Unexpected refresh session error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected refresh session error')
+      }
       return { error }
     }
+  }
+
+  const checkPasswordResetRateLimit = () => {
+    return passwordResetLimiter.checkLimit()
+  }
+
+  const checkSignInRateLimit = () => {
+    return signInLimiter.checkLimit()
   }
 
   const value = {
@@ -233,6 +316,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     resetPassword,
     updatePassword,
     refreshSession,
+    checkPasswordResetRateLimit,
+    checkSignInRateLimit,
   }
 
   return (

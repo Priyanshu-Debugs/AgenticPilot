@@ -12,6 +12,7 @@ import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
 import { useRouter, useSearchParams } from "next/navigation"
+import { validatePassword } from "@/lib/password-validation"
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("")
@@ -36,9 +37,12 @@ export default function ResetPassword() {
     const isPasswordReset = urlParams.has('type') && urlParams.get('type') === 'recovery'
     const hasAccessToken = hashParams.has('access_token')
     
-    console.log('Reset password page - URL params:', Object.fromEntries(urlParams))
-    console.log('Reset password page - Hash params:', Object.fromEntries(hashParams))
-    console.log('Reset password page - User:', user)
+    // Only log in development mode without sensitive data
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Reset password page - Password reset detected:', isPasswordReset)
+      console.log('Reset password page - Has access token:', hasAccessToken)
+      console.log('Reset password page - User present:', !!user)
+    }
     
     const handlePasswordResetSession = async () => {
       if (isPasswordReset || hasAccessToken) {
@@ -47,7 +51,9 @@ export default function ResetPassword() {
         
         // If we have access tokens in the hash, try to refresh the session
         if (hasAccessToken && !user) {
-          console.log('Refreshing session from URL tokens...')
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Refreshing session from URL tokens...')
+          }
           await refreshSession()
         }
         
@@ -99,9 +105,10 @@ export default function ResetPassword() {
       return
     }
 
-    // Validate password strength
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long")
+    // Enhanced password validation
+    const passwordValidation = validatePassword(password)
+    if (!passwordValidation.isValid) {
+      setError(`Password requirements not met: ${passwordValidation.errors.join(', ')}`)
       return
     }
 
@@ -244,7 +251,7 @@ export default function ResetPassword() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         className="border-gray-200 dark:border-gray-800 pr-10"
-                        minLength={6}
+                        minLength={8}
                       />
                       <Button
                         type="button"
@@ -273,7 +280,7 @@ export default function ResetPassword() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                         className="border-gray-200 dark:border-gray-800 pr-10"
-                        minLength={6}
+                        minLength={8}
                       />
                       <Button
                         type="button"
@@ -291,8 +298,15 @@ export default function ResetPassword() {
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Password must be at least 6 characters long
+                  <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <div>Password requirements:</div>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>At least 8 characters long</li>
+                      <li>Contains uppercase and lowercase letters</li>
+                      <li>Contains at least one number</li>
+                      <li>Contains at least one special character</li>
+                      <li>Not a commonly used password</li>
+                    </ul>
                   </div>
 
                   <Button

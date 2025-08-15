@@ -11,6 +11,8 @@ import { Bot, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
+import { RateLimitDisplay } from "@/components/ui/rate-limit-display"
+import { RateLimitResult } from "@/lib/rate-limiting"
 
 export default function SignIn() {
   const [email, setEmail] = useState("")
@@ -18,23 +20,40 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
 
-  const { signIn } = useAuth()
+  const { signIn, checkSignInRateLimit } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
+    // Check rate limit before attempting
+    const rateLimitCheck = checkSignInRateLimit()
+    setRateLimitResult(rateLimitCheck)
+
+    if (!rateLimitCheck.allowed) {
+      setError("Too many sign in attempts. Please wait before trying again.")
+      setIsLoading(false)
+      return
+    }
+
     try {
       const { error } = await signIn(email, password)
       
       if (error) {
-        setError(error.message || "An error occurred during sign in")
+        if (error.rateLimitExceeded) {
+          setError("Too many sign in attempts. Please wait before trying again.")
+        } else {
+          setError(error.message || "An error occurred during sign in")
+        }
+        setRateLimitResult(checkSignInRateLimit())
       }
       // Success redirect is handled by AuthProvider
     } catch (err) {
       setError("An unexpected error occurred")
+      setRateLimitResult(checkSignInRateLimit())
     } finally {
       setIsLoading(false)
     }
@@ -63,6 +82,13 @@ export default function SignIn() {
             <p className="text-gray-600 dark:text-gray-400">Welcome back to AgenticPilot</p>
           </CardHeader>
           <CardContent>
+            {rateLimitResult && (
+              <RateLimitDisplay 
+                result={rateLimitResult} 
+                action="sign in attempts"
+                className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
+              />
+            )}
             {error && (
               <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
                 {error}
@@ -113,7 +139,7 @@ export default function SignIn() {
               <Button
                 type="submit"
                 className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                disabled={isLoading}
+                disabled={isLoading || rateLimitResult?.isBlocked}
               >
                 {isLoading ? "Signing In..." : "Sign In"}
               </Button>
