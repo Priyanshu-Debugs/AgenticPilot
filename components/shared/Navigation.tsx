@@ -158,9 +158,53 @@ export function Navigation({
             )}
           </div>
 
-          {/* Mobile menu button and mode toggle */}
+          {/* Mobile menu button, theme toggle, and sign in */}
           <div className="md:hidden flex items-center space-x-2">
             <ModeToggle />
+            {isAuthenticated && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback className="text-xs">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSignIn}
+                disabled={isSignInLoading}
+                className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent text-xs px-2 py-1"
+              >
+                {isSignInLoading ? "..." : "Sign In"}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -259,29 +303,16 @@ export function Navigation({
                     Sign Out
                   </Button>
                 ) : (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        handleSignIn()
-                        toggleMobileMenu()
-                      }}
-                      disabled={isSignInLoading}
-                      className="w-full border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent transition-all duration-200"
-                    >
-                      {isSignInLoading ? "Signing In..." : "Sign In"}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        onSignUp()
-                        toggleMobileMenu()
-                      }}
-                      className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-all duration-200"
-                    >
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </>
+                  <Button
+                    onClick={() => {
+                      onSignUp()
+                      toggleMobileMenu()
+                    }}
+                    className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-all duration-200"
+                  >
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 )}
               </div>
             </div>
