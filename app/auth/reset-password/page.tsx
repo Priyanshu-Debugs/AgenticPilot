@@ -76,19 +76,23 @@ function ResetPasswordForm() {
           await refreshSession()
         }
         
-        // Wait a bit before cleaning URL to ensure session is established
+        // Give more time for session to establish, especially from callback
+        const cleanupDelay = sessionValid === 'true' ? 3000 : 1000
         setTimeout(() => {
           const cleanUrl = window.location.pathname
           window.history.replaceState({}, document.title, cleanUrl)
-        }, 1000) // Reduced timeout since session should be established
+        }, cleanupDelay)
       } else if (user) {
         // User has a valid session but no reset parameters
         setIsValidSession(true)
       } else {
-        // If no user session and no reset parameters, redirect to forgot password page
+        // If no user session and no reset parameters, wait a bit longer before redirecting
+        // in case session is still being established
         const timer = setTimeout(() => {
-          router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
-        }, 3000)
+          if (!user && !isPasswordReset && sessionValid !== 'true') {
+            router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
+          }
+        }, 5000) // Increased timeout to allow session establishment
         return () => clearTimeout(timer)
       }
     }
