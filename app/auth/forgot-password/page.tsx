@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,8 +20,37 @@ export default function ForgotPassword() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
   const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
+  const [urlError, setUrlError] = useState("")
 
   const { resetPassword, checkPasswordResetRateLimit } = useAuth()
+
+  // Check for URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    const messageParam = urlParams.get('message')
+    
+    if (errorParam && messageParam) {
+      const decodedMessage = decodeURIComponent(messageParam)
+      
+      switch (errorParam) {
+        case 'session_expired':
+          setUrlError(`${decodedMessage} Please request a new password reset link below.`)
+          break
+        case 'invalid_link':
+          setUrlError(decodedMessage)
+          break
+        default:
+          setUrlError(decodedMessage)
+      }
+      
+      // Clean up URL after showing the error
+      setTimeout(() => {
+        const cleanUrl = window.location.pathname
+        window.history.replaceState({}, document.title, cleanUrl)
+      }, 2000)
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -126,6 +155,11 @@ export default function ForgotPassword() {
               </div>
             ) : (
               <>
+                {urlError && (
+                  <div className="mb-4 p-3 text-sm text-blue-600 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    {urlError}
+                  </div>
+                )}
                 {rateLimitResult && (
                   <RateLimitDisplay 
                     result={rateLimitResult} 

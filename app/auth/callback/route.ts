@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
             return request.cookies.getAll()
           },
           setAll(cookiesToSet) {
-            // Cookies will be handled by the server response
+            // Cookies are automatically handled by Supabase SSR
           },
         },
       }
@@ -30,10 +29,28 @@ export async function GET(request: NextRequest) {
       
       if (error) {
         const errorMessage = encodeURIComponent(error.message)
-        if (type === 'recovery') {
-          return NextResponse.redirect(`${origin}/auth/reset-password?error=recovery_failed&message=${errorMessage}`)
+        
+        // Handle specific error types
+        if (error.message?.includes('expired') || error.message?.includes('invalid_grant')) {
+          const message = type === 'recovery' ? 'Password reset link has expired' : 'Verification link has expired'
+          const redirectPath = type === 'recovery' ? '/auth/forgot-password' : '/auth/signin'
+          const errorType = type === 'recovery' ? 'session_expired' : 'verification_failed'
+          return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${encodeURIComponent(message)}`)
         }
-        return NextResponse.redirect(`${origin}/auth/signin?error=verification_failed&message=${errorMessage}`)
+        
+        if (error.message?.includes('already_used') || error.message?.includes('invalid_code')) {
+          const message = type === 'recovery' 
+            ? 'Password reset link is invalid or has already been used'
+            : 'Verification link is invalid or has already been used'
+          const redirectPath = type === 'recovery' ? '/auth/forgot-password' : '/auth/signin'
+          const errorType = type === 'recovery' ? 'invalid_link' : 'verification_failed'
+          return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${encodeURIComponent(message)}`)
+        }
+        
+        // Generic error handling
+        const redirectPath = type === 'recovery' ? '/auth/reset-password' : '/auth/signin'
+        const errorType = type === 'recovery' ? 'recovery_failed' : 'verification_failed'
+        return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${errorMessage}`)
       }
 
       if (data.session) {
@@ -44,19 +61,29 @@ export async function GET(request: NextRequest) {
         
         // For regular email verification, redirect to dashboard
         return NextResponse.redirect(`${origin}/dashboard`)
+      } else {
+        // No session data returned
+        const message = type === 'recovery' 
+          ? 'Unable to establish password reset session'
+          : 'Email verification failed'
+        const redirectPath = type === 'recovery' ? '/auth/forgot-password' : '/auth/signin'
+        const errorType = type === 'recovery' ? 'session_expired' : 'verification_failed'
+        return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${encodeURIComponent(message)}`)
       }
     } catch (error) {
       console.error('Callback processing error:', error)
-      if (type === 'recovery') {
-        return NextResponse.redirect(`${origin}/auth/reset-password?error=recovery_failed&message=An unexpected error occurred`)
-      }
-      return NextResponse.redirect(`${origin}/auth/signin?error=verification_failed&message=An unexpected error occurred`)
+      const message = 'An unexpected error occurred'
+      const redirectPath = type === 'recovery' ? '/auth/reset-password' : '/auth/signin'
+      const errorType = type === 'recovery' ? 'recovery_failed' : 'verification_failed'
+      return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${encodeURIComponent(message)}`)
     }
   }
 
   // If no code, redirect appropriately based on type
-  if (type === 'recovery') {
-    return NextResponse.redirect(`${origin}/auth/forgot-password?error=invalid_link&message=Password reset link is invalid or expired`)
-  }
-  return NextResponse.redirect(`${origin}/auth/signin?error=no_code&message=Email verification link is invalid or expired`)
+  const message = type === 'recovery' 
+    ? 'Password reset link is invalid or expired'
+    : 'Email verification link is invalid or expired'
+  const redirectPath = type === 'recovery' ? '/auth/forgot-password' : '/auth/signin'
+  const errorType = type === 'recovery' ? 'invalid_link' : 'no_code'
+  return NextResponse.redirect(`${origin}${redirectPath}?error=${errorType}&message=${encodeURIComponent(message)}`)
 }

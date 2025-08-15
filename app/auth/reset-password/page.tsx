@@ -35,6 +35,7 @@ function ResetPasswordForm() {
     const urlError = searchParams.get('error')
     const urlMessage = searchParams.get('message')
     const sessionValid = searchParams.get('session_valid')
+    const timestamp = searchParams.get('ts')
     
     if (urlError && urlMessage) {
       switch (urlError) {
@@ -43,6 +44,9 @@ function ResetPasswordForm() {
           break
         case 'no_code':
           setError('Password reset link is invalid or malformed.')
+          break
+        case 'session_expired':
+          setError(decodeURIComponent(urlMessage))
           break
         default:
           setError(decodeURIComponent(urlMessage))
@@ -61,10 +65,14 @@ function ResetPasswordForm() {
       console.log('Reset password page - Has access token:', hasAccessToken)
       console.log('Reset password page - Session valid flag:', sessionValid)
       console.log('Reset password page - User present:', !!user)
+      console.log('Reset password page - Timestamp:', timestamp)
     }
     
     const handlePasswordResetSession = async () => {
-      if (isPasswordReset || hasAccessToken || sessionValid === 'true') {
+      // Check if we have valid password reset indicators
+      const isValidResetFlow = isPasswordReset || hasAccessToken || sessionValid === 'true'
+      
+      if (isValidResetFlow) {
         // This is a valid password reset session
         setIsValidSession(true)
         
@@ -73,28 +81,61 @@ function ResetPasswordForm() {
           if (process.env.NODE_ENV === 'development') {
             console.log('Refreshing session from URL tokens...')
           }
-          await refreshSession()
+          try {
+            await refreshSession()
+          } catch (err) {
+            console.error('Failed to refresh session:', err)
+          }
         }
         
-        // Give more time for session to establish, especially from callback
-        const cleanupDelay = sessionValid === 'true' ? 3000 : 1000
+        // Clean up URL after a delay to allow user to see the page
+        const cleanupDelay = sessionValid === 'true' ? 5000 : 2000
         setTimeout(() => {
           const cleanUrl = window.location.pathname
           window.history.replaceState({}, document.title, cleanUrl)
         }, cleanupDelay)
-      } else if (user) {
-        // User has a valid session but no reset parameters
-        setIsValidSession(true)
-      } else {
-        // If no user session and no reset parameters, wait a bit longer before redirecting
-        // in case session is still being established
-        const timer = setTimeout(() => {
-          if (!user && !isPasswordReset && sessionValid !== 'true') {
-            router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
-          }
-        }, 5000) // Increased timeout to allow session establishment
-        return () => clearTimeout(timer)
+        
+        return // Exit early for valid reset flows
       }
+      
+      // If user has a valid session but no reset parameters, allow access
+      if (user) {
+        setIsValidSession(true)
+        return
+      }
+      
+      // Check if we're coming from a fresh reset link (within last 30 seconds)
+      if (timestamp) {
+        const linkTimestamp = parseInt(timestamp)
+        const now = Date.now()
+        const timeDiff = now - linkTimestamp
+        
+        if (timeDiff < 30000) { // 30 seconds grace period
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Recent reset link detected, allowing extra time for session establishment')
+          }
+          setIsValidSession(true)
+          
+          // Set a longer timeout for recent links
+          const timer = setTimeout(() => {
+            if (!user && !isPasswordReset && sessionValid !== 'true') {
+              router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
+            }
+          }, 15000) // 15 seconds for recent links
+          
+          return () => clearTimeout(timer)
+        }
+      }
+      
+      // Default case: no valid session indicators and no user
+      // Set a reasonable timeout before redirecting
+      const timer = setTimeout(() => {
+        if (!user && !isPasswordReset && sessionValid !== 'true') {
+          router.push('/auth/forgot-password?error=session_expired&message=Password reset session expired')
+        }
+      }, 8000) // 8 seconds default timeout
+      
+      return () => clearTimeout(timer)
     }
 
     handlePasswordResetSession()
@@ -165,6 +206,10 @@ function ResetPasswordForm() {
   }
 
   if (!isValidSession && !user) {
+    // Check if this is a session expiration case
+    const urlError = searchParams.get('error')
+    const isSessionExpired = urlError === 'session_expired'
+    
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         {/* Navigation */}
@@ -183,10 +228,20 @@ function ResetPasswordForm() {
         <div className="flex-1 flex items-center justify-center container-padding py-8">
           <Card className="w-full max-w-md card-elevated">
             <CardContent className="pt-6 text-center">
-              <h2 className="text-xl font-semibold mb-2">Invalid Reset Link</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                {isSessionExpired ? "Session Expired" : "Invalid Reset Link"}
+              </h2>
               <p className="text-muted-foreground mb-4">
-                This password reset link is invalid or has expired. You will be redirected to request a new one.
+                {isSessionExpired 
+                  ? "Your password reset session has expired. Please request a new reset link to continue."
+                  : "This password reset link is invalid or has expired. You will be redirected to request a new one."
+                }
               </p>
+              {isSessionExpired && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  Password reset links are valid for a limited time for security reasons.
+                </p>
+              )}
               <Link href="/auth/forgot-password">
                 <Button>Request New Reset Link</Button>
               </Link>
