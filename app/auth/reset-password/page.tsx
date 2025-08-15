@@ -31,6 +31,23 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    // Check for URL parameters with error messages from callback
+    const urlError = searchParams.get('error')
+    const urlMessage = searchParams.get('message')
+    
+    if (urlError && urlMessage) {
+      switch (urlError) {
+        case 'recovery_failed':
+          setError(`Password recovery failed: ${decodeURIComponent(urlMessage)}`)
+          break
+        case 'no_code':
+          setError('Password reset link is invalid or malformed.')
+          break
+        default:
+          setError(decodeURIComponent(urlMessage))
+      }
+    }
+
     // Check URL parameters for password reset tokens
     const urlParams = new URLSearchParams(window.location.search)
     const hashParams = new URLSearchParams(window.location.hash.substring(1))

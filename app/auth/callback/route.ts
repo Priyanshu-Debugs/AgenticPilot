@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const type = requestUrl.searchParams.get('type')
   const origin = requestUrl.origin
 
   if (code) {
@@ -27,18 +28,34 @@ export async function GET(request: NextRequest) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (error) {
-        return NextResponse.redirect(`${origin}/auth/signin?error=verification_failed&message=${encodeURIComponent(error.message)}`)
+        const errorMessage = encodeURIComponent(error.message)
+        if (type === 'recovery') {
+          return NextResponse.redirect(`${origin}/auth/reset-password?error=recovery_failed&message=${errorMessage}`)
+        }
+        return NextResponse.redirect(`${origin}/auth/signin?error=verification_failed&message=${errorMessage}`)
       }
 
       if (data.session) {
-        // Redirect to dashboard on successful verification
+        // Check if this is a password recovery session
+        if (type === 'recovery') {
+          // Redirect to reset password page for password recovery
+          return NextResponse.redirect(`${origin}/auth/reset-password?type=recovery`)
+        }
+        
+        // For regular email verification, redirect to dashboard
         return NextResponse.redirect(`${origin}/dashboard`)
       }
     } catch (error) {
+      if (type === 'recovery') {
+        return NextResponse.redirect(`${origin}/auth/reset-password?error=recovery_failed&message=An unexpected error occurred`)
+      }
       return NextResponse.redirect(`${origin}/auth/signin?error=verification_failed&message=An unexpected error occurred`)
     }
   }
 
-  // If no code, redirect to signin
+  // If no code, redirect appropriately based on type
+  if (type === 'recovery') {
+    return NextResponse.redirect(`${origin}/auth/reset-password?error=no_code&message=Password reset link is invalid`)
+  }
   return NextResponse.redirect(`${origin}/auth/signin?error=no_code&message=Email verification link is invalid`)
 }
