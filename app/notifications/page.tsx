@@ -44,20 +44,20 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="container-padding">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <Link href="/" className="text-xl font-bold">
+            <div className="flex items-center space-x-4">
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <Link href="/" className="text-lg sm:text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
             <div className="flex items-center space-x-4">
               <ModeToggle />
-              <Button variant="outline" asChild className="border-black dark:border-white bg-transparent">
+              <Button variant="outline" asChild>
                 <Link href="/dashboard">Back to Dashboard</Link>
               </Button>
             </div>
@@ -66,7 +66,7 @@ export default function NotificationsPage() {
       </nav>
 
       {/* Notifications Content */}
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="container-padding section-spacing">
         <NotificationSystem
           onMarkAsRead={handleMarkAsRead}
           onMarkAllAsRead={handleMarkAllAsRead}

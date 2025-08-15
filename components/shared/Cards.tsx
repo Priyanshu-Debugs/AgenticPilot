@@ -17,13 +17,13 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, change, changeType = "neutral", icon: Icon, trend }: StatsCardProps) {
   const changeColor = {
-    positive: "text-green-600 dark:text-green-400",
-    negative: "text-red-600 dark:text-red-400",
-    neutral: "text-gray-500 dark:text-gray-400"
+    positive: "text-emerald-600",
+    negative: "text-destructive",
+    neutral: "text-muted-foreground"
   }
 
   return (
-    <Card className="border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
+    <Card className="card-elevated hover:shadow-lg transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -37,9 +37,9 @@ export function StatsCard({ title, value, change, changeType = "neutral", icon: 
         )}
         {trend !== undefined && (
           <div className="mt-2 flex items-center space-x-2">
-            <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+            <div className="flex-1 bg-muted rounded-full h-1">
               <div 
-                className="bg-gray-600 dark:bg-gray-400 h-1 rounded-full transition-all duration-300" 
+                className="bg-primary h-1 rounded-full transition-all duration-300" 
                 style={{ width: `${Math.min(trend, 100)}%` }}
               />
             </div>
@@ -66,25 +66,29 @@ export function FeatureCard({ title, description, icon: Icon, href, badge, isAct
   
   return (
     <CardWrapper href={href || ""} className={href ? "block" : ""}>
-      <Card className={`group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] ${
-        isActive ? "ring-2 ring-gray-400 bg-gray-50 dark:bg-gray-900" : ""
-      }`} onClick={onClick}>
-        <CardHeader className="text-center space-y-4">
-          <div className="relative">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto transform rotate-45 bg-black dark:bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-white dark:text-black transform -rotate-45" />
+      <Card className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/20 ${
+        isActive ? "ring-2 ring-primary border-primary/30" : ""
+      } h-full`} onClick={onClick}>
+        <CardHeader className="space-y-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-primary group-hover:text-primary-foreground transition-colors" />
+              </div>
+              {badge && (
+                <Badge className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs px-1.5 py-0.5">
+                  {badge}
+                </Badge>
+              )}
             </div>
-            {badge && (
-              <Badge className="absolute -top-2 -right-2 bg-red-500 text-white">
-                {badge}
-              </Badge>
-            )}
-          </div>
-          <div className="space-y-2">
-            <CardTitle className="text-lg sm:text-xl">{title}</CardTitle>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-              {description}
-            </p>
+            <div className="flex-1 space-y-2 min-w-0">
+              <CardTitle className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                {title}
+              </CardTitle>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                {description}
+              </p>
+            </div>
           </div>
         </CardHeader>
       </Card>
@@ -112,10 +116,10 @@ export function ActionCard({
   variant = "default" 
 }: ActionCardProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="card-elevated hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <div className="p-2 bg-muted rounded-lg">
             <Icon className="h-5 w-5" />
           </div>
           <div className="flex-1">

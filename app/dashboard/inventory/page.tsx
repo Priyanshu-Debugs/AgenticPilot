@@ -143,35 +143,35 @@ export default function InventoryManagement() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "In Stock":
-        return "bg-green-600/20 text-green-400 border-green-600/30"
+        return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
       case "Low Stock":
-        return "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+        return "bg-amber-500/20 text-amber-400 border-amber-500/30"
       case "Out of Stock":
-        return "bg-red-600/20 text-red-400 border-red-600/30"
+        return "bg-red-500/20 text-red-400 border-red-500/30"
       default:
-        return "bg-gray-600/20 text-gray-400 border-gray-600/30"
+        return "bg-muted text-muted-foreground border-border"
     }
   }
 
   const getOrderStatusColor = (status: string) => {
     switch (status) {
       case "Delivered":
-        return "bg-green-600/20 text-green-400 border-green-600/30"
+        return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
       case "In Transit":
-        return "bg-blue-600/20 text-blue-400 border-blue-600/30"
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
       case "Processing":
-        return "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+        return "bg-amber-500/20 text-amber-400 border-amber-500/30"
       default:
-        return "bg-gray-600/20 text-gray-400 border-gray-600/30"
+        return "bg-muted text-muted-foreground border-border"
     }
   }
 
   const getStockLevel = (current: number, min: number, max: number) => {
     const percentage = (current / max) * 100
     if (current === 0) return { level: "empty", color: "bg-red-500" }
-    if (current <= min) return { level: "low", color: "bg-yellow-500" }
-    if (percentage > 70) return { level: "high", color: "bg-green-500" }
-    return { level: "medium", color: "bg-blue-500" }
+    if (current <= min) return { level: "low", color: "bg-amber-500" }
+    if (percentage > 70) return { level: "high", color: "bg-emerald-500" }
+    return { level: "medium", color: "bg-primary" }
   }
 
   const filteredItems = inventoryItems.filter(item =>
@@ -192,12 +192,12 @@ export default function InventoryManagement() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-600/20 rounded-lg flex items-center justify-center">
-            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Inventory Management</h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Inventory Management</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               AI-powered inventory tracking and automated reordering
             </p>
           </div>
@@ -208,15 +208,16 @@ export default function InventoryManagement() {
             variant={isAutomationActive ? "default" : "secondary"}
             className={
               isAutomationActive
-                ? "bg-green-600/20 text-green-400 border-green-600/30"
-                : "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                : "bg-amber-500/20 text-amber-400 border-amber-500/30"
             }
           >
             {isAutomationActive ? "Active" : "Paused"}
           </Badge>
           <Button
             onClick={() => setIsAutomationActive(!isAutomationActive)}
-            className={isAutomationActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+            variant={isAutomationActive ? "destructive" : "default"}
+            size="sm"
           >
             {isAutomationActive ? (
               <>
@@ -237,20 +238,20 @@ export default function InventoryManagement() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {analytics.map((stat, index) => {
           const IconComponent = stat.icon
-          const colors = ["text-gray-500", "text-yellow-500", "text-green-500", "text-red-500"]
+          const colors = ["text-muted-foreground", "text-amber-500", "text-emerald-500", "text-red-500"]
 
           return (
             <Card
               key={stat.metric}
-              className="border-gray-200 dark:border-gray-800"
+              className="card-elevated"
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{stat.metric}</CardTitle>
                 <IconComponent className={`h-4 w-4 ${colors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{stat.change}</p>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
+                <p className="text-xs text-muted-foreground">{stat.change}</p>
               </CardContent>
             </Card>
           )
@@ -259,7 +260,7 @@ export default function InventoryManagement() {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="inventory" className="space-y-6">
-        <TabsList className="bg-gray-100 dark:bg-gray-800">
+        <TabsList className="bg-muted">
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="reorder">Auto Reorder</TabsTrigger>
           <TabsTrigger value="orders">Recent Orders</TabsTrigger>
@@ -272,21 +273,21 @@ export default function InventoryManagement() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search inventory..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                  className="pl-10"
                 />
               </div>
-              <Button variant="outline" className="bg-transparent">
+              <Button variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" className="bg-transparent">
+              <Button variant="outline">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
@@ -298,7 +299,7 @@ export default function InventoryManagement() {
           </div>
 
           {/* Inventory Table */}
-          <Card className="border-gray-200 dark:border-gray-800">
+          <Card className="card-elevated">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -323,8 +324,8 @@ export default function InventoryManagement() {
                       <TableRow key={item.id}>
                         <TableCell className="font-medium">
                           <div>
-                            <div className="font-medium">{item.name}</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <div className="font-medium text-foreground">{item.name}</div>
+                            <div className="text-sm text-muted-foreground">
                               {item.supplier}
                             </div>
                           </div>
@@ -335,11 +336,11 @@ export default function InventoryManagement() {
                           <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                               <span>{item.currentStock} / {item.maxStock}</span>
-                              <span className="text-gray-500 dark:text-gray-400">
+                              <span className="text-muted-foreground">
                                 {stockPercentage.toFixed(0)}%
                               </span>
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div className="w-full bg-muted rounded-full h-2">
                               <div
                                 className={`h-2 rounded-full ${stockLevel.color}`}
                                 style={{ width: `${Math.max(stockPercentage, 5)}%` }}
@@ -356,7 +357,7 @@ export default function InventoryManagement() {
                         <TableCell>{item.lastRestocked}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm" className="bg-transparent">
+                            <Button variant="outline" size="sm">
                               Edit
                             </Button>
                             {item.currentStock <= item.reorderPoint && (
@@ -377,7 +378,7 @@ export default function InventoryManagement() {
         </TabsContent>
 
         <TabsContent value="reorder" className="space-y-6">
-          <Card className="border-gray-200 dark:border-gray-800">
+          <Card className="card-elevated">
             <CardHeader>
               <CardTitle>Automatic Reordering</CardTitle>
               <CardDescription>
@@ -388,7 +389,7 @@ export default function InventoryManagement() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">Enable Auto Reorder</Label>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-muted-foreground">
                     Automatically reorder items when they reach the reorder point
                   </div>
                 </div>
@@ -403,15 +404,15 @@ export default function InventoryManagement() {
                     .map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center justify-between p-4 rounded-lg bg-gray-100 dark:bg-gray-700/30"
+                        className="flex items-center justify-between p-4 rounded-lg bg-muted/50"
                       >
                         <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-red-600/20 rounded-lg flex items-center justify-center">
+                          <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
                             <AlertTriangle className="h-5 w-5 text-red-400" />
                           </div>
                           <div>
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="font-medium text-foreground">{item.name}</p>
+                            <p className="text-sm text-muted-foreground">
                               Current: {item.currentStock} | Reorder Point: {item.reorderPoint}
                             </p>
                           </div>
@@ -447,7 +448,7 @@ export default function InventoryManagement() {
             </Button>
           </div>
 
-          <Card className="border-gray-200 dark:border-gray-800">
+          <Card className="card-elevated">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -485,7 +486,7 @@ export default function InventoryManagement() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-gray-200 dark:border-gray-800">
+            <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Inventory Insights</CardTitle>
                 <CardDescription>Key metrics and trends</CardDescription>
@@ -493,25 +494,25 @@ export default function InventoryManagement() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Average Stock Level
                     </span>
                     <span className="text-sm font-medium">68%</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Stock Turnover Rate
                     </span>
                     <span className="text-sm font-medium">4.2x per year</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Carrying Cost
                     </span>
                     <span className="text-sm font-medium">$2,150/month</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Stockout Incidents
                     </span>
                     <span className="text-sm font-medium">2 this month</span>
@@ -520,7 +521,7 @@ export default function InventoryManagement() {
               </CardContent>
             </Card>
 
-            <Card className="border-gray-200 dark:border-gray-800">
+            <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Category Breakdown</CardTitle>
                 <CardDescription>Inventory distribution by category</CardDescription>
@@ -528,19 +529,19 @@ export default function InventoryManagement() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Electronics
                     </span>
                     <span className="text-sm font-medium">45% ($20,250)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Accessories
                     </span>
                     <span className="text-sm font-medium">35% ($15,830)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Office
                     </span>
                     <span className="text-sm font-medium">20% ($9,150)</span>
@@ -552,7 +553,7 @@ export default function InventoryManagement() {
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-6">
-          <Card className="border-gray-200 dark:border-gray-800">
+          <Card className="card-elevated">
             <CardHeader>
               <CardTitle>Inventory Management Settings</CardTitle>
               <CardDescription>Configure your inventory automation preferences</CardDescription>
@@ -562,7 +563,7 @@ export default function InventoryManagement() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label className="text-base">Low Stock Alerts</Label>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-muted-foreground">
                       Receive notifications when items are running low
                     </div>
                   </div>
@@ -572,7 +573,7 @@ export default function InventoryManagement() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label className="text-base">Auto Purchase Orders</Label>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-muted-foreground">
                       Automatically create purchase orders for suppliers
                     </div>
                   </div>
@@ -585,7 +586,6 @@ export default function InventoryManagement() {
                     id="reorder-threshold"
                     type="number"
                     defaultValue="20"
-                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
                   />
                 </div>
 
@@ -595,7 +595,6 @@ export default function InventoryManagement() {
                     id="safety-stock"
                     type="number"
                     defaultValue="15"
-                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
                   />
                 </div>
               </div>

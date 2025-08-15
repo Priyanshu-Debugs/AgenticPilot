@@ -143,25 +143,25 @@ function ResetPasswordForm() {
 
   if (!isValidSession && !user) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col">
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
         {/* Navigation */}
-        <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="border-b border-border bg-background/80 backdrop-blur-md">
+          <div className="container-padding">
             <div className="flex justify-between items-center h-16">
               <Link href="/" className="flex items-center space-x-2">
-                <Bot className="h-8 w-8 text-black dark:text-white" />
-                <span className="text-xl font-bold">AgenticPilot</span>
+                <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
               </Link>
               <ModeToggle />
             </div>
           </div>
         </nav>
 
-        <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-          <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
+        <div className="flex-1 flex items-center justify-center container-padding py-8">
+          <Card className="w-full max-w-md card-elevated">
             <CardContent className="pt-6 text-center">
               <h2 className="text-xl font-semibold mb-2">Invalid Reset Link</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-muted-foreground mb-4">
                 This password reset link is invalid or has expired. You will be redirected to request a new one.
               </p>
               <Link href="/auth/forgot-password">
@@ -175,14 +175,14 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Navigation */}
-      <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="container-padding">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <span className="text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
@@ -190,13 +190,13 @@ function ResetPasswordForm() {
       </nav>
 
       {/* Reset Password Form */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
+      <div className="flex-1 flex items-center justify-center container-padding py-8">
+        <Card className="w-full max-w-md card-elevated">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">
               {success ? "Password Updated!" : "Set New Password"}
             </CardTitle>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               {success 
                 ? "Your password has been successfully updated" 
                 : "Enter your new password below"
@@ -205,9 +205,9 @@ function ResetPasswordForm() {
           </CardHeader>
           <CardContent>
             {success ? (
-              <div className="text-center space-y-4">
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-center space-y-6">
+                <CheckCircle className="h-12 w-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
+                <p className="text-sm text-muted-foreground">
                   You will be redirected to your dashboard shortly.
                 </p>
                 <Link href="/dashboard">
@@ -219,7 +219,7 @@ function ResetPasswordForm() {
             ) : (
               <>
                 {error && (
-                  <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+                  <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                     {error}
                     {error.includes('session has expired') && (
                       <div className="mt-2 space-y-2">
@@ -239,9 +239,9 @@ function ResetPasswordForm() {
                     )}
                   </div>
                 )}
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="password">New Password</Label>
+                    <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
                     <div className="relative">
                       <Input
                         id="password"
@@ -250,7 +250,7 @@ function ResetPasswordForm() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="border-gray-200 dark:border-gray-800 pr-10"
+                        className="pr-10"
                         minLength={8}
                       />
                       <Button
@@ -261,16 +261,16 @@ function ResetPasswordForm() {
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-gray-400" />
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
                         ) : (
-                          <Eye className="h-4 w-4 text-gray-400" />
+                          <Eye className="h-4 w-4 text-muted-foreground" />
                         )}
                       </Button>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm New Password</Label>
                     <div className="relative">
                       <Input
                         id="confirmPassword"
@@ -279,7 +279,7 @@ function ResetPasswordForm() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="border-gray-200 dark:border-gray-800 pr-10"
+                        className="pr-10"
                         minLength={8}
                       />
                       <Button
@@ -290,15 +290,15 @@ function ResetPasswordForm() {
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
                         {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4 text-gray-400" />
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
                         ) : (
-                          <Eye className="h-4 w-4 text-gray-400" />
+                          <Eye className="h-4 w-4 text-muted-foreground" />
                         )}
                       </Button>
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                  <div className="text-xs text-muted-foreground space-y-1">
                     <div>Password requirements:</div>
                     <ul className="list-disc list-inside space-y-1 ml-2">
                       <li>At least 8 characters long</li>
@@ -311,7 +311,7 @@ function ResetPasswordForm() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                    className="w-full"
                     disabled={isLoading}
                   >
                     {isLoading ? "Updating..." : "Update Password"}
@@ -329,27 +329,27 @@ function ResetPasswordForm() {
 // Loading component for Suspense fallback
 function ResetPasswordLoading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Navigation */}
-      <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="container-padding">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-8 w-8 text-black dark:text-white" />
-              <span className="text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
           </div>
         </div>
       </nav>
 
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
+      <div className="flex-1 flex items-center justify-center container-padding py-8">
+        <Card className="w-full max-w-md card-elevated">
           <CardContent className="pt-6 text-center">
             <div className="animate-pulse space-y-4">
-              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-6 bg-muted rounded"></div>
+              <div className="h-4 bg-muted rounded"></div>
+              <div className="h-10 bg-muted rounded"></div>
             </div>
           </CardContent>
         </Card>

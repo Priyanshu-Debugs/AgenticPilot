@@ -185,7 +185,7 @@ export default function Dashboard() {
           </p>
           {profile && (
             <div className="flex items-center mt-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
               <span className="text-xs text-muted-foreground">
                 {profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)} Plan Active
               </span>
@@ -236,7 +236,7 @@ export default function Dashboard() {
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid gap-6">
-            <Card>
+            <Card className="card-elevated">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BarChart3 className="h-5 w-5" />
@@ -246,22 +246,22 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">2,247</div>
+                    <div className="text-2xl font-bold">2,247</div>
                     <p className="text-sm text-muted-foreground">Total Tasks Processed</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">96.8%</div>
+                    <div className="text-2xl font-bold">96.8%</div>
                     <p className="text-sm text-muted-foreground">Success Rate</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">1.2s</div>
+                    <div className="text-2xl font-bold">1.2s</div>
                     <p className="text-sm text-muted-foreground">Avg Response Time</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Usage Trends</CardTitle>
               </CardHeader>
@@ -318,7 +318,7 @@ export default function Dashboard() {
       </Tabs>
 
       {/* Recent Activity */}
-      <Card>
+      <Card className="card-elevated">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Clock className="h-5 w-5" />
@@ -351,9 +351,9 @@ export default function Dashboard() {
             ].map((activity, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <div className={`w-2 h-2 rounded-full ${
-                  activity.status === "success" ? "bg-green-500" :
-                  activity.status === "warning" ? "bg-yellow-500" :
-                  "bg-gray-500"
+                  activity.status === "success" ? "bg-emerald-500" :
+                  activity.status === "warning" ? "bg-amber-500" :
+                  "bg-primary"
                 }`} />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{activity.action}</p>

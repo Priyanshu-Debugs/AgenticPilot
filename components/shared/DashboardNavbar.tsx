@@ -85,115 +85,90 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
     return planMap[profile.plan] || 'Starter Plan'
   }
 
-  // Get plan color
-  const getPlanColor = () => {
-    if (!profile) return 'text-gray-500'
-    
-    const colorMap = {
-      starter: 'text-blue-600 dark:text-blue-400',
-      professional: 'text-green-600 dark:text-green-400',
-      enterprise: 'text-purple-600 dark:text-purple-400'
-    }
-    return colorMap[profile.plan] || 'text-blue-600 dark:text-blue-400'
-  }
-
   return (
-    // Fixed navigation bar with backdrop blur and shadow
-    <nav className="fixed top-0 left-0 right-0 border-b border-gray-200/60 dark:border-gray-800/60 bg-white/95 dark:bg-black/95 backdrop-blur-md z-50 shadow-sm">
-      <div className="px-3 sm:px-4 lg:px-8">
+    // Fixed navigation bar with Supabase-inspired design
+    <nav className="fixed top-0 left-0 right-0 border-b border-border bg-background/95 backdrop-blur-md z-50">
+      <div className="container-padding">
         <div className="flex justify-between items-center h-14 sm:h-16">
           
           {/* Left Section: Mobile Menu + Logo */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             
             {/* Mobile-only hamburger/close button */}
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={toggleSidebar}
-              className="lg:hidden transition-all duration-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 rounded-lg p-1.5 sm:p-2"
+              className="lg:hidden"
               aria-label="Toggle sidebar"
             >
-              {/* Dynamic icon based on sidebar state */}
               {isSidebarOpen ? (
-                <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                <X className="h-4 w-4" />
               ) : (
-                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Menu className="h-4 w-4" />
               )}
             </Button>
 
-            {/* Brand logo with hover effects */}
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-all duration-200 group">
-              <div className="relative">
-                {/* Bot icon with color transitions */}
-                <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400 transition-colors group-hover:text-blue-700 dark:group-hover:text-blue-300" />
-                {/* Subtle background effect on hover */}
-                <div className="absolute inset-0 bg-blue-600/20 dark:bg-blue-400/20 rounded-lg scale-0 group-hover:scale-110 transition-transform duration-200"></div>
-              </div>
-              {/* Responsive brand text with gradient */}
-              <span className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+            {/* Brand logo */}
+            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-lg sm:text-xl font-bold text-foreground">
                 AgenticPilot
               </span>
             </Link>
           </div>
 
           {/* Right Section: Actions & User Menu */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-2">
             
-            {/* Notification bell with unread count badge */}
+            {/* Notification bell */}
             <Link href="/notifications">
-              <Button variant="ghost" size="sm" className="relative hover:bg-gray-100/80 dark:hover:bg-gray-800/80 rounded-xl transition-all duration-200 p-1.5 sm:p-2">
+              <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-4 w-4" />
-                {/* Animated notification badge */}
-                <Badge className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs h-3 w-3 sm:h-4 sm:w-4 rounded-full flex items-center justify-center p-0 border border-white dark:border-black shadow-sm animate-pulse">
-                  <span className="hidden sm:inline">3</span>
-                  <span className="sm:hidden"></span>
+                <Badge className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs h-4 w-4 rounded-full flex items-center justify-center p-0">
+                  3
                 </Badge>
               </Button>
             </Link>
 
-            {/* Settings button - Hidden on mobile to save space */}
+            {/* Settings button - Hidden on mobile */}
             <Link href="/settings" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="hover:bg-gray-100/80 dark:hover:bg-gray-800/80 rounded-xl transition-all duration-200">
+              <Button variant="ghost" size="icon">
                 <Settings className="h-4 w-4" />
               </Button>
             </Link>
 
-            {/* Theme toggle - Hidden on mobile, available in user dropdown */}
+            {/* Theme toggle - Hidden on mobile */}
             <div className="hidden md:block">
               <ModeToggle />
             </div>
 
-            {/* User profile dropdown menu */}
+            {/* User profile dropdown */}
             <DropdownMenu>
-              {/* Avatar trigger button with hover effects */}
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-all duration-200 border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
-                  <Avatar className="h-6 w-6 sm:h-8 sm:w-8 border border-gray-200 dark:border-gray-700">
+                <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                     <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt="User" />
-                    <AvatarFallback className="text-xs font-medium bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               
-              {/* Dropdown content with user info and actions */}
-              <DropdownMenuContent className="w-64 shadow-lg border-gray-200/60 dark:border-gray-700/60" align="end" forceMount>
-                
+              <DropdownMenuContent className="w-64" align="end" forceMount>
                 {/* User profile information */}
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium leading-none">
+                    <p className="text-sm font-medium">
                       {loading ? 'Loading...' : getDisplayName()}
                     </p>
-                    <p className="text-xs leading-none text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {user?.email || 'No email'}
                     </p>
-                    {/* Subscription status indicator */}
                     <div className="flex items-center mt-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                      <span className={`text-xs ${getPlanColor()}`}>
+                      <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                      <span className="text-xs text-primary font-medium">
                         {getPlanDisplay()}
                       </span>
                     </div>
@@ -202,7 +177,6 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
                 
                 <DropdownMenuSeparator />
                 
-                {/* Desktop menu items */}
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
@@ -216,8 +190,8 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
                   </Link>
                 </DropdownMenuItem>
                 
-                {/* Mobile-only menu items (settings & theme) */}
-                <div className="sm:hidden">
+                {/* Mobile-only settings */}
+                <div className="md:hidden">
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/settings" className="cursor-pointer">
@@ -225,18 +199,11 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <div className="flex items-center px-2 py-1.5 cursor-pointer">
-                      <span className="mr-2 text-sm">Theme</span>
-                      <ModeToggle />
-                    </div>
-                  </DropdownMenuItem>
                 </div>
                 
                 <DropdownMenuSeparator />
                 
-                {/* Logout action with destructive styling */}
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>

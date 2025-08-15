@@ -60,8 +60,8 @@ export function Navigation({
   }
 
   return (
-    <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <div className="container-padding">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Hamburger + Logo */}
           <div className="flex items-center space-x-3">
@@ -69,7 +69,7 @@ export function Navigation({
               variant="ghost"
               size="sm"
               onClick={toggleMobileMenu}
-              className="md:hidden transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-800 relative z-50 p-2"
+              className="md:hidden transition-all duration-200 hover:scale-105 hover:bg-muted relative z-50 p-2"
               aria-label="Toggle navigation menu"
             >
               <div className="relative w-5 h-5">
@@ -78,8 +78,8 @@ export function Navigation({
               </div>
             </Button>
             <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-black dark:text-white" />
-              <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
+              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-lg sm:text-xl font-bold tracking-tight">AgenticPilot</span>
             </Link>
           </div>
 
@@ -144,13 +144,13 @@ export function Navigation({
                   variant="outline"
                   onClick={handleSignIn}
                   disabled={isSignInLoading}
-                  className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
+                  className="text-sm"
                 >
                   {isSignInLoading ? "Signing In..." : "Sign In"}
                 </Button>
                 <Button
                   onClick={onSignUp}
-                  className="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="text-sm"
                 >
                   Get Started
                 </Button>
@@ -219,15 +219,15 @@ export function Navigation({
           />
           
           {/* Side Drawer */}
-          <div className={`fixed top-0 left-0 h-screen w-80 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 z-50 md:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
+          <div className={`fixed top-0 left-0 h-screen w-80 bg-background border-r border-border z-50 md:hidden transform transition-transform duration-300 ease-in-out shadow-2xl ${
             isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}>
             
             {/* Drawer Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <Link href="/" className="flex items-center space-x-2" onClick={toggleMobileMenu}>
-                <Bot className="h-8 w-8 text-black dark:text-white" />
-                <span className="text-xl font-bold text-black dark:text-white">AgenticPilot</span>
+                <Bot className="h-8 w-8 text-primary" />
+                <span className="text-xl font-bold tracking-tight">AgenticPilot</span>
               </Link>
               <Button 
                 variant="ghost" 
@@ -242,7 +242,7 @@ export function Navigation({
 
             {/* User Info Section (if authenticated) */}
             {isAuthenticated && user && (
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+              <div className="p-6 border-b border-border">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -289,7 +289,7 @@ export function Navigation({
               </div>
               
               {/* Action Buttons */}
-              <div className="px-6 py-6 border-t border-gray-200 dark:border-gray-800 space-y-3">
+              <div className="px-6 py-6 border-t border-border space-y-3">
                 {isAuthenticated ? (
                   <Button
                     variant="outline"
@@ -308,7 +308,7 @@ export function Navigation({
                       onSignUp()
                       toggleMobileMenu()
                     }}
-                    className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-all duration-200"
+                    className="w-full transition-all duration-200"
                   >
                     Get Started
                     <ArrowRight className="ml-2 h-4 w-4" />

@@ -39,8 +39,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
   return (
-    // Main dashboard container with full height and theming
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+    // Main dashboard container with Supabase-inspired design
+    <div className="min-h-screen bg-background text-foreground">
       
       {/* Fixed navbar component spanning full width */}
       <DashboardNavbar toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
@@ -51,19 +51,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Sidebar navigation component */}
         <DashboardSidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-        {/* Main content area with responsive margins and overflow handling */}
+        {/* Main content area with responsive margins */}
         <div className="flex-1 lg:ml-80 min-w-0">
           {/* Content wrapper with responsive padding */}
-          <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+          <div className="container-padding py-6 sm:py-8">
             {/* Page-specific content rendered here */}
             {children}
           </div>
         </div>
 
-        {/* Mobile sidebar backdrop overlay - only visible when sidebar is open */}
+        {/* Mobile sidebar backdrop overlay */}
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity duration-300"
             onClick={toggleSidebar}
           />
         )}

@@ -49,12 +49,12 @@ export default function GmailAutomation() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600/20 rounded-lg flex items-center justify-center">
-            <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+            <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Gmail Automation</h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Gmail Automation</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               AI-powered email automation and response management
             </p>
           </div>
@@ -65,15 +65,16 @@ export default function GmailAutomation() {
             variant={isEnabled ? "default" : "secondary"}
             className={
               isEnabled
-                ? "bg-green-600/20 text-green-400 border-green-600/30"
-                : "bg-yellow-600/20 text-yellow-400 border-yellow-600/30"
+                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                : "bg-amber-500/20 text-amber-400 border-amber-500/30"
             }
           >
             {isEnabled ? "Active" : "Paused"}
           </Badge>
           <Button
             onClick={() => setIsEnabled(!isEnabled)}
-            className={isEnabled ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+            variant={isEnabled ? "destructive" : "default"}
+            size="sm"
           >
             {isEnabled ? (
               <>
@@ -87,7 +88,7 @@ export default function GmailAutomation() {
               </>
             )}
           </Button>
-          <Button>
+          <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
             New Template
           </Button>
@@ -99,14 +100,14 @@ export default function GmailAutomation() {
         {stats.map((stat, index) => {
           const IconComponent = stat.icon
           return (
-            <Card key={index} className="border-gray-200 dark:border-gray-800">
+            <Card key={index} className="card-elevated">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
-                    <p className="text-xl sm:text-2xl font-bold mt-1">{stat.value}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                    <p className="text-xl sm:text-2xl font-bold mt-1 text-foreground">{stat.value}</p>
                   </div>
-                  <IconComponent className="w-8 h-8 text-blue-600" />
+                  <IconComponent className="w-8 h-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -115,7 +116,7 @@ export default function GmailAutomation() {
       </div>
 
       {/* Email Templates */}
-      <Card className="border-gray-200 dark:border-gray-800">
+      <Card className="card-elevated">
         <CardHeader>
           <CardTitle className="text-xl font-semibold">Email Templates</CardTitle>
           <CardDescription>Manage your automated email response templates</CardDescription>
@@ -124,11 +125,11 @@ export default function GmailAutomation() {
           {templates.map((template) => (
             <div
               key={template.id}
-              className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:bg-muted/50 transition-colors"
+              className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-3">
-                  <h3 className="font-semibold">{template.name}</h3>
+                  <h3 className="font-semibold text-foreground">{template.name}</h3>
                   <Badge variant={template.isActive ? "default" : "secondary"}>
                     {template.isActive ? "Active" : "Inactive"}
                   </Badge>
@@ -140,15 +141,15 @@ export default function GmailAutomation() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg"
+                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Subject: {template.subject}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{template.preview}</p>
-              <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm font-medium text-muted-foreground mb-1">Subject: {template.subject}</p>
+              <p className="text-sm text-muted-foreground mb-3">{template.preview}</p>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>{template.responses} responses sent</span>
                 <span>Last used: 2 hours ago</span>
               </div>
@@ -158,7 +159,7 @@ export default function GmailAutomation() {
       </Card>
 
       {/* Recent Activity */}
-      <Card className="border-gray-200 dark:border-gray-800">
+      <Card className="card-elevated">
         <CardHeader>
           <CardTitle className="text-xl font-semibold">Recent Auto-Replies</CardTitle>
           <CardDescription>Latest automated email responses sent by the system</CardDescription>
@@ -172,13 +173,13 @@ export default function GmailAutomation() {
           ].map((reply, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 text-blue-600" />
+                <Mail className="w-4 h-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium">{reply.email}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Template: {reply.template}</p>
+                  <p className="text-sm font-medium text-foreground">{reply.email}</p>
+                  <p className="text-xs text-muted-foreground">Template: {reply.template}</p>
                 </div>
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{reply.time}</span>
+              <span className="text-xs text-muted-foreground">{reply.time}</span>
             </div>
           ))}
         </CardContent>

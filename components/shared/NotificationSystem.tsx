@@ -87,43 +87,43 @@ export function NotificationSystem({
   const getIcon = (type: Notification["type"]) => {
     switch (type) {
       case "success":
-        return <CheckCircle className="h-5 w-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-emerald-500" />
       case "warning":
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />
+        return <AlertTriangle className="h-5 w-5 text-amber-500" />
       case "error":
-        return <AlertTriangle className="h-5 w-5 text-red-500" />
+        return <AlertTriangle className="h-5 w-5 text-destructive" />
       case "info":
       default:
-        return <Info className="h-5 w-5 text-gray-500" />
+        return <Info className="h-5 w-5 text-primary" />
     }
   }
 
   const getBorderColor = (type: Notification["type"]) => {
     switch (type) {
       case "success":
-        return "border-l-green-500"
+        return "border-l-emerald-500"
       case "warning":
-        return "border-l-yellow-500"
+        return "border-l-amber-500"
       case "error":
-        return "border-l-red-500"
+        return "border-l-destructive"
       case "info":
       default:
-        return "border-l-blue-500"
+        return "border-l-primary"
     }
   }
 
   const getCategoryBadgeColor = (category: Notification["category"]) => {
     switch (category) {
       case "system":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+        return "bg-muted/50 text-muted-foreground border-border"
       case "automation":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+        return "bg-primary/10 text-primary border-primary/20"
       case "alert":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+        return "bg-destructive/10 text-destructive border-destructive/20"
       case "update":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+        return "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted/50 text-muted-foreground border-border"
     }
   }
 
@@ -171,7 +171,7 @@ export function NotificationSystem({
           <div className="relative">
             <Bell className="h-6 w-6" />
             {unreadCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center p-0">
+              <Badge className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs h-5 w-5 rounded-full flex items-center justify-center p-0">
                 {unreadCount > 9 ? "9+" : unreadCount}
               </Badge>
             )}
@@ -238,7 +238,7 @@ export function NotificationSystem({
             <Card
               key={notification.id}
               className={`border-l-4 ${getBorderColor(notification.type)} ${
-                !notification.read ? "bg-gray-50 dark:bg-gray-900/50" : ""
+                !notification.read ? "bg-muted/30 card-elevated" : "card-elevated"
               } transition-all hover:shadow-md`}
             >
               <CardContent className="p-4">
@@ -254,7 +254,7 @@ export function NotificationSystem({
                             {notification.title}
                           </h3>
                           {!notification.read && (
-                            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                            <div className="w-2 h-2 bg-primary rounded-full"></div>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">

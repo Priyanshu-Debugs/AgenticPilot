@@ -32,32 +32,32 @@ interface AutomationControllerProps {
 
 const statusConfig = {
   running: {
-    color: "bg-green-500",
-    textColor: "text-green-700 dark:text-green-300",
+    color: "bg-emerald-500",
+    textColor: "text-emerald-600",
     badge: "Running",
     icon: Play
   },
   paused: {
-    color: "bg-yellow-500",
-    textColor: "text-yellow-700 dark:text-yellow-300",
+    color: "bg-amber-500",
+    textColor: "text-amber-600",
     badge: "Paused",
     icon: Pause
   },
   stopped: {
-    color: "bg-gray-500",
-    textColor: "text-gray-700 dark:text-gray-300",
+    color: "bg-muted-foreground",
+    textColor: "text-muted-foreground",
     badge: "Stopped",
     icon: Square
   },
   error: {
-    color: "bg-red-500",
-    textColor: "text-red-700 dark:text-red-300",
+    color: "bg-destructive",
+    textColor: "text-destructive",
     badge: "Error",
     icon: AlertTriangle
   },
   completed: {
-    color: "bg-blue-500",
-    textColor: "text-blue-700 dark:text-blue-300",
+    color: "bg-primary",
+    textColor: "text-primary",
     badge: "Completed",
     icon: CheckCircle
   }
@@ -91,7 +91,7 @@ export function AutomationController({ tasks, onStartTask, onPauseTask, onStopTa
           const StatusIcon = config.icon
 
           return (
-            <Card key={task.id} className="overflow-hidden">
+            <Card key={task.id} className="overflow-hidden card-elevated">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -247,7 +247,7 @@ export function AutomationController({ tasks, onStartTask, onPauseTask, onStopTa
       </div>
 
       {tasks.length === 0 && (
-        <Card>
+        <Card className="card-elevated">
           <CardContent className="text-center py-8">
             <Zap className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No Automations Found</h3>
