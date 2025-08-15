@@ -161,6 +161,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+      const redirectUrl = `${siteUrl}/auth/callback`
+        
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -168,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: {
             full_name: fullName || '',
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`
+          emailRedirectTo: redirectUrl
         }
       })
 
@@ -216,8 +219,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+      const redirectUrl = `${siteUrl}/auth/reset-password?type=recovery`
+        
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password?type=recovery`,
+        redirectTo: redirectUrl,
       })
 
       if (error) {
