@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,7 +14,7 @@ import { useAuth } from "@/utils/auth/AuthProvider"
 import { useRouter, useSearchParams } from "next/navigation"
 import { validatePassword } from "@/lib/password-validation"
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -323,5 +323,45 @@ export default function ResetPassword() {
         </Card>
       </div>
     </div>
+  )
+}
+
+// Loading component for Suspense fallback
+function ResetPasswordLoading() {
+  return (
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col">
+      {/* Navigation */}
+      <nav className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-black/80 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-2">
+              <Bot className="h-8 w-8 text-black dark:text-white" />
+              <span className="text-xl font-bold">AgenticPilot</span>
+            </Link>
+            <ModeToggle />
+          </div>
+        </div>
+      </nav>
+
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md border-gray-200 dark:border-gray-800">
+          <CardContent className="pt-6 text-center">
+            <div className="animate-pulse space-y-4">
+              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<ResetPasswordLoading />}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }
