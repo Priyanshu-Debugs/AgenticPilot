@@ -42,8 +42,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages, except reset-password
   if (request.nextUrl.pathname.startsWith('/auth')) {
+    // Allow access to reset-password page even if authenticated
+    if (request.nextUrl.pathname === '/auth/reset-password') {
+      return response
+    }
+    
     if (user) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }

@@ -11,6 +11,9 @@ interface AuthContextType {
   signOut: () => Promise<void>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>
+  resetPassword: (email: string) => Promise<{ error: any }>
+  updatePassword: (newPassword: string) => Promise<{ error: any }>
+  refreshSession: () => Promise<{ error: any }>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,15 +22,29 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
   signIn: async () => ({ error: null }),
   signUp: async () => ({ error: null }),
+  resetPassword: async () => ({ error: null }),
+  updatePassword: async () => ({ error: null }),
+  refreshSession: async () => ({ error: null }),
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isPasswordResetFlow, setIsPasswordResetFlow] = useState(false)
   const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
+    // Check if we're coming from a password reset link
+    const urlParams = new URLSearchParams(window.location.search)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1))
+    const isPasswordReset = urlParams.has('type') && urlParams.get('type') === 'recovery'
+    const hasResetTokens = hashParams.has('access_token') || hashParams.has('refresh_token')
+    
+    if (isPasswordReset || hasResetTokens) {
+      setIsPasswordResetFlow(true)
+    }
+
     // Get initial session
     const getInitialSession = async () => {
       try {
@@ -54,9 +71,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Handle redirects based on auth state
         if (event === 'SIGNED_IN') {
-          router.push('/dashboard')
-          router.refresh()
+          // Check if we're on the reset password page - if so, don't redirect
+          const currentPath = window.location.pathname
+          if (currentPath === '/auth/reset-password') {
+            // Don't redirect, user is in password reset flow
+            return
+          }
+          
+          // Check URL parameters for password reset indicators
+          const urlParams = new URLSearchParams(window.location.search)
+          const isPasswordReset = urlParams.has('type') && urlParams.get('type') === 'recovery'
+          
+          if (isPasswordReset || isPasswordResetFlow) {
+            // This is a password reset session, redirect to reset password page
+            setIsPasswordResetFlow(true)
+            router.push('/auth/reset-password')
+            router.refresh()
+          } else {
+            // Normal sign-in, redirect to dashboard
+            router.push('/dashboard')
+            router.refresh()
+          }
         } else if (event === 'SIGNED_OUT') {
+          setIsPasswordResetFlow(false)
           router.push('/')
           router.refresh()
         }
@@ -123,12 +160,79 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password?type=recovery`,
+      })
+
+      if (error) {
+        console.error('Reset password error:', error)
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error) {
+      console.error('Unexpected reset password error:', error)
+      return { error }
+    }
+  }
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+      // First, check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError || !session) {
+        console.error('No valid session for password update:', sessionError)
+        return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        console.error('Update password error:', error)
+        return { error }
+      }
+
+      // Reset the password reset flow state
+      setIsPasswordResetFlow(false)
+
+      return { error: null }
+    } catch (error) {
+      console.error('Unexpected update password error:', error)
+      return { error }
+    }
+  }
+
+  const refreshSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      
+      if (error) {
+        console.error('Refresh session error:', error)
+        return { error }
+      }
+
+      setUser(session?.user ?? null)
+      return { error: null }
+    } catch (error) {
+      console.error('Unexpected refresh session error:', error)
+      return { error }
+    }
+  }
+
   const value = {
     user,
     loading,
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    updatePassword,
+    refreshSession,
   }
 
   return (
