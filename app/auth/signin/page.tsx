@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,8 +13,9 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
 import { RateLimitDisplay } from "@/components/ui/rate-limit-display"
 import { RateLimitResult } from "@/lib/rate-limiting"
+import { useSearchParams } from "next/navigation"
 
-export default function SignIn() {
+function SignIn() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -23,6 +24,33 @@ export default function SignIn() {
   const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
 
   const { signIn, checkSignInRateLimit } = useAuth()
+  const searchParams = useSearchParams()
+
+  // Check for URL parameters with error messages
+  useEffect(() => {
+    const urlError = searchParams.get('error')
+    const urlMessage = searchParams.get('message')
+    
+    if (urlError && urlMessage) {
+      switch (urlError) {
+        case 'verification_failed':
+          setError(`Email verification failed: ${decodeURIComponent(urlMessage)}`)
+          break
+        case 'no_code':
+          setError('Email verification link is invalid or malformed.')
+          break
+        case 'access_denied':
+          if (urlMessage.includes('expired')) {
+            setError('Email verification link has expired. Please request a new sign-up.')
+          } else {
+            setError('Email verification was denied. Please try signing up again.')
+          }
+          break
+        default:
+          setError(decodeURIComponent(urlMessage))
+      }
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -174,5 +202,13 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignIn />
+    </Suspense>
   )
 }
