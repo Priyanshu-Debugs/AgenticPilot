@@ -10,22 +10,34 @@ import { Label } from "@/components/ui/label"
 import { Bot, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/utils/auth/AuthProvider"
 
 export default function SignIn() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("")
 
-    // Simulate authentication
-    setTimeout(() => {
+    try {
+      const { error } = await signIn(email, password)
+      
+      if (error) {
+        setError(error.message || "An error occurred during sign in")
+      }
+      // Success redirect is handled by AuthProvider
+    } catch (err) {
+      setError("An unexpected error occurred")
+    } finally {
       setIsLoading(false)
-      window.location.href = "/dashboard"
-    }, 1500)
+    }
   }
 
   return (
@@ -51,6 +63,11 @@ export default function SignIn() {
             <p className="text-gray-600 dark:text-gray-400">Welcome back to AgenticPilot</p>
           </CardHeader>
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+                {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

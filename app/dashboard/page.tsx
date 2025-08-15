@@ -13,6 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
 import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock } from "lucide-react"
 import Link from "next/link"
+// Auth and profile hooks
+import { useAuth } from "@/utils/auth/AuthProvider"
+import { useUserProfile } from "@/utils/hooks/useUserProfile"
 
 /**
  * Dashboard Component
@@ -32,6 +35,10 @@ import Link from "next/link"
  * - Quick access to all automation modules
  */
 export default function Dashboard() {
+  const { user } = useAuth()
+  const { profile, loading } = useUserProfile()
+
+
   // Mock automation task data with type safety
   const [automationTasks, setAutomationTasks] = useState([
     {
@@ -176,6 +183,14 @@ export default function Dashboard() {
           <p className="text-sm sm:text-base text-muted-foreground">
             Monitor and control your AI automation workflows
           </p>
+          {profile && (
+            <div className="flex items-center mt-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-xs text-muted-foreground">
+                {profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)} Plan Active
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button>

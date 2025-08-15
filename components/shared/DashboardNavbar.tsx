@@ -17,6 +17,8 @@ import {
 import { Menu, Bell, Settings, User, CreditCard, LogOut, Bot, X } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/utils/auth/AuthProvider"
+import { useUserProfile } from "@/utils/hooks/useUserProfile"
 
 // Props interface for type safety
 interface DashboardNavbarProps {
@@ -42,10 +44,57 @@ interface DashboardNavbarProps {
  * - Smooth transitions and hover effects
  */
 export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavbarProps) {
-  // Handle user logout - redirects to sign-in page
-  const handleLogout = () => {
-    // TODO: Implement proper logout logic (clear tokens, etc.)
-    window.location.href = "/auth/signin"
+  const { user, signOut } = useAuth()
+  const { profile, loading } = useUserProfile()
+
+  // Handle user logout
+  const handleLogout = async () => {
+    await signOut()
+  }
+
+  // Generate user initials for avatar fallback
+  const getUserInitials = () => {
+    if (profile?.full_name) {
+      return profile.full_name
+        .split(' ')
+        .map(name => name[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    }
+    if (user?.email) {
+      return user.email.slice(0, 2).toUpperCase()
+    }
+    return 'U'
+  }
+
+  // Get display name
+  const getDisplayName = () => {
+    return profile?.full_name || user?.email?.split('@')[0] || 'User'
+  }
+
+  // Get plan display
+  const getPlanDisplay = () => {
+    if (!profile) return 'Loading...'
+    
+    const planMap = {
+      starter: 'Starter Plan',
+      professional: 'Pro Plan',
+      enterprise: 'Enterprise'
+    }
+    return planMap[profile.plan] || 'Starter Plan'
+  }
+
+  // Get plan color
+  const getPlanColor = () => {
+    if (!profile) return 'text-gray-500'
+    
+    const colorMap = {
+      starter: 'text-blue-600 dark:text-blue-400',
+      professional: 'text-green-600 dark:text-green-400',
+      enterprise: 'text-purple-600 dark:text-purple-400'
+    }
+    return colorMap[profile.plan] || 'text-blue-600 dark:text-blue-400'
   }
 
   return (
@@ -121,8 +170,10 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-all duration-200 border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
                   <Avatar className="h-6 w-6 sm:h-8 sm:w-8 border border-gray-200 dark:border-gray-700">
-                    <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                    <AvatarFallback className="text-xs font-medium bg-gradient-to-br from-blue-500 to-purple-600 text-white">JD</AvatarFallback>
+                    <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt="User" />
+                    <AvatarFallback className="text-xs font-medium bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                      {getUserInitials()}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -133,14 +184,18 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
                 {/* User profile information */}
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium leading-none">John Doe</p>
+                    <p className="text-sm font-medium leading-none">
+                      {loading ? 'Loading...' : getDisplayName()}
+                    </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      john.doe@example.com
+                      {user?.email || 'No email'}
                     </p>
                     {/* Subscription status indicator */}
                     <div className="flex items-center mt-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                      <span className="text-xs text-green-600 dark:text-green-400">Pro Plan</span>
+                      <span className={`text-xs ${getPlanColor()}`}>
+                        {getPlanDisplay()}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Bot, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/utils/auth/AuthProvider"
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -21,22 +22,41 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
+  const { signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("")
+    setSuccess("")
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!")
+      setError("Passwords don't match!")
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long")
       return
     }
 
     setIsLoading(true)
 
-    // Simulate account creation
-    setTimeout(() => {
+    try {
+      const { error } = await signUp(formData.email, formData.password, formData.name)
+      
+      if (error) {
+        setError(error.message || "An error occurred during sign up")
+      } else {
+        setSuccess("Account created! Please check your email to verify your account before signing in.")
+      }
+    } catch (err) {
+      setError("An unexpected error occurred")
+    } finally {
       setIsLoading(false)
-      window.location.href = "/dashboard"
-    }, 2000)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +89,16 @@ export default function SignUp() {
             <p className="text-gray-600 dark:text-gray-400">Create your AgenticPilot account</p>
           </CardHeader>
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
+                {success}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
