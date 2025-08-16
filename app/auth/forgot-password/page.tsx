@@ -28,7 +28,7 @@ export default function ForgotPassword() {
   const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
   const [urlError, setUrlError] = useState("")
 
-  const { resetPassword, checkPasswordResetRateLimit } = useAuth()
+  const { forgotPassword, checkPasswordResetRateLimit } = useAuth()
 
   // Check for URL parameters on component mount
   useEffect(() => {
@@ -74,13 +74,9 @@ export default function ForgotPassword() {
     }
 
     try {
-      const { error, rateLimitExceeded } = await resetPassword(email)
-      
-      if (rateLimitExceeded) {
-        setError("Too many password reset attempts. Please wait before trying again.")
-        setRateLimitResult(await checkPasswordResetRateLimit())
-      } else if (error) {
-        setError(error.message || "An error occurred while sending reset email")
+      const { error } = await forgotPassword(email)
+      if (error) {
+        setError(error || "An error occurred while sending reset email")
         setRateLimitResult(await checkPasswordResetRateLimit())
       } else {
         setSuccess(true)

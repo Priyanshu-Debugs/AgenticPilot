@@ -96,17 +96,12 @@ function SignIn() {
     }
 
     try {
-      const { error } = await signIn(email, password)
-      
-      if (error) {
-        if (error.rateLimitExceeded) {
-          setError("Too many sign in attempts. Please wait before trying again.")
-        } else {
-          setError(error.message || "An error occurred during sign in")
-        }
+      const result = await signIn(email, password)
+      if (result.error) {
+        setError(result.error || "An error occurred during sign in")
         setRateLimitResult(await checkSignInRateLimit())
       }
-      // Success redirect is handled by AuthProvider
+      // Success redirect is now handled by AuthProvider
     } catch (err) {
       setError("An unexpected error occurred")
       setRateLimitResult(await checkSignInRateLimit())
@@ -120,12 +115,12 @@ function SignIn() {
     setError("")
 
     try {
-      const { error } = await signInWithGoogle()
+      const result = await signInWithGoogle()
       
-      if (error) {
-        setError(error.message || "An error occurred during Google sign in")
+      if (result.error) {
+        setError(result.error || "An error occurred during Google sign in")
       }
-      // Success redirect is handled by AuthProvider
+      // Success redirect is now handled by AuthProvider
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {

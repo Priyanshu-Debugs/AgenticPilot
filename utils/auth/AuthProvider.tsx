@@ -1,9 +1,17 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { createClient } from '@/utils/supabase/client'
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
+
+interface AuthUser {
+  id: string
+  email: string | undefined
+  full_name?: string
+  avatar_url?: string
+  created_at?: string
+  updated_at?: string
+}
 
 interface RateLimitResult {
   allowed: boolean
@@ -14,120 +22,55 @@ interface RateLimitResult {
 }
 
 interface AuthContextType {
-  user: User | null
+  user: AuthUser | null
   loading: boolean
-  signOut: () => Promise<void>
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signInWithGoogle: () => Promise<{ error: any }>
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>
-  resetPassword: (email: string) => Promise<{ error: any, rateLimitExceeded?: boolean }>
-  updatePassword: (newPassword: string) => Promise<{ error: any }>
-  refreshSession: () => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string; redirectTo?: string }>
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ success: boolean; error?: string; message?: string; redirectTo?: string }>
+  signOut: () => Promise<{ success: boolean; error?: string }>
+  signInWithGoogle: () => Promise<{ success: boolean; error?: string; url?: string }>
+  forgotPassword: (email: string) => Promise<{ success: boolean; error?: string; message?: string }>
+  resetPassword: (password: string, confirmPassword: string) => Promise<{ success: boolean; error?: string; message?: string; redirectTo?: string }>
+  checkAuthStatus: () => Promise<void>
   checkPasswordResetRateLimit: () => Promise<RateLimitResult>
   checkSignInRateLimit: () => Promise<RateLimitResult>
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  signOut: async () => {},
-  signIn: async () => ({ error: null }),
-  signInWithGoogle: async () => ({ error: null }),
-  signUp: async () => ({ error: null }),
-  resetPassword: async () => ({ error: null }),
-  updatePassword: async () => ({ error: null }),
-  refreshSession: async () => ({ error: null }),
-  checkPasswordResetRateLimit: async () => ({ allowed: true, remaining: 3, resetTime: 0, isBlocked: false }),
-  checkSignInRateLimit: async () => ({ allowed: true, remaining: 5, resetTime: 0, isBlocked: false }),
-})
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isPasswordResetFlow, setIsPasswordResetFlow] = useState(false)
-  const supabase = createClient()
   const router = useRouter()
 
-  useEffect(() => {
-    // Check if we're coming from a password reset link
-    const urlParams = new URLSearchParams(window.location.search)
-    const hashParams = new URLSearchParams(window.location.hash.substring(1))
-    const isPasswordReset = urlParams.has('type') && urlParams.get('type') === 'recovery'
-    const hasResetTokens = hashParams.has('access_token') || hashParams.has('refresh_token')
-    
-    if (isPasswordReset || hasResetTokens) {
-      setIsPasswordResetFlow(true)
-    }
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
-    // Get initial session
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        if (error) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Error getting session')
-          }
-        }
-        setUser(session?.user ?? null)
-      } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error in getInitialSession')
-        }
-      } finally {
-        setLoading(false)
+  // Check authentication status via API
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/auth/status', {
+        credentials: 'include' // Include cookies
+      })
+      const data = await response.json()
+
+      if (data.authenticated && data.user) {
+        setUser(data.user)
+      } else {
+        setUser(null)
       }
+    } catch (error) {
+      console.error('Auth status check error:', error)
+      setUser(null)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    getInitialSession()
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        // Only log non-sensitive information in development
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Auth state changed:', event)
-        }
-        setUser(session?.user ?? null)
-        setLoading(false)
-        
-        // Handle redirects based on auth state
-        if (event === 'SIGNED_IN') {
-          // Check if we're on the reset password page - if so, don't redirect
-          const currentPath = window.location.pathname
-          if (currentPath === '/auth/reset-password') {
-            // Don't redirect, user is in password reset flow
-            return
-          }
-          
-          // Check URL parameters for password reset indicators
-          const urlParams = new URLSearchParams(window.location.search)
-          const isPasswordReset = urlParams.has('type') && urlParams.get('type') === 'recovery'
-          
-          if (isPasswordReset || isPasswordResetFlow) {
-            // This is a password reset session, redirect to reset password page
-            setIsPasswordResetFlow(true)
-            router.push('/auth/reset-password')
-            router.refresh()
-          } else {
-            // Normal sign-in, redirect to dashboard
-            router.push('/dashboard')
-            router.refresh()
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setIsPasswordResetFlow(false)
-          router.push('/')
-          router.refresh()
-        }
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase, router])
-
+  // Sign in via API
   const signIn = async (email: string, password: string) => {
-    // Check server-side rate limit before attempting sign in
+    // Check rate limit first
     try {
       const rateLimitResponse = await fetch('/api/rate-limit', {
         method: 'POST',
@@ -139,25 +82,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (!rateLimitResult.allowed) {
         return { 
-          error: { 
-            message: 'Too many sign in attempts. Please wait before trying again.',
-            rateLimitExceeded: true 
-          } 
+          success: false,
+          error: 'Too many sign in attempts. Please wait before trying again.'
         }
       }
     } catch (rateLimitError) {
-      // If rate limit check fails, continue with sign in (fallback)
       console.warn('Rate limit check failed:', rateLimitError)
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
       })
 
-      if (error) {
-        // Record failed attempt for server-side rate limiting
+      const data = await response.json()
+
+      if (data.success) {
+        await checkAuthStatus() // Refresh user data
+        // Redirect to dashboard after successful sign-in
+        router.push(data.redirectTo || '/dashboard')
+        return { 
+          success: true, 
+          redirectTo: data.redirectTo 
+        }
+      } else {
+        // Record failed attempt for rate limiting
         try {
           await fetch('/api/rate-limit', {
             method: 'PUT',
@@ -167,16 +121,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (recordError) {
           console.warn('Failed to record rate limit attempt:', recordError)
         }
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Sign in error:', error.message)
-        }
-        return { error }
-      }
 
-      return { error: null }
+        return { 
+          success: false, 
+          error: data.error || 'Sign in failed' 
+        }
+      }
     } catch (error) {
-      // Record failed attempt for server-side rate limiting
+      // Record failed attempt for rate limiting
       try {
         await fetch('/api/rate-limit', {
           method: 'PUT',
@@ -186,125 +138,131 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (recordError) {
         console.warn('Failed to record rate limit attempt:', recordError)
       }
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected sign in error')
+
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
       }
-      return { error }
     }
   }
 
-  const signInWithGoogle = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
-        }
-      })
-
-      if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Google sign in error:', error.message)
-        }
-        return { error }
-      }
-
-      return { error: null }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected Google sign in error')
-      }
-      return { error }
-    }
-  }
-
+  // Sign up via API
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName || '',
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          full_name: fullName 
+        }),
       })
 
-      if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Sign up error details:', {
-            message: error.message,
-            status: error.status,
-            details: error
-          })
-        }
-        
-        // Provide user-friendly error messages
-        let userMessage = error.message
-        if (error.message?.includes('User already registered')) {
-          userMessage = 'An account with this email already exists. Please sign in instead.'
-        } else if (error.message?.includes('Database error')) {
-          userMessage = 'There was a technical issue creating your account. Please try again in a moment.'
-        } else if (error.message?.includes('Invalid email')) {
-          userMessage = 'Please enter a valid email address.'
-        } else if (error.message?.includes('Password')) {
-          userMessage = 'Password does not meet requirements. Please check the password criteria.'
-        }
-        
-        return { error: { ...error, message: userMessage } }
-      }
+      const data = await response.json()
 
-      // If signup was successful and we have a user, try to set up welcome data manually
-      if (data.user && !error) {
-        try {
-          // Call the manual welcome setup function
-          const { error: welcomeError } = await supabase.rpc('setup_user_welcome', {
-            user_id: data.user.id,
-            user_email: email,
-            user_name: fullName || ''
-          })
-          
-          if (welcomeError) {
-            console.warn('Welcome setup failed (non-critical):', welcomeError)
+      if (data.success) {
+        if (data.requiresEmailConfirmation) {
+          return { 
+            success: true, 
+            message: data.message 
           }
-        } catch (welcomeError) {
-          // This is non-critical - don't fail signup if welcome setup fails
-          console.warn('Could not setup welcome data:', welcomeError)
+        } else {
+          await checkAuthStatus() // Refresh user data
+          // Redirect to dashboard after successful sign-up
+          router.push(data.redirectTo || '/dashboard')
+          return { 
+            success: true, 
+            redirectTo: data.redirectTo 
+          }
         }
-      }
-
-      // Note: User will need to confirm email before they can sign in
-      return { error: null }
-    } catch (error: any) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected sign up error:', error)
-      }
-      return { 
-        error: { 
-          message: 'An unexpected error occurred during sign up. Please try again.',
-          originalError: error
-        } 
-      }
-    }
-  }
-
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error && process.env.NODE_ENV === 'development') {
-        console.error('Sign out error:', error.message)
+      } else {
+        return { 
+          success: false, 
+          error: data.error || 'Sign up failed' 
+        }
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected sign out error')
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
       }
     }
   }
 
-  const resetPassword = async (email: string) => {
-    // Check server-side rate limit before attempting password reset
+  // Sign out via API
+  const signOut = async () => {
+    try {
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setUser(null)
+        // Redirect to landing page after successful sign-out
+        router.push('/')
+        return { success: true }
+      } else {
+        return { 
+          success: false, 
+          error: data.error || 'Sign out failed' 
+        }
+      }
+    } catch (error) {
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
+      }
+    }
+  }
+
+  // Sign in with Google via API
+  const signInWithGoogle = async () => {
+    try {
+      const response = await fetch('/api/auth/oauth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          provider: 'google',
+          redirectTo: '/dashboard'
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.url) {
+        // Redirect to Google OAuth
+        window.location.href = data.url
+        return { 
+          success: true, 
+          url: data.url 
+        }
+      } else {
+        return { 
+          success: false, 
+          error: data.error || 'OAuth failed' 
+        }
+      }
+    } catch (error) {
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
+      }
+    }
+  }
+
+  // Forgot password via API
+  const forgotPassword = async (email: string) => {
+    // Check rate limit first
     try {
       const rateLimitResponse = await fetch('/api/rate-limit', {
         method: 'POST',
@@ -316,45 +274,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (!rateLimitResult.allowed) {
         return { 
-          error: { 
-            message: 'Too many password reset attempts. Please wait before trying again.',
-            rateLimitExceeded: true 
-          },
-          rateLimitExceeded: true
+          success: false,
+          error: 'Too many password reset attempts. Please wait before trying again.'
         }
       }
     } catch (rateLimitError) {
-      // If rate limit check fails, continue with reset (fallback)
       console.warn('Rate limit check failed:', rateLimitError)
     }
 
     try {
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
-      const redirectUrl = `${siteUrl}/auth/reset-password?type=recovery`
-        
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password?type=recovery`,
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email }),
       })
 
-      if (error) {
-        // Record failed attempt for server-side rate limiting
-        try {
-          await fetch('/api/rate-limit', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'password-reset', identifier: email })
-          })
-        } catch (recordError) {
-          console.warn('Failed to record rate limit attempt:', recordError)
-        }
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Reset password error:', error.message)
-        }
-        return { error }
-      }
+      const data = await response.json()
 
-      // Record successful attempt for server-side rate limiting (still counts toward limit)
+      // Always record attempt for rate limiting
       try {
         await fetch('/api/rate-limit', {
           method: 'PUT',
@@ -364,10 +304,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (recordError) {
         console.warn('Failed to record rate limit attempt:', recordError)
       }
-      
-      return { error: null }
+
+      if (data.success) {
+        return { 
+          success: true, 
+          message: data.message 
+        }
+      } else {
+        return { 
+          success: false, 
+          error: data.error || 'Password reset failed' 
+        }
+      }
     } catch (error) {
-      // Record failed attempt for server-side rate limiting
+      // Record failed attempt for rate limiting
       try {
         await fetch('/api/rate-limit', {
           method: 'PUT',
@@ -377,87 +327,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (recordError) {
         console.warn('Failed to record rate limit attempt:', recordError)
       }
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected reset password error')
+
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
       }
-      return { error }
     }
   }
 
-  const updatePassword = async (newPassword: string) => {
+  // Reset password via API
+  const resetPassword = async (password: string, confirmPassword: string) => {
     try {
-      // First, try to refresh session to ensure we have the latest tokens
-      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
-      
-      if (refreshError) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Session refresh failed:', refreshError.message)
-        }
-        // If refresh fails, try to get current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
-        if (sessionError || !session) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('No valid session for password update')
-          }
-          return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
-        }
-      }
-
-      // Now attempt to update password with refreshed/current session
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          password, 
+          confirmPassword 
+        }),
       })
 
-      if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Update password error:', error.message)
+      const data = await response.json()
+
+      if (data.success) {
+        await checkAuthStatus() // Refresh user data
+        // Redirect to dashboard after successful password reset
+        router.push(data.redirectTo || '/dashboard')
+        return { 
+          success: true, 
+          message: data.message,
+          redirectTo: data.redirectTo 
         }
-        
-        // Handle specific session errors
-        if (error.message?.includes('Auth session missing') || 
-            error.message?.includes('session_not_found') ||
-            error.message?.includes('invalid_token')) {
-          return { error: { message: 'Authentication session expired. Please request a new password reset link.' } }
+      } else {
+        return { 
+          success: false, 
+          error: data.error || 'Password reset failed' 
         }
-        
-        return { error }
       }
-
-      // Reset the password reset flow state
-      setIsPasswordResetFlow(false)
-
-      return { error: null }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected update password error')
+      return { 
+        success: false, 
+        error: 'Network error. Please try again.' 
       }
-      return { error }
     }
   }
 
-  const refreshSession = async () => {
-    try {
-      const { data: { session }, error } = await supabase.auth.refreshSession()
-      
-      if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Refresh session error:', error.message)
-        }
-        return { error }
-      }
-
-      setUser(session?.user ?? null)
-      return { error: null }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected refresh session error')
-      }
-      return { error }
-    }
-  }
-
+  // Rate limit checking functions
   const checkPasswordResetRateLimit = async () => {
     try {
       const response = await fetch('/api/rate-limit', {
@@ -473,7 +391,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn('Failed to check password reset rate limit:', error)
     }
     
-    // Fallback to default values if server-side fails
     return { allowed: true, remaining: 3, resetTime: 0, isBlocked: false }
   }
 
@@ -492,34 +409,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn('Failed to check sign-in rate limit:', error)
     }
     
-    // Fallback to default values if server-side fails
     return { allowed: true, remaining: 5, resetTime: 0, isBlocked: false }
   }
+
+  // Initialize auth status on mount
+  useEffect(() => {
+    checkAuthStatus()
+
+    // Listen for auth state changes from Supabase (for real-time updates)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await checkAuthStatus()
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const value = {
     user,
     loading,
     signIn,
-    signInWithGoogle,
     signUp,
     signOut,
+    signInWithGoogle,
+    forgotPassword,
     resetPassword,
-    updatePassword,
-    refreshSession,
+    checkAuthStatus,
     checkPasswordResetRateLimit,
     checkSignInRateLimit,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context

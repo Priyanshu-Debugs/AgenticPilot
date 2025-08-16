@@ -49,7 +49,19 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
 
   // Handle user logout
   const handleLogout = async () => {
-    await signOut()
+    try {
+      const result = await signOut()
+      if (!result.success && result.error) {
+        console.error('Logout error:', result.error)
+        // Even if logout fails, redirect to login page
+        window.location.href = '/'
+      }
+      // Success redirect is handled by AuthProvider
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Force redirect on error
+      window.location.href = '/'
+    }
   }
 
   // Generate user initials for avatar fallback

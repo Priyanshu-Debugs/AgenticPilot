@@ -24,9 +24,7 @@ function ResetPasswordForm() {
   const [success, setSuccess] = useState(false)
   const [isValidSession, setIsValidSession] = useState(false)
 
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const { updatePassword, user, refreshSession } = useAuth()
+  const { resetPassword, user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -76,17 +74,8 @@ function ResetPasswordForm() {
         // This is a valid password reset session
         setIsValidSession(true)
         
-        // If we have access tokens in the hash, try to refresh the session
-        if (hasAccessToken && !user) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Refreshing session from URL tokens...')
-          }
-          try {
-            await refreshSession()
-          } catch (err) {
-            console.error('Failed to refresh session:', err)
-          }
-        }
+  // If we have access tokens in the hash, try to refresh the session
+  // (No longer supported)
         
         // Clean up URL after a delay to allow user to see the page
         const cleanupDelay = sessionValid === 'true' ? 5000 : 2000
@@ -139,25 +128,9 @@ function ResetPasswordForm() {
     }
 
     handlePasswordResetSession()
-  }, [user, router, refreshSession, searchParams])
+  }, [user, router, searchParams])
 
-  const handleRefreshSession = async () => {
-    setIsRefreshing(true)
-    setError("")
-    
-    try {
-      const { error } = await refreshSession()
-      if (error) {
-        setError("Failed to refresh session. Please request a new password reset link.")
-      } else {
-        setError("")
-      }
-    } catch (err) {
-      setError("Failed to refresh session. Please request a new password reset link.")
-    } finally {
-      setIsRefreshing(false)
-    }
-  }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -179,14 +152,9 @@ function ResetPasswordForm() {
     setIsLoading(true)
 
     try {
-      const { error } = await updatePassword(password)
-      
+      const { error } = await resetPassword(password, confirmPassword)
       if (error) {
-        if (error.message?.includes('Auth session missing')) {
-          setError("Your session has expired. Please request a new password reset link.")
-        } else {
-          setError(error.message || "An error occurred while updating password")
-        }
+        setError(error || "An error occurred while updating password")
       } else {
         setSuccess(true)
         // Redirect to dashboard after successful password reset
@@ -194,12 +162,8 @@ function ResetPasswordForm() {
           router.push('/dashboard')
         }, 3000)
       }
-    } catch (err: any) {
-      if (err?.message?.includes('Auth session missing')) {
-        setError("Your session has expired. Please request a new password reset link.")
-      } else {
-        setError("An unexpected error occurred")
-      }
+    } catch (err) {
+      setError("An unexpected error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -301,15 +265,6 @@ function ResetPasswordForm() {
                     {error}
                     {error.includes('session has expired') && (
                       <div className="mt-2 space-y-2">
-                        <Button
-                          onClick={handleRefreshSession}
-                          variant="outline"
-                          size="sm"
-                          disabled={isRefreshing}
-                          className="w-full"
-                        >
-                          {isRefreshing ? "Refreshing..." : "Try Refreshing Session"}
-                        </Button>
                         <Link href="/auth/forgot-password" className="block text-center underline font-medium">
                           Request a new password reset link
                         </Link>

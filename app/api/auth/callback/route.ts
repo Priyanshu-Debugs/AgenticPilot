@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const type = requestUrl.searchParams.get('type')
+  const next = requestUrl.searchParams.get('next') || '/dashboard'
   const origin = requestUrl.origin
 
   if (code) {
@@ -37,19 +38,54 @@ export async function GET(request: NextRequest) {
       }
 
       if (data.session) {
-        // Try to set up welcome notification for new users
+        // Set up user data for new users
         try {
-          const { error: welcomeError } = await supabase.rpc('setup_user_welcome', {
-            user_id: data.session.user.id,
-            user_email: data.session.user.email || '',
-            user_name: data.session.user.user_metadata?.full_name || ''
-          })
+          // Create user profile if it doesn't exist
+          const { error: profileError } = await supabase
+            .from('user_profiles')
+            .upsert({
+              user_id: data.user.id,
+              full_name: data.user.user_metadata?.full_name || '',
+              avatar_url: data.user.user_metadata?.avatar_url || '',
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id'
+            })
+
+          // Create user settings if it doesn't exist  
+          const { error: settingsError } = await supabase
+            .from('user_settings')
+            .upsert({
+              user_id: data.user.id,
+              theme: 'system',
+              language: 'en',
+              timezone: 'UTC',
+              email_notifications: true,
+              push_notifications: true,
+              marketing_emails: false,
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id'
+            })
+
+          // Create subscription record if it doesn't exist
+          const { error: subscriptionError } = await supabase
+            .from('subscriptions')
+            .upsert({
+              user_id: data.user.id,
+              plan_id: 'free',
+              status: 'active',
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id'
+            })
           
-          if (welcomeError) {
-            console.warn('Welcome setup failed during callback (non-critical):', welcomeError)
-          }
-        } catch (welcomeError) {
-          console.warn('Could not setup welcome data during callback:', welcomeError)
+          if (profileError) console.warn('Profile setup warning:', profileError)
+          if (settingsError) console.warn('Settings setup warning:', settingsError)
+          if (subscriptionError) console.warn('Subscription setup warning:', subscriptionError)
+
+        } catch (setupError) {
+          console.warn('Non-critical user setup error:', setupError)
         }
 
         // For password recovery, redirect to reset password page
@@ -57,8 +93,8 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}/auth/reset-password`)
         }
         
-        // For regular email verification, redirect to dashboard
-        return NextResponse.redirect(`${origin}/dashboard`)
+        // For regular authentication, redirect to the requested page
+        return NextResponse.redirect(`${origin}${next}`)
       }
     } catch (error) {
       console.error('Callback processing error:', error)

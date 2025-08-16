@@ -70,13 +70,14 @@ export default function SignUp() {
     setIsLoading(true)
 
     try {
-      const { error } = await signUp(formData.email, formData.password, formData.name)
+      const result = await signUp(formData.email, formData.password, formData.name)
       
-      if (error) {
-        setError(error.message || "An error occurred during sign up")
-      } else {
-        setSuccess("Account created! Please check your email to verify your account before signing in.")
+      if (result.error) {
+        setError(result.error || "An error occurred during sign up")
+      } else if (result.message) {
+        setSuccess(result.message)
       }
+      // Success redirect is now handled by AuthProvider if no email confirmation needed
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {
@@ -97,12 +98,12 @@ export default function SignUp() {
     setSuccess("")
 
     try {
-      const { error } = await signInWithGoogle()
+      const result = await signInWithGoogle()
       
-      if (error) {
-        setError(error.message || "An error occurred during Google sign up")
+      if (result.error) {
+        setError(result.error || "An error occurred during Google sign up")
       }
-      // Success redirect is handled by AuthProvider
+      // Success redirect is now handled by AuthProvider
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {
