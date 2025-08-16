@@ -1,10 +1,39 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Settings, Plus, Edit, Trash2, Power, Clock, Play, Pause } from "lucide-react"
+import { Mail, Settings, Plus, Edit, Trash2, Power, Clock, Play, Pause, Loader2 } from "lucide-react"
+import GmailConnection from "@/components/shared/GmailConnection"
+
+// Loading component for Suspense fallback
+function GmailConnectionFallback() {
+  return (
+    <Card className="min-h-[280px]">
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          <Mail className="h-6 w-6 text-blue-600" />
+          <div className="flex-1">
+            <CardTitle className="flex items-center gap-2">
+              Gmail Connection
+              <div className="h-6 w-20 bg-muted animate-pulse rounded-full"></div>
+            </CardTitle>
+            <CardDescription>
+              <div className="h-4 w-80 bg-muted animate-pulse rounded mt-1"></div>
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span className="ml-2">Loading Gmail connection...</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function GmailAutomation() {
   const [isEnabled, setIsEnabled] = useState(true)
@@ -46,6 +75,7 @@ export default function GmailAutomation() {
 
   return (
     <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
+
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div className="flex items-center space-x-3 sm:space-x-4">
@@ -94,6 +124,11 @@ export default function GmailAutomation() {
           </Button>
         </div>
       </div>
+
+      {/* Gmail Connection Component */}
+      <Suspense fallback={<GmailConnectionFallback />}>
+        <GmailConnection />
+      </Suspense>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

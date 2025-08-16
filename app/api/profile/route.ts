@@ -28,11 +28,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get unified profile data from user_profiles table
+    // Get unified profile data from user_profiles table using user_id (RLS compliant)
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single()
 
     const userData = {
@@ -40,12 +40,10 @@ export async function GET(request: NextRequest) {
       email: user.email,
       full_name: profile?.full_name || user.user_metadata?.full_name || '',
       avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || '',
-      company: profile?.company || '',
+      company_name: profile?.company_name || '',
+      job_title: profile?.job_title || '',
+      phone: profile?.phone || '',
       bio: profile?.bio || '',
-      website: profile?.website || '',
-      location: profile?.location || '',
-      timezone: profile?.timezone || 'UTC',
-      plan: profile?.plan || 'starter',
       created_at: user.created_at,
       updated_at: profile?.updated_at
     }
@@ -84,8 +82,8 @@ export async function PUT(request: NextRequest) {
 
     const profileData = await request.json()
     
-    // Validate profile data - allow all profile fields
-    const allowedFields = ['full_name', 'avatar_url', 'company', 'bio', 'website', 'location', 'timezone', 'plan']
+    // Validate profile data - allow all profile fields per RLS schema
+    const allowedFields = ['full_name', 'avatar_url', 'company_name', 'job_title', 'phone', 'bio']
     const filteredData = Object.keys(profileData)
       .filter(key => allowedFields.includes(key))
       .reduce((obj, key) => {
@@ -100,13 +98,15 @@ export async function PUT(request: NextRequest) {
       })
     }
 
-    // Update or insert profile in unified user_profiles table
+    // Update or insert profile in unified user_profiles table (RLS compliant with user_id)
     const { data, error } = await supabase
       .from('user_profiles')
       .upsert({
-        id: user.id,
+        user_id: user.id,  // Use user_id for RLS
         ...filteredData,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'  // Specify conflict resolution column
       })
       .select()
       .single()

@@ -18,6 +18,7 @@ interface AuthContextType {
   loading: boolean
   signOut: () => Promise<void>
   signIn: (email: string, password: string) => Promise<{ error: any }>
+  signInWithGoogle: () => Promise<{ error: any }>
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>
   resetPassword: (email: string) => Promise<{ error: any, rateLimitExceeded?: boolean }>
   updatePassword: (newPassword: string) => Promise<{ error: any }>
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signOut: async () => {},
   signIn: async () => ({ error: null }),
+  signInWithGoogle: async () => ({ error: null }),
   signUp: async () => ({ error: null }),
   resetPassword: async () => ({ error: null }),
   updatePassword: async () => ({ error: null }),
@@ -187,6 +189,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (process.env.NODE_ENV === 'development') {
         console.error('Unexpected sign in error')
+      }
+      return { error }
+    }
+  }
+
+  const signInWithGoogle = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
+        }
+      })
+
+      if (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Google sign in error:', error.message)
+        }
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Unexpected Google sign in error')
       }
       return { error }
     }
@@ -473,6 +500,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     loading,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
     resetPassword,

@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user settings from database
+    // Get user settings from database (RLS will automatically filter by auth.uid())
     const { data: settings, error } = await supabase
       .from('user_settings')
       .select('*')
@@ -43,28 +43,43 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Return default settings if none exist
-    const defaultSettings = {
+    // Return settings from RLS-compliant structure
+    const userSettings = settings || {
+      theme: 'system',
+      language: 'en',
+      timezone: 'UTC',
+      email_notifications: true,
+      push_notifications: true,
+      marketing_emails: false,
+      two_factor_enabled: false,
+      gmail_auto_reply_enabled: false,
+      gmail_reply_confidence_threshold: 0.8
+    }
+
+    // Map to existing frontend structure for backward compatibility
+    const responseSettings = {
       profile: {
         firstName: user.user_metadata?.full_name?.split(' ')[0] || '',
         lastName: user.user_metadata?.full_name?.split(' ')[1] || '',
         email: user.email || '',
         company: '',
-        timezone: 'America/New_York',
-        language: 'en'
+        timezone: userSettings.timezone || 'America/New_York',
+        language: userSettings.language || 'en'
       },
       notifications: {
-        emailNotifications: true,
-        pushNotifications: true,
+        emailNotifications: userSettings.email_notifications ?? true,
+        pushNotifications: userSettings.push_notifications ?? true,
         smsNotifications: false,
         taskCompletion: true,
         lowStock: true,
         systemUpdates: true,
-        weeklyReport: true
+        weeklyReport: true,
+        marketingEmails: userSettings.marketing_emails ?? false
       },
       automation: {
-        gmailEnabled: false,
+        gmailEnabled: userSettings.gmail_auto_reply_enabled ?? false,
         gmailCheckInterval: '5',
+        gmailConfidenceThreshold: userSettings.gmail_reply_confidence_threshold ?? 0.8,
         instagramEnabled: false,
         instagramPostTime: '09:00',
         inventoryEnabled: false,
@@ -72,7 +87,7 @@ export async function GET(request: NextRequest) {
         autoReorder: false
       },
       security: {
-        twoFactorEnabled: false,
+        twoFactorEnabled: userSettings.two_factor_enabled ?? false,
         sessionTimeout: '30',
         passwordExpiry: '90',
         loginNotifications: true
@@ -82,10 +97,13 @@ export async function GET(request: NextRequest) {
         instagramConnected: false,
         inventoryConnected: false,
         webhookUrl: ''
+      },
+      appearance: {
+        theme: userSettings.theme || 'system'
       }
     }
 
-    return NextResponse.json(settings?.settings || defaultSettings)
+    return NextResponse.json(responseSettings)
   } catch (error) {
     console.error('Settings GET API error:', error)
     return NextResponse.json({ 
@@ -136,44 +154,33 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid settings format' }, { status: 400 })
     }
 
-    // First try to update existing settings
-    const { data: existingSettings } = await supabase
-      .from('user_settings')
-      .select('user_id')
-      .eq('user_id', user.id)
-      .single()
-
-    let result
-    if (existingSettings) {
-      // Update existing record
-      result = await supabase
-        .from('user_settings')
-        .update({
-          settings: settings,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id)
-    } else {
-      // Insert new record
-      result = await supabase
-        .from('user_settings')
-        .insert({
-          user_id: user.id,
-          settings: settings,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+    // Map frontend settings to RLS-compliant database structure
+    const dbSettings = {
+      user_id: user.id,
+      theme: settings.appearance?.theme || 'system',
+      language: settings.profile?.language || 'en',
+      timezone: settings.profile?.timezone || 'UTC',
+      email_notifications: settings.notifications?.emailNotifications ?? true,
+      push_notifications: settings.notifications?.pushNotifications ?? true,
+      marketing_emails: settings.notifications?.marketingEmails ?? false,
+      two_factor_enabled: settings.security?.twoFactorEnabled ?? false,
+      gmail_auto_reply_enabled: settings.automation?.gmailEnabled ?? false,
+      gmail_reply_confidence_threshold: settings.automation?.gmailConfidenceThreshold ?? 0.8,
+      updated_at: new Date().toISOString()
     }
 
-    if (result.error) {
-      console.error('Supabase settings error:', {
-        error: result.error,
-        user_id: user.id,
-        operation: existingSettings ? 'update' : 'insert'
+    // Use upsert for RLS-compliant insert/update (will automatically filter by auth.uid())
+    const { error: upsertError } = await supabase
+      .from('user_settings')
+      .upsert(dbSettings, {
+        onConflict: 'user_id'
       })
+
+    if (upsertError) {
+      console.error('Supabase settings upsert error:', upsertError)
       return NextResponse.json({ 
-        error: `Failed to save settings: ${result.error.message}`,
-        details: result.error.code 
+        error: `Failed to save settings: ${upsertError.message}`,
+        details: upsertError.code 
       }, { status: 500 })
     }
 
