@@ -23,63 +23,16 @@ interface NotificationSystemProps {
   onMarkAllAsRead?: () => void
   onDismiss?: (id: string) => void
   onAction?: (notification: Notification) => void
+  showFullInterface?: boolean
 }
 
-const defaultNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "warning",
-    title: "Low Stock Alert",
-    message: "USB-C Cable inventory is running low (5 units remaining)",
-    timestamp: "2 minutes ago",
-    read: false,
-    category: "alert",
-    actionUrl: "/dashboard/inventory"
-  },
-  {
-    id: "2",
-    type: "success",
-    title: "Gmail Automation Active",
-    message: "Successfully processed 45 emails in the last hour",
-    timestamp: "15 minutes ago",
-    read: false,
-    category: "automation"
-  },
-  {
-    id: "3",
-    type: "info",
-    title: "Instagram Post Scheduled",
-    message: "Your post about new product launch has been scheduled for tomorrow at 9 AM",
-    timestamp: "1 hour ago",
-    read: true,
-    category: "automation"
-  },
-  {
-    id: "4",
-    type: "error",
-    title: "API Limit Warning",
-    message: "You've used 80% of your monthly API calls. Consider upgrading your plan.",
-    timestamp: "3 hours ago",
-    read: false,
-    category: "system"
-  },
-  {
-    id: "5",
-    type: "info",
-    title: "System Update",
-    message: "New automation features are now available in your dashboard",
-    timestamp: "1 day ago",
-    read: true,
-    category: "update"
-  }
-]
-
 export function NotificationSystem({ 
-  notifications = defaultNotifications,
+  notifications = [],
   onMarkAsRead = () => {},
   onMarkAllAsRead = () => {},
   onDismiss = () => {},
-  onAction = () => {}
+  onAction = () => {},
+  showFullInterface = false
 }: NotificationSystemProps) {
   const [localNotifications, setLocalNotifications] = useState(notifications)
   const [filter, setFilter] = useState<"all" | "unread" | "system" | "automation" | "alert">("all")

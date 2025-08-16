@@ -6,6 +6,7 @@ import { Bot } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { NotificationSystem } from "@/components/shared/NotificationSystem"
+import { useNotifications } from "@/utils/hooks/useNotifications"
 
 /**
  * NotificationsPage Component
@@ -14,32 +15,50 @@ import { NotificationSystem } from "@/components/shared/NotificationSystem"
  * Uses "use client" directive because it passes event handlers to child components.
  * 
  * Features:
- * - Full-page notification interface
+ * - Full-page notification interface with API integration
  * - Mark as read functionality
  * - Notification filtering and categorization
  * - Action buttons for notification responses
  * - Back to dashboard navigation
  */
 export default function NotificationsPage() {
-  const handleMarkAsRead = (id: string) => {
-    // Mark notification as read - would integrate with backend API
-    // TODO: Implement API call to mark notification as read
+  const { 
+    notifications, 
+    loading, 
+    error, 
+    markAsRead, 
+    markAllAsRead, 
+    dismissNotification 
+  } = useNotifications()
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await markAsRead(id, true)
+    } catch (err) {
+      console.error('Failed to mark notification as read:', err)
+    }
   }
 
-  const handleMarkAllAsRead = () => {
-    // Mark all notifications as read - would integrate with backend API
-    // TODO: Implement API call to mark all notifications as read
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead()
+    } catch (err) {
+      console.error('Failed to mark all notifications as read:', err)
+    }
   }
 
-  const handleDismiss = (id: string) => {
-    // Dismiss notification - would integrate with backend API
-    // TODO: Implement API call to dismiss notification
+  const handleDismiss = async (id: string) => {
+    try {
+      await dismissNotification(id)
+    } catch (err) {
+      console.error('Failed to dismiss notification:', err)
+    }
   }
 
   const handleAction = (notification: any) => {
     // Handle notification action
-    if (notification.actionUrl) {
-      window.location.href = notification.actionUrl
+    if (notification.action_url) {
+      window.location.href = notification.action_url
     }
   }
 
@@ -67,12 +86,30 @@ export default function NotificationsPage() {
 
       {/* Notifications Content */}
       <div className="container-padding section-spacing">
-        <NotificationSystem
-          onMarkAsRead={handleMarkAsRead}
-          onMarkAllAsRead={handleMarkAllAsRead}
-          onDismiss={handleDismiss}
-          onAction={handleAction}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading notifications...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-destructive mb-4">Error loading notifications: {error}</p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
+            </div>
+          </div>
+        ) : (
+          <NotificationSystem
+            notifications={notifications}
+            onMarkAsRead={handleMarkAsRead}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onDismiss={handleDismiss}
+            onAction={handleAction}
+            showFullInterface={true}
+          />
+        )}
       </div>
     </div>
   )

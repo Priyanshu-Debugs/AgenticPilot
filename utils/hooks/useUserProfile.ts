@@ -7,6 +7,11 @@ interface UserProfile {
   full_name: string | null
   avatar_url: string | null
   plan: 'starter' | 'professional' | 'enterprise'
+  company: string | null
+  bio: string | null
+  website: string | null
+  location: string | null
+  timezone: string
   created_at: string
   updated_at: string
 }
@@ -15,7 +20,7 @@ interface UserProfileHook {
   profile: UserProfile | null
   loading: boolean
   error: string | null
-  updateProfile: (updates: Partial<Pick<UserProfile, 'full_name' | 'avatar_url'>>) => Promise<{ error: any }>
+  updateProfile: (updates: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>) => Promise<{ error: any }>
   refreshProfile: () => Promise<void>
 }
 
@@ -49,7 +54,12 @@ export function useUserProfile(): UserProfileHook {
               id: user.id,
               full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
               avatar_url: user.user_metadata?.avatar_url || null,
-              plan: 'starter'
+              plan: 'starter',
+              company: null,
+              bio: null,
+              website: null,
+              location: null,
+              timezone: 'UTC'
             })
             .select()
             .single()
@@ -73,7 +83,7 @@ export function useUserProfile(): UserProfileHook {
     }
   }
 
-  const updateProfile = async (updates: Partial<Pick<UserProfile, 'full_name' | 'avatar_url'>>) => {
+  const updateProfile = async (updates: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>) => {
     if (!user || !profile) {
       return { error: { message: 'No user or profile found' } }
     }

@@ -6,6 +6,7 @@ import { Bot, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { SettingsPage } from "@/components/shared/SettingsPage"
+import { useSettings } from "@/utils/hooks/useSettings"
 
 /**
  * Settings Component
@@ -16,29 +17,64 @@ import { SettingsPage } from "@/components/shared/SettingsPage"
  * Features:
  * - Comprehensive settings interface with tabs
  * - Profile, notifications, automation, security, and integration settings
- * - Save/reset functionality
+ * - Save/reset functionality with API integration
  * - Import/export capabilities
  * - Back to dashboard navigation
  */
 export default function Settings() {
-  const handleSave = (settings: any) => {
-    // Save settings - would integrate with backend API
-    // TODO: Implement API call to save settings
+  const { settings, loading, error, saveSettings, resetSettings } = useSettings()
+
+  const handleSave = async (newSettings: any) => {
+    try {
+      await saveSettings(newSettings)
+      // Could show a success toast here
+    } catch (err) {
+      console.error('Failed to save settings:', err)
+      // Could show an error toast here
+    }
   }
 
-  const handleReset = () => {
-    // Reset settings to defaults - would integrate with backend API
-    // TODO: Implement API call to reset settings
+  const handleReset = async () => {
+    try {
+      await resetSettings()
+      // Could show a success toast here
+    } catch (err) {
+      console.error('Failed to reset settings:', err)
+      // Could show an error toast here
+    }
   }
 
   const handleExport = () => {
-    // Export settings as JSON file
-    // TODO: Implement settings export functionality
+    if (!settings) return
+    
+    const dataStr = JSON.stringify(settings, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'agenticpilot-settings.json'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
-  const handleImport = (data: any) => {
-    // Import settings from file
-    // TODO: Implement settings import functionality
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        const importedSettings = JSON.parse(e.target?.result as string)
+        await saveSettings(importedSettings)
+        // Could show a success toast here
+      } catch (err) {
+        console.error('Failed to import settings:', err)
+        // Could show an error toast here
+      }
+    }
+    reader.readAsText(file)
   }
 
   return (
@@ -68,12 +104,33 @@ export default function Settings() {
 
       {/* Settings Content */}
       <div className="container-padding section-spacing">
-        <SettingsPage
-          onSave={handleSave}
-          onReset={handleReset}
-          onExport={handleExport}
-          onImport={handleImport}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading settings...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-destructive mb-4">Error loading settings: {error}</p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
+            </div>
+          </div>
+        ) : settings ? (
+          <SettingsPage
+            settings={settings}
+            onSave={handleSave}
+            onReset={handleReset}
+            onExport={handleExport}
+            onImport={handleImport}
+          />
+        ) : (
+          <div className="flex items-center justify-center py-12">
+            <p className="text-muted-foreground">No settings found</p>
+          </div>
+        )}
       </div>
     </div>
   )

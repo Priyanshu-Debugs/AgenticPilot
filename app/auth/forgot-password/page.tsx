@@ -11,8 +11,14 @@ import { Bot, ArrowLeft, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
-import { RateLimitDisplay } from "@/components/ui/rate-limit-display"
-import { RateLimitResult } from "@/lib/rate-limiting"
+
+interface RateLimitResult {
+  allowed: boolean
+  remaining: number
+  resetTime: number
+  isBlocked: boolean
+  nextAllowedTime?: number
+}
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")
@@ -58,7 +64,7 @@ export default function ForgotPassword() {
     setError("")
 
     // Check rate limit before attempting
-    const rateLimitCheck = checkPasswordResetRateLimit()
+    const rateLimitCheck = await checkPasswordResetRateLimit()
     setRateLimitResult(rateLimitCheck)
 
     if (!rateLimitCheck.allowed) {
@@ -72,17 +78,17 @@ export default function ForgotPassword() {
       
       if (rateLimitExceeded) {
         setError("Too many password reset attempts. Please wait before trying again.")
-        setRateLimitResult(checkPasswordResetRateLimit())
+        setRateLimitResult(await checkPasswordResetRateLimit())
       } else if (error) {
         setError(error.message || "An error occurred while sending reset email")
-        setRateLimitResult(checkPasswordResetRateLimit())
+        setRateLimitResult(await checkPasswordResetRateLimit())
       } else {
         setSuccess(true)
-        setRateLimitResult(checkPasswordResetRateLimit())
+        setRateLimitResult(await checkPasswordResetRateLimit())
       }
     } catch (err) {
       setError("An unexpected error occurred")
-      setRateLimitResult(checkPasswordResetRateLimit())
+      setRateLimitResult(await checkPasswordResetRateLimit())
     } finally {
       setIsLoading(false)
     }
@@ -125,13 +131,6 @@ export default function ForgotPassword() {
                   Please check your email and click the reset link to continue.
                   If you don't see the email, check your spam folder.
                 </p>
-                {rateLimitResult && (
-                  <RateLimitDisplay 
-                    result={rateLimitResult} 
-                    action="password reset requests"
-                    className="bg-primary/10 border-primary/20"
-                  />
-                )}
                 <div className="space-y-3">
                   <Button
                     onClick={() => {
@@ -159,13 +158,6 @@ export default function ForgotPassword() {
                   <div className="mb-4 p-3 text-sm text-blue-600 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                     {urlError}
                   </div>
-                )}
-                {rateLimitResult && (
-                  <RateLimitDisplay 
-                    result={rateLimitResult} 
-                    action="password reset requests"
-                    className="mb-4 bg-amber-500/10 border-amber-500/20"
-                  />
                 )}
                 {error && (
                   <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">

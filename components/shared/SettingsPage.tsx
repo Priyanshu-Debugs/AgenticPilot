@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,20 +31,22 @@ import {
 } from "lucide-react"
 
 interface SettingsProps {
+  settings?: any
   onSave?: (settings: any) => void
   onReset?: () => void
   onExport?: () => void
-  onImport?: (data: any) => void
+  onImport?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function SettingsPage({ 
+  settings: initialSettings,
   onSave = () => {}, 
   onReset = () => {}, 
   onExport = () => {}, 
   onImport = () => {} 
 }: SettingsProps) {
   const [showPassword, setShowPassword] = useState(false)
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState(initialSettings || {
     // Profile Settings
     profile: {
       firstName: "John",
@@ -91,8 +93,15 @@ export function SettingsPage({
     }
   })
 
+  // Update settings when initialSettings prop changes
+  React.useEffect(() => {
+    if (initialSettings) {
+      setSettings(initialSettings)
+    }
+  }, [initialSettings])
+
   const handleSettingChange = (category: string, key: string, value: any) => {
-    setSettings(prev => ({
+    setSettings((prev: any) => ({
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
@@ -642,6 +651,37 @@ export function SettingsPage({
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Save/Reset Actions */}
+      <div className="flex justify-between items-center pt-6">
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={onExport}>
+            Export Settings
+          </Button>
+          <div>
+            <input
+              type="file"
+              accept=".json"
+              onChange={onImport}
+              className="hidden"
+              id="import-settings"
+            />
+            <Button variant="outline" onClick={() => document.getElementById('import-settings')?.click()}>
+              Import Settings
+            </Button>
+          </div>
+        </div>
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={onReset}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Reset to Defaults
+          </Button>
+          <Button onClick={() => onSave(settings)}>
+            <Save className="h-4 w-4 mr-2" />
+            Save Settings
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

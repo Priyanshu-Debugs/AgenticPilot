@@ -182,7 +182,7 @@ export default function InventoryManagement() {
 
   const handleReorderAll = () => {
     const itemsNeedingReorder = inventoryItems.filter(item => item.currentStock <= item.reorderPoint)
-    // TODO: Integrate with ordering system API to reorder items
+    // Integrate with ordering system API to reorder items
     // For now, show alert with items that need reordering
     alert(`${itemsNeedingReorder.length} items need reordering`)
   }

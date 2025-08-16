@@ -4,7 +4,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { passwordResetLimiter, signInLimiter, RateLimitResult } from '@/lib/rate-limiting'
+
+interface RateLimitResult {
+  allowed: boolean
+  remaining: number
+  resetTime: number
+  isBlocked: boolean
+  nextAllowedTime?: number
+}
 
 interface AuthContextType {
   user: User | null
@@ -15,8 +22,8 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: any, rateLimitExceeded?: boolean }>
   updatePassword: (newPassword: string) => Promise<{ error: any }>
   refreshSession: () => Promise<{ error: any }>
-  checkPasswordResetRateLimit: () => RateLimitResult
-  checkSignInRateLimit: () => RateLimitResult
+  checkPasswordResetRateLimit: () => Promise<RateLimitResult>
+  checkSignInRateLimit: () => Promise<RateLimitResult>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,8 +35,8 @@ const AuthContext = createContext<AuthContextType>({
   resetPassword: async () => ({ error: null }),
   updatePassword: async () => ({ error: null }),
   refreshSession: async () => ({ error: null }),
-  checkPasswordResetRateLimit: () => ({ allowed: true, remaining: 3, resetTime: 0, isBlocked: false }),
-  checkSignInRateLimit: () => ({ allowed: true, remaining: 5, resetTime: 0, isBlocked: false }),
+  checkPasswordResetRateLimit: async () => ({ allowed: true, remaining: 3, resetTime: 0, isBlocked: false }),
+  checkSignInRateLimit: async () => ({ allowed: true, remaining: 5, resetTime: 0, isBlocked: false }),
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -118,15 +125,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, router])
 
   const signIn = async (email: string, password: string) => {
-    // Check rate limit before attempting sign in
-    const rateLimitCheck = signInLimiter.checkLimit(email)
-    if (!rateLimitCheck.allowed) {
-      return { 
-        error: { 
-          message: 'Too many sign in attempts. Please wait before trying again.',
-          rateLimitExceeded: true 
-        } 
+    // Check server-side rate limit before attempting sign in
+    try {
+      const rateLimitResponse = await fetch('/api/rate-limit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sign-in', identifier: email })
+      })
+      
+      const rateLimitResult = await rateLimitResponse.json()
+      
+      if (!rateLimitResult.allowed) {
+        return { 
+          error: { 
+            message: 'Too many sign in attempts. Please wait before trying again.',
+            rateLimitExceeded: true 
+          } 
+        }
       }
+    } catch (rateLimitError) {
+      // If rate limit check fails, continue with sign in (fallback)
+      console.warn('Rate limit check failed:', rateLimitError)
     }
 
     try {
@@ -136,8 +155,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        // Record failed attempt for rate limiting
-        signInLimiter.recordAttempt()
+        // Record failed attempt for server-side rate limiting
+        try {
+          await fetch('/api/rate-limit', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'sign-in', identifier: email })
+          })
+        } catch (recordError) {
+          console.warn('Failed to record rate limit attempt:', recordError)
+        }
         
         if (process.env.NODE_ENV === 'development') {
           console.error('Sign in error:', error.message)
@@ -145,12 +172,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error }
       }
 
-      // Reset rate limit on successful sign in
-      signInLimiter.reset()
       return { error: null }
     } catch (error) {
-      // Record failed attempt for rate limiting
-      signInLimiter.recordAttempt()
+      // Record failed attempt for server-side rate limiting
+      try {
+        await fetch('/api/rate-limit', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'sign-in', identifier: email })
+        })
+      } catch (recordError) {
+        console.warn('Failed to record rate limit attempt:', recordError)
+      }
       
       if (process.env.NODE_ENV === 'development') {
         console.error('Unexpected sign in error')
@@ -174,18 +207,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Sign up error:', error.message)
+          console.error('Sign up error details:', {
+            message: error.message,
+            status: error.status,
+            details: error
+          })
         }
-        return { error }
+        
+        // Provide user-friendly error messages
+        let userMessage = error.message
+        if (error.message?.includes('User already registered')) {
+          userMessage = 'An account with this email already exists. Please sign in instead.'
+        } else if (error.message?.includes('Database error')) {
+          userMessage = 'There was a technical issue creating your account. Please try again in a moment.'
+        } else if (error.message?.includes('Invalid email')) {
+          userMessage = 'Please enter a valid email address.'
+        } else if (error.message?.includes('Password')) {
+          userMessage = 'Password does not meet requirements. Please check the password criteria.'
+        }
+        
+        return { error: { ...error, message: userMessage } }
+      }
+
+      // If signup was successful and we have a user, try to set up welcome data manually
+      if (data.user && !error) {
+        try {
+          // Call the manual welcome setup function
+          const { error: welcomeError } = await supabase.rpc('setup_user_welcome', {
+            user_id: data.user.id,
+            user_email: email,
+            user_name: fullName || ''
+          })
+          
+          if (welcomeError) {
+            console.warn('Welcome setup failed (non-critical):', welcomeError)
+          }
+        } catch (welcomeError) {
+          // This is non-critical - don't fail signup if welcome setup fails
+          console.warn('Could not setup welcome data:', welcomeError)
+        }
       }
 
       // Note: User will need to confirm email before they can sign in
       return { error: null }
-    } catch (error) {
+    } catch (error: any) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('Unexpected sign up error')
+        console.error('Unexpected sign up error:', error)
       }
-      return { error }
+      return { 
+        error: { 
+          message: 'An unexpected error occurred during sign up. Please try again.',
+          originalError: error
+        } 
+      }
     }
   }
 
@@ -203,16 +277,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const resetPassword = async (email: string) => {
-    // Check rate limit before attempting password reset
-    const rateLimitCheck = passwordResetLimiter.checkLimit(email)
-    if (!rateLimitCheck.allowed) {
-      return { 
-        error: { 
-          message: 'Too many password reset attempts. Please wait before trying again.',
-          rateLimitExceeded: true 
-        },
-        rateLimitExceeded: true
+    // Check server-side rate limit before attempting password reset
+    try {
+      const rateLimitResponse = await fetch('/api/rate-limit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'password-reset', identifier: email })
+      })
+      
+      const rateLimitResult = await rateLimitResponse.json()
+      
+      if (!rateLimitResult.allowed) {
+        return { 
+          error: { 
+            message: 'Too many password reset attempts. Please wait before trying again.',
+            rateLimitExceeded: true 
+          },
+          rateLimitExceeded: true
+        }
       }
+    } catch (rateLimitError) {
+      // If rate limit check fails, continue with reset (fallback)
+      console.warn('Rate limit check failed:', rateLimitError)
     }
 
     try {
@@ -224,8 +310,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        // Record failed attempt for rate limiting
-        passwordResetLimiter.recordAttempt()
+        // Record failed attempt for server-side rate limiting
+        try {
+          await fetch('/api/rate-limit', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'password-reset', identifier: email })
+          })
+        } catch (recordError) {
+          console.warn('Failed to record rate limit attempt:', recordError)
+        }
         
         if (process.env.NODE_ENV === 'development') {
           console.error('Reset password error:', error.message)
@@ -233,12 +327,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error }
       }
 
-      // Record successful attempt for rate limiting (still counts toward limit)
-      passwordResetLimiter.recordAttempt()
+      // Record successful attempt for server-side rate limiting (still counts toward limit)
+      try {
+        await fetch('/api/rate-limit', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'password-reset', identifier: email })
+        })
+      } catch (recordError) {
+        console.warn('Failed to record rate limit attempt:', recordError)
+      }
+      
       return { error: null }
     } catch (error) {
-      // Record failed attempt for rate limiting
-      passwordResetLimiter.recordAttempt()
+      // Record failed attempt for server-side rate limiting
+      try {
+        await fetch('/api/rate-limit', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'password-reset', identifier: email })
+        })
+      } catch (recordError) {
+        console.warn('Failed to record rate limit attempt:', recordError)
+      }
       
       if (process.env.NODE_ENV === 'development') {
         console.error('Unexpected reset password error')
@@ -320,12 +431,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const checkPasswordResetRateLimit = () => {
-    return passwordResetLimiter.checkLimit()
+  const checkPasswordResetRateLimit = async () => {
+    try {
+      const response = await fetch('/api/rate-limit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'password-reset' })
+      })
+      
+      if (response.ok) {
+        return await response.json()
+      }
+    } catch (error) {
+      console.warn('Failed to check password reset rate limit:', error)
+    }
+    
+    // Fallback to default values if server-side fails
+    return { allowed: true, remaining: 3, resetTime: 0, isBlocked: false }
   }
 
-  const checkSignInRateLimit = () => {
-    return signInLimiter.checkLimit()
+  const checkSignInRateLimit = async () => {
+    try {
+      const response = await fetch('/api/rate-limit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sign-in' })
+      })
+      
+      if (response.ok) {
+        return await response.json()
+      }
+    } catch (error) {
+      console.warn('Failed to check sign-in rate limit:', error)
+    }
+    
+    // Fallback to default values if server-side fails
+    return { allowed: true, remaining: 5, resetTime: 0, isBlocked: false }
   }
 
   const value = {

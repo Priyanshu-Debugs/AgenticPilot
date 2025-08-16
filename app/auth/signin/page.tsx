@@ -11,9 +11,15 @@ import { Bot, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
-import { RateLimitDisplay } from "@/components/ui/rate-limit-display"
-import { RateLimitResult } from "@/lib/rate-limiting"
 import { useSearchParams } from "next/navigation"
+
+interface RateLimitResult {
+  allowed: boolean
+  remaining: number
+  resetTime: number
+  isBlocked: boolean
+  nextAllowedTime?: number
+}
 
 function SignIn() {
   const [email, setEmail] = useState("")
@@ -58,7 +64,7 @@ function SignIn() {
     setError("")
 
     // Check rate limit before attempting
-    const rateLimitCheck = checkSignInRateLimit()
+    const rateLimitCheck = await checkSignInRateLimit()
     setRateLimitResult(rateLimitCheck)
 
     if (!rateLimitCheck.allowed) {
@@ -76,12 +82,12 @@ function SignIn() {
         } else {
           setError(error.message || "An error occurred during sign in")
         }
-        setRateLimitResult(checkSignInRateLimit())
+        setRateLimitResult(await checkSignInRateLimit())
       }
       // Success redirect is handled by AuthProvider
     } catch (err) {
       setError("An unexpected error occurred")
-      setRateLimitResult(checkSignInRateLimit())
+      setRateLimitResult(await checkSignInRateLimit())
     } finally {
       setIsLoading(false)
     }
@@ -114,14 +120,6 @@ function SignIn() {
           {/* Form Card */}
           <Card className="card-elevated p-6 sm:p-8">
             <div className="space-y-6">
-              {rateLimitResult && (
-                <RateLimitDisplay 
-                  result={rateLimitResult} 
-                  action="sign in attempts"
-                  className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
-                />
-              )}
-              
               {error && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                   {error}
