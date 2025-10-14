@@ -33,10 +33,27 @@ const GMAIL_SCOPES = [
 
 // Initialize OAuth2 client
 export function createGoogleOAuthClient() {
+  const redirectUri = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/gmail/callback`;
+  
+  // Log for debugging (remove in production)
+  console.log('OAuth Config:', {
+    clientId: process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...',
+    redirectUri,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+  });
+  
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error('Missing Google OAuth credentials in environment variables');
+  }
+  
+  if (!process.env.NEXT_PUBLIC_SITE_URL) {
+    throw new Error('Missing NEXT_PUBLIC_SITE_URL in environment variables');
+  }
+  
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/gmail/callback`
+    redirectUri
   );
 }
 
