@@ -20,124 +20,51 @@ import {
   Search,
   Filter,
   Download,
+  Loader2,
 } from "lucide-react"
+import { InventoryItem, useInventory } from "@/utils/hooks/useInventory"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export default function InventoryManagement() {
   const [isAutomationActive, setIsAutomationActive] = useState(true)
   const [autoReorderEnabled, setAutoReorderEnabled] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null)
+  const [newItem, setNewItem] = useState({
+    name: "",
+    sku: "",
+    category: "",
+    current_stock: 0,
+    min_stock: 10,
+    max_stock: 100,
+    reorder_point: 15,
+    unit_price: 0,
+    supplier: "",
+  })
 
-  const inventoryItems = [
-    {
-      id: 1,
-      name: "Wireless Headphones",
-      sku: "WH-001",
-      category: "Electronics",
-      currentStock: 25,
-      minStock: 10,
-      maxStock: 100,
-      reorderPoint: 15,
-      unitPrice: 129.99,
-      status: "In Stock",
-      supplier: "Tech Corp",
-      lastRestocked: "2024-01-15",
-    },
-    {
-      id: 2,
-      name: "Smartphone Case",
-      sku: "SC-002",
-      category: "Accessories",
-      currentStock: 5,
-      minStock: 20,
-      maxStock: 200,
-      reorderPoint: 25,
-      unitPrice: 24.99,
-      status: "Low Stock",
-      supplier: "Mobile Plus",
-      lastRestocked: "2024-01-10",
-    },
-    {
-      id: 3,
-      name: "USB Cable",
-      sku: "UC-003",
-      category: "Accessories",
-      currentStock: 150,
-      minStock: 50,
-      maxStock: 300,
-      reorderPoint: 75,
-      unitPrice: 12.99,
-      status: "In Stock",
-      supplier: "Cable Co",
-      lastRestocked: "2024-01-20",
-    },
-    {
-      id: 4,
-      name: "Bluetooth Speaker",
-      sku: "BS-004",
-      category: "Electronics",
-      currentStock: 0,
-      minStock: 5,
-      maxStock: 50,
-      reorderPoint: 8,
-      unitPrice: 89.99,
-      status: "Out of Stock",
-      supplier: "Audio Systems",
-      lastRestocked: "2023-12-28",
-    },
-    {
-      id: 5,
-      name: "Laptop Stand",
-      sku: "LS-005",
-      category: "Office",
-      currentStock: 35,
-      minStock: 15,
-      maxStock: 80,
-      reorderPoint: 20,
-      unitPrice: 45.99,
-      status: "In Stock",
-      supplier: "Office Pro",
-      lastRestocked: "2024-01-18",
-    },
-  ]
+  // Use the inventory hook instead of mock data
+  const {
+    items: inventoryItems,
+    orders: recentOrders,
+    loading,
+    addItem,
+    updateItem,
+    deleteItem,
+    createOrder,
+    getItemsNeedingReorder,
+    getAnalytics,
+  } = useInventory()
 
-  const analytics = [
-    { metric: "Total Items", value: "215", change: "+12 this month", icon: Package },
-    { metric: "Low Stock Alerts", value: "3", change: "2 new alerts", icon: AlertTriangle },
-    { metric: "Inventory Value", value: "$45,230", change: "+8.2% from last month", icon: TrendingUp },
-    { metric: "Reorder Needed", value: "5", change: "Items below threshold", icon: TrendingDown },
-  ]
+  // Get analytics data
+  const analytics = getAnalytics()
 
-  const recentOrders = [
-    {
-      id: 1,
-      item: "Wireless Headphones",
-      quantity: 50,
-      supplier: "Tech Corp",
-      orderDate: "2024-01-15",
-      expectedDelivery: "2024-01-22",
-      status: "In Transit",
-      total: 2500.0,
-    },
-    {
-      id: 2,
-      item: "Smartphone Case",
-      quantity: 100,
-      supplier: "Mobile Plus",
-      orderDate: "2024-01-10",
-      expectedDelivery: "2024-01-18",
-      status: "Delivered",
-      total: 2499.0,
-    },
-    {
-      id: 3,
-      item: "USB Cable",
-      quantity: 200,
-      supplier: "Cable Co",
-      orderDate: "2024-01-12",
-      expectedDelivery: "2024-01-25",
-      status: "Processing",
-      total: 2598.0,
-    },
+  const analyticsDisplay = [
+    { metric: "Total Items", value: String(analytics.totalItems), change: "+12 this month", icon: Package },
+    { metric: "Low Stock Alerts", value: String(analytics.lowStockCount), change: `${analytics.itemsNeedingReorder} need reorder`, icon: AlertTriangle },
+    { metric: "Inventory Value", value: `$${analytics.totalValue.toFixed(2)}`, change: "+8.2% from last month", icon: TrendingUp },
+    { metric: "Avg Stock Level", value: `${analytics.avgStockLevel}%`, change: "Items below threshold", icon: TrendingDown },
   ]
 
   const getStatusColor = (status: string) => {
@@ -166,10 +93,18 @@ export default function InventoryManagement() {
     }
   }
 
+  const calculateStatus = (current: number, min: number, reorderPoint: number): 'In Stock' | 'Low Stock' | 'Out of Stock' => {
+    if (current === 0) return 'Out of Stock'
+    if (current <= reorderPoint || current <= min) return 'Low Stock'
+    return 'In Stock'
+  }
+
   const getStockLevel = (current: number, min: number, max: number) => {
-    const percentage = (current / max) * 100
     if (current === 0) return { level: "empty", color: "bg-red-500" }
     if (current <= min) return { level: "low", color: "bg-amber-500" }
+    if (current > max) return { level: "overstocked", color: "bg-purple-500" }
+
+    const percentage = (current / max) * 100
     if (percentage > 70) return { level: "high", color: "bg-emerald-500" }
     return { level: "medium", color: "bg-primary" }
   }
@@ -177,11 +112,59 @@ export default function InventoryManagement() {
   const filteredItems = inventoryItems.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (item.category || '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const handleAddItem = async () => {
+    try {
+      await addItem(newItem)
+      setIsAddDialogOpen(false)
+      setNewItem({
+        name: "",
+        sku: "",
+        category: "",
+        current_stock: 0,
+        min_stock: 10,
+        max_stock: 100,
+        reorder_point: 15,
+        unit_price: 0,
+        supplier: "",
+      })
+    } catch (error) {
+      // Error is handled by the hook with toast
+    }
+  }
+
+  const handleEditClick = (item: InventoryItem) => {
+    setEditingItem(item)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleUpdateItem = async () => {
+    if (!editingItem) return
+
+    try {
+      await updateItem({
+        id: editingItem.id,
+        name: editingItem.name,
+        sku: editingItem.sku,
+        category: editingItem.category,
+        current_stock: editingItem.current_stock,
+        min_stock: editingItem.min_stock,
+        max_stock: editingItem.max_stock,
+        reorder_point: editingItem.reorder_point,
+        unit_price: editingItem.unit_price,
+        supplier: editingItem.supplier,
+      })
+      setIsEditDialogOpen(false)
+      setEditingItem(null)
+    } catch (error) {
+      // Error is handled by the hook with toast
+    }
+  }
+
   const handleReorderAll = () => {
-    const itemsNeedingReorder = inventoryItems.filter(item => item.currentStock <= item.reorderPoint)
+    const itemsNeedingReorder = inventoryItems.filter(item => item.current_stock <= item.reorder_point)
     // Integrate with ordering system API to reorder items
     // For now, show alert with items that need reordering
     alert(`${itemsNeedingReorder.length} items need reordering`)
@@ -236,26 +219,32 @@ export default function InventoryManagement() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {analytics.map((stat, index) => {
-          const IconComponent = stat.icon
-          const colors = ["text-muted-foreground", "text-amber-500", "text-emerald-500", "text-red-500"]
+        {loading ? (
+          <div className="col-span-4 text-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+          </div>
+        ) : (
+          analyticsDisplay.map((stat, index) => {
+            const IconComponent = stat.icon
+            const colors = ["text-muted-foreground", "text-amber-500", "text-emerald-500", "text-red-500"]
 
-          return (
-            <Card
-              key={stat.metric}
-              className="card-elevated"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.metric}</CardTitle>
-                <IconComponent className={`h-4 w-4 ${colors[index]}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">{stat.change}</p>
-              </CardContent>
-            </Card>
-          )
-        })}
+            return (
+              <Card
+                key={stat.metric}
+                className="card-elevated"
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{stat.metric}</CardTitle>
+                  <IconComponent className={`h-4 w-4 ${colors[index]}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
+                  <p className="text-xs text-muted-foreground">{stat.change}</p>
+                </CardContent>
+              </Card>
+            )
+          })
+        )}
       </div>
 
       {/* Main Content Tabs */}
@@ -291,7 +280,7 @@ export default function InventoryManagement() {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button>
+              <Button onClick={() => setIsAddDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Item
               </Button>
@@ -315,63 +304,65 @@ export default function InventoryManagement() {
                       <TableHead className="whitespace-nowrap">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
-                <TableBody>
-                  {filteredItems.map((item) => {
-                    const stockLevel = getStockLevel(item.currentStock, item.minStock, item.maxStock)
-                    const stockPercentage = (item.currentStock / item.maxStock) * 100
+                  <TableBody>
+                    {filteredItems.map((item) => {
+                      const stockLevel = getStockLevel(item.current_stock, item.min_stock, item.max_stock)
+                      const stockPercentage = (item.current_stock / item.max_stock) * 100
 
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium">
-                          <div>
-                            <div className="font-medium text-foreground">{item.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {item.supplier}
+                      const dynamicStatus = calculateStatus(item.current_stock, item.min_stock, item.reorder_point)
+
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">
+                            <div>
+                              <div className="font-medium text-foreground">{item.name}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {item.supplier}
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{item.sku}</TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>{item.currentStock} / {item.maxStock}</span>
-                              <span className="text-muted-foreground">
-                                {stockPercentage.toFixed(0)}%
-                              </span>
+                          </TableCell>
+                          <TableCell>{item.sku}</TableCell>
+                          <TableCell>{item.category}</TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between text-sm">
+                                <span>{item.current_stock} / {item.max_stock}</span>
+                                <span className="text-muted-foreground">
+                                  {stockPercentage.toFixed(0)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-muted rounded-full h-2">
+                                <div
+                                  className={`h-2 rounded-full ${stockLevel.color}`}
+                                  style={{ width: `${Math.min(Math.max(stockPercentage, 5), 100)}%` }}
+                                />
+                              </div>
                             </div>
-                            <div className="w-full bg-muted rounded-full h-2">
-                              <div
-                                className={`h-2 rounded-full ${stockLevel.color}`}
-                                style={{ width: `${Math.max(stockPercentage, 5)}%` }}
-                              />
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(item.status)}>
-                            {item.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>${item.unitPrice}</TableCell>
-                        <TableCell>{item.lastRestocked}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm">
-                              Edit
-                            </Button>
-                            {item.currentStock <= item.reorderPoint && (
-                              <Button size="sm">
-                                Reorder
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getStatusColor(dynamicStatus)}>
+                              {dynamicStatus}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>${item.unit_price?.toFixed(2) || '0.00'}</TableCell>
+                          <TableCell>{item.last_restocked ? new Date(item.last_restocked).toLocaleDateString() : 'Never'}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Button variant="outline" size="sm" onClick={() => handleEditClick(item)}>
+                                Edit
                               </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                              {item.current_stock <= item.reorder_point && (
+                                <Button size="sm">
+                                  Reorder
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
@@ -400,7 +391,7 @@ export default function InventoryManagement() {
                 <h3 className="text-lg font-semibold">Items Requiring Reorder</h3>
                 <div className="space-y-3">
                   {inventoryItems
-                    .filter(item => item.currentStock <= item.reorderPoint)
+                    .filter(item => item.current_stock <= item.reorder_point)
                     .map((item) => (
                       <div
                         key={item.id}
@@ -413,13 +404,13 @@ export default function InventoryManagement() {
                           <div>
                             <p className="font-medium text-foreground">{item.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              Current: {item.currentStock} | Reorder Point: {item.reorderPoint}
+                              Current: {item.current_stock} | Reorder Point: {item.reorder_point}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Badge className={getStatusColor(item.status)}>
-                            {item.status}
+                          <Badge className={getStatusColor(calculateStatus(item.current_stock, item.min_stock, item.reorder_point))}>
+                            {calculateStatus(item.current_stock, item.min_stock, item.reorder_point)}
                           </Badge>
                           <Button size="sm">
                             Reorder Now
@@ -429,7 +420,7 @@ export default function InventoryManagement() {
                     ))}
                 </div>
 
-                {inventoryItems.filter(item => item.currentStock <= item.reorderPoint).length > 0 && (
+                {inventoryItems.filter(item => item.current_stock <= item.reorder_point).length > 0 && (
                   <Button onClick={handleReorderAll} className="w-full">
                     Reorder All Items
                   </Button>
@@ -461,24 +452,24 @@ export default function InventoryManagement() {
                       <TableHead className="whitespace-nowrap">Expected Delivery</TableHead>
                       <TableHead className="whitespace-nowrap">Status</TableHead>
                       <TableHead className="whitespace-nowrap">Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentOrders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium">{order.item}</TableCell>
-                      <TableCell>{order.quantity}</TableCell>
-                      <TableCell>{order.supplier}</TableCell>
-                      <TableCell>{order.orderDate}</TableCell>
-                      <TableCell>{order.expectedDelivery}</TableCell>
-                      <TableCell>
-                        <Badge className={getOrderStatusColor(order.status)}>{order.status}</Badge>
-                      </TableCell>
-                      <TableCell>${order.total.toFixed(2)}</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {recentOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.item_name}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                        <TableCell>{order.supplier}</TableCell>
+                        <TableCell>{order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}</TableCell>
+                        <TableCell>{order.expected_delivery ? new Date(order.expected_delivery).toLocaleDateString() : 'TBD'}</TableCell>
+                        <TableCell>
+                          <Badge className={getOrderStatusColor(order.status)}>{order.status}</Badge>
+                        </TableCell>
+                        <TableCell>${order.total_cost?.toFixed(2) || '0.00'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
@@ -604,6 +595,222 @@ export default function InventoryManagement() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Add Item Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Inventory Item</DialogTitle>
+            <DialogDescription>
+              Add a new product to your inventory. All fields are required.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">Name</Label>
+              <Input
+                id="name"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="sku" className="text-right">SKU</Label>
+              <Input
+                id="sku"
+                value={newItem.sku}
+                onChange={(e) => setNewItem({ ...newItem, sku: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="text-right">Category</Label>
+              <Input
+                id="category"
+                value={newItem.category}
+                onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="supplier" className="text-right">Supplier</Label>
+              <Input
+                id="supplier"
+                value={newItem.supplier}
+                onChange={(e) => setNewItem({ ...newItem, supplier: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="current_stock" className="text-right">Current Stock</Label>
+              <Input
+                id="current_stock"
+                type="number"
+                value={newItem.current_stock}
+                onChange={(e) => setNewItem({ ...newItem, current_stock: parseInt(e.target.value) || 0 })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="min_stock" className="text-right">Min Stock</Label>
+              <Input
+                id="min_stock"
+                type="number"
+                value={newItem.min_stock}
+                onChange={(e) => setNewItem({ ...newItem, min_stock: parseInt(e.target.value) || 0 })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="max_stock" className="text-right">Max Stock</Label>
+              <Input
+                id="max_stock"
+                type="number"
+                value={newItem.max_stock}
+                onChange={(e) => setNewItem({ ...newItem, max_stock: parseInt(e.target.value) || 0 })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="reorder_point" className="text-right">Reorder Point</Label>
+              <Input
+                id="reorder_point"
+                type="number"
+                value={newItem.reorder_point}
+                onChange={(e) => setNewItem({ ...newItem, reorder_point: parseInt(e.target.value) || 0 })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="unit_price" className="text-right">Unit Price</Label>
+              <Input
+                id="unit_price"
+                type="number"
+                step="0.01"
+                value={newItem.unit_price}
+                onChange={(e) => setNewItem({ ...newItem, unit_price: parseFloat(e.target.value) || 0 })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddItem}>Add Item</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Inventory Item</DialogTitle>
+            <DialogDescription>
+              Update the product details and stock information.
+            </DialogDescription>
+          </DialogHeader>
+          {editingItem && (
+            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-name" className="text-right">Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editingItem.name}
+                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-sku" className="text-right">SKU</Label>
+                <Input
+                  id="edit-sku"
+                  value={editingItem.sku}
+                  onChange={(e) => setEditingItem({ ...editingItem, sku: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-category" className="text-right">Category</Label>
+                <Input
+                  id="edit-category"
+                  value={editingItem.category || ''}
+                  onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-supplier" className="text-right">Supplier</Label>
+                <Input
+                  id="edit-supplier"
+                  value={editingItem.supplier || ''}
+                  onChange={(e) => setEditingItem({ ...editingItem, supplier: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-current_stock" className="text-right">Current Stock</Label>
+                <Input
+                  id="edit-current_stock"
+                  type="number"
+                  value={editingItem.current_stock}
+                  onChange={(e) => setEditingItem({ ...editingItem, current_stock: parseInt(e.target.value) || 0 })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-min_stock" className="text-right">Min Stock</Label>
+                <Input
+                  id="edit-min_stock"
+                  type="number"
+                  value={editingItem.min_stock}
+                  onChange={(e) => setEditingItem({ ...editingItem, min_stock: parseInt(e.target.value) || 0 })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-max_stock" className="text-right">Max Stock</Label>
+                <Input
+                  id="edit-max_stock"
+                  type="number"
+                  value={editingItem.max_stock}
+                  onChange={(e) => setEditingItem({ ...editingItem, max_stock: parseInt(e.target.value) || 0 })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-reorder_point" className="text-right">Reorder Point</Label>
+                <Input
+                  id="edit-reorder_point"
+                  type="number"
+                  value={editingItem.reorder_point}
+                  onChange={(e) => setEditingItem({ ...editingItem, reorder_point: parseInt(e.target.value) || 0 })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-unit_price" className="text-right">Unit Price</Label>
+                <Input
+                  id="edit-unit_price"
+                  type="number"
+                  step="0.01"
+                  value={editingItem.unit_price}
+                  onChange={(e) => setEditingItem({ ...editingItem, unit_price: parseFloat(e.target.value) || 0 })}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateItem}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
+
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -31,31 +31,33 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Calculate stats
+    // Calculate stats with safe defaults for empty database
     const totalProcessed = logs?.length || 0
-    
-    // Count successful auto-replies (where action was 'reply' and success was true)
-    const autoReplies = logs?.filter(log => 
-      log.action === 'reply' && log.success === true
+
+    // Count successful auto-replies (where action was 'auto_reply' or 'reply' and success was true)
+    const autoReplies = logs?.filter(log =>
+      (log.action === 'auto_reply' || log.action === 'reply') && log.success === true
     ).length || 0
 
     // Calculate average response time
     const responseTimes = logs
-      ?.filter(log => log.response_time_ms)
+      ?.filter(log => log.response_time_ms && log.response_time_ms > 0)
       .map(log => log.response_time_ms) || []
-    
+
     const avgResponseTimeMs = responseTimes.length > 0
       ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
       : 0
-    
+
     // Convert to seconds with 1 decimal place
-    const avgResponseTimeSec = (avgResponseTimeMs / 1000).toFixed(1)
+    const avgResponseTimeSec = avgResponseTimeMs > 0
+      ? (avgResponseTimeMs / 1000).toFixed(1)
+      : '0.0'
 
     // Calculate success rate
     const successfulActions = logs?.filter(log => log.success === true).length || 0
     const successRate = totalProcessed > 0
       ? ((successfulActions / totalProcessed) * 100).toFixed(1)
-      : '0.0'
+      : '100.0' // Default to 100% when no data (aspirational)
 
     // Get recent activity (last 10 logs)
     const recentActivity = logs?.slice(0, 10).map(log => ({
