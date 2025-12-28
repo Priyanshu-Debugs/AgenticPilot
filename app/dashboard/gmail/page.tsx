@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 // Icons
 import {
@@ -69,6 +71,10 @@ function GmailAutomationContent() {
     const [replyEmail, setReplyEmail] = useState<GmailMessage | null>(null)
     const [replyBody, setReplyBody] = useState('')
     const [sending, setSending] = useState(false)
+
+    // Drawer/Modal state
+    const [analysisDrawerOpen, setAnalysisDrawerOpen] = useState(false)
+    const [replyModalOpen, setReplyModalOpen] = useState(false)
 
     // Activity state
     const [logs, setLogs] = useState<GmailLog[]>([])
@@ -202,6 +208,7 @@ function GmailAutomationContent() {
         setSelectedEmail(email)
         setAnalyzing(true)
         setAnalysis(null)
+        setAnalysisDrawerOpen(true) // Open drawer
 
         try {
             const res = await fetch('/api/gmail/analyze', {
@@ -230,6 +237,7 @@ function GmailAutomationContent() {
     const handleOpenReply = (email: GmailMessage) => {
         setReplyEmail(email)
         setReplyBody(analysis?.suggestedReply || '')
+        setReplyModalOpen(true) // Open modal
     }
 
     // Generate AI reply
@@ -278,6 +286,7 @@ function GmailAutomationContent() {
             toast.success('Reply sent successfully!')
             setReplyEmail(null)
             setReplyBody('')
+            setReplyModalOpen(false) // Close modal
             loadEmails() // Refresh inbox
             loadLogs() // Refresh logs
         } catch (error: any) {
@@ -292,6 +301,8 @@ function GmailAutomationContent() {
         if (selectedEmail) {
             setReplyEmail(selectedEmail)
             setReplyBody(reply)
+            setReplyModalOpen(true) // Open reply modal
+            setAnalysisDrawerOpen(false) // Close analysis drawer
         }
     }
 
@@ -379,36 +390,48 @@ function GmailAutomationContent() {
                             </CardContent>
                         </Card>
 
-                        {/* Email List and Analysis */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <div>
-                                <EmailList
-                                    emails={emails}
-                                    loading={emailsLoading}
-                                    onAnalyze={handleAnalyze}
-                                    onReply={handleOpenReply}
-                                    selectedId={selectedEmail?.id}
-                                />
-                            </div>
-                            <div className="space-y-4">
-                                <AnalysisResult
-                                    analysis={analysis}
-                                    loading={analyzing}
-                                    onUseReply={useSuggestedReply}
-                                />
+                        {/* Email List - Full Width */}
+                        <div className="max-w-4xl mx-auto">
+                            <EmailList
+                                emails={emails}
+                                loading={emailsLoading}
+                                onAnalyze={handleAnalyze}
+                                onReply={handleOpenReply}
+                                selectedId={selectedEmail?.id}
+                            />
+                        </div>
 
+                        {/* Analysis Drawer */}
+                        <Sheet open={analysisDrawerOpen} onOpenChange={setAnalysisDrawerOpen}>
+                            <SheetContent className="overflow-y-auto">
+                                <SheetHeader>
+                                    <SheetTitle>Email Analysis</SheetTitle>
+                                </SheetHeader>
+                                <div className="mt-4">
+                                    <AnalysisResult
+                                        analysis={analysis}
+                                        loading={analyzing}
+                                        onUseReply={useSuggestedReply}
+                                    />
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+
+                        {/* Reply Modal */}
+                        <Dialog open={replyModalOpen} onOpenChange={setReplyModalOpen}>
+                            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                                 {replyEmail && (
                                     <ComposeReply
                                         email={replyEmail}
                                         initialBody={replyBody}
                                         onSend={handleSendReply}
                                         onGenerateAI={generateAIReply}
-                                        onClose={() => setReplyEmail(null)}
+                                        onClose={() => setReplyModalOpen(false)}
                                         sending={sending}
                                     />
                                 )}
-                            </div>
-                        </div>
+                            </DialogContent>
+                        </Dialog>
                     </TabsContent>
 
                     <TabsContent value="activity">

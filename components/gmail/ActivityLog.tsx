@@ -32,7 +32,7 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
     return (
         <div className="space-y-4">
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <StatCard
                     label="Processed"
                     value={stats.totalProcessed}
@@ -65,8 +65,8 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
                             No activity yet. Analyze or reply to emails to see logs.
                         </p>
                     ) : (
-                        <div className="space-y-3">
-                            {logs.slice(0, 10).map((log) => (
+                        <div className="space-y-3 max-h-[calc(100vh-500px)] overflow-y-auto pr-2">
+                            {logs.slice(0, 20).map((log) => (
                                 <div
                                     key={log.id}
                                     className="flex items-start gap-3 text-sm"

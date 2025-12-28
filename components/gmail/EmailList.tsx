@@ -53,17 +53,17 @@ export function EmailList({
     }
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[calc(100vh-320px)] overflow-y-auto pr-2">
             {emails.map((email) => (
                 <Card
                     key={email.id}
-                    className={`transition-all hover:shadow-md ${selectedId === email.id ? 'ring-2 ring-primary' : ''
-                        } ${email.isUnread ? 'border-l-4 border-l-primary' : ''}`}
+                    className={`transition-all hover:shadow-lg cursor-pointer ${selectedId === email.id ? 'ring-2 ring-primary shadow-md' : ''
+                        } ${email.isUnread ? 'border-l-4 border-l-primary bg-primary/5' : ''}`}
                 >
                     <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
                                     <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                                     <span className="text-sm font-medium truncate">
                                         {extractName(email.from)}
@@ -73,7 +73,8 @@ export function EmailList({
                                     )}
                                 </div>
 
-                                <h4 className={`font-semibold truncate ${email.isUnread ? '' : 'text-muted-foreground'}`}>
+                                <h4 className={`font-semibold truncate mb-1 ${email.isUnread ? 'text-foreground' : 'text-muted-foreground'
+                                    }`}>
                                     {email.subject || '(No Subject)'}
                                 </h4>
 
@@ -82,40 +83,56 @@ export function EmailList({
                                 </p>
 
                                 {expandedId === email.id && (
-                                    <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm whitespace-pre-wrap">
+                                    <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm whitespace-pre-wrap max-h-48 overflow-y-auto">
                                         {email.body.substring(0, 1000)}
                                         {email.body.length > 1000 && '...'}
                                     </div>
                                 )}
 
-                                <div className="flex items-center gap-3 mt-3">
+                                <div className="flex items-center gap-2 mt-3 flex-wrap">
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => onAnalyze(email)}
-                                        className="gap-1"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onAnalyze(email)
+                                        }}
+                                        className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-colors"
                                     >
-                                        <Sparkles className="h-3 w-3" />
+                                        <Sparkles className="h-3.5 w-3.5" />
                                         Analyze
                                     </Button>
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => onReply(email)}
-                                        className="gap-1"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onReply(email)
+                                        }}
+                                        className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-colors"
                                     >
-                                        <Send className="h-3 w-3" />
+                                        <Send className="h-3.5 w-3.5" />
                                         Reply
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => setExpandedId(expandedId === email.id ? null : email.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setExpandedId(expandedId === email.id ? null : email.id)
+                                        }}
+                                        className="ml-auto"
                                     >
                                         {expandedId === email.id ? (
-                                            <ChevronUp className="h-4 w-4" />
+                                            <>
+                                                <ChevronUp className="h-4 w-4 mr-1" />
+                                                <span className="text-xs">Hide</span>
+                                            </>
                                         ) : (
-                                            <ChevronDown className="h-4 w-4" />
+                                            <>
+                                                <ChevronDown className="h-4 w-4 mr-1" />
+                                                <span className="text-xs">Show</span>
+                                            </>
                                         )}
                                     </Button>
                                 </div>
