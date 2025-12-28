@@ -35,12 +35,17 @@ export async function middleware(request: NextRequest) {
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  // Define protected routes that require authentication
+  const protectedRoutes = ['/dashboard', '/settings', '/profile', '/notifications', '/billing']
+  const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+
+  // Protect routes that require authentication
+  if (isProtectedRoute) {
     if (!user) {
       return NextResponse.redirect(new URL('/auth/signin', request.url))
     }
   }
+
 
   // Redirect authenticated users away from auth pages, except reset-password
   if (request.nextUrl.pathname.startsWith('/auth')) {
@@ -48,7 +53,7 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname === '/auth/reset-password') {
       return response
     }
-    
+
     if (user) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }

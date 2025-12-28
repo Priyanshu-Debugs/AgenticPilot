@@ -1,7 +1,7 @@
 "use client"
 
 // React hooks
-import { useState } from "react"
+import { useState, useEffect } from "react"
 // Custom components
 import { StatsCard, ActionCard } from "@/components/shared/Cards"
 import { AutomationController } from "@/components/shared/AutomationController"
@@ -11,93 +11,133 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
-import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock } from "lucide-react"
+import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2 } from "lucide-react"
 import Link from "next/link"
 // Auth and profile hooks
 import { useAuth } from "@/utils/auth/AuthProvider"
 import { useUserProfile } from "@/utils/hooks/useUserProfile"
 
+interface GmailStats {
+  totalProcessed: number
+  autoReplies: number
+  avgResponseTime: string
+  successRate: string
+}
+
+interface Activity {
+  id: string
+  action: string
+  status: string
+  details: string
+  timestamp: string
+  emailSubject?: string
+}
+
 /**
  * Dashboard Component
  * 
  * Main dashboard page that provides:
- * - Quick stats overview cards
+ * - Quick stats overview cards from real database
  * - Active automation management
- * - Recent activity feed
+ * - Recent activity feed from gmail_logs
  * - Navigation shortcuts to automation pages
  * - Performance metrics and monitoring
- * 
- * Features:
- * - Real-time automation status display
- * - Progress tracking for running tasks
- * - Success rate and performance metrics
- * - Responsive layout with mobile optimization
- * - Quick access to all automation modules
  */
 export default function Dashboard() {
   const { user } = useAuth()
   const { profile, loading } = useUserProfile()
 
+  // Real stats from API
+  const [stats, setStats] = useState<GmailStats>({
+    totalProcessed: 0,
+    autoReplies: 0,
+    avgResponseTime: "0.0",
+    successRate: "100.0"
+  })
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
+  const [isLoadingStats, setIsLoadingStats] = useState(true)
 
-  // Mock automation task data with type safety
+  // Fetch real stats on mount
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  const fetchStats = async () => {
+    setIsLoadingStats(true)
+    try {
+      const response = await fetch('/api/gmail/stats')
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data.stats)
+        setRecentActivity(data.recentActivity || [])
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    } finally {
+      setIsLoadingStats(false)
+    }
+  }
+
+  // Automation tasks - derived from real connection status
   const [automationTasks, setAutomationTasks] = useState([
     {
       id: "gmail-1",
-      name: "Customer Support Emails",
-      description: "Automatically respond to customer inquiries in Gmail",
-      status: "running" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 85,
-      lastRun: "2 hours ago",
-      nextRun: "In 10 minutes",
-      executionTime: "1.2s avg",
-      tasksProcessed: 247,
-      successRate: 96
+      name: "Gmail AI Assistant",
+      description: "AI-powered email responses with Gemini",
+      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 0,
+      lastRun: "Not run yet",
+      nextRun: "Manual trigger",
+      executionTime: `${stats.avgResponseTime}s avg`,
+      tasksProcessed: stats.totalProcessed,
+      successRate: parseFloat(stats.successRate) || 0
     },
     {
-      id: "inventory-1", 
-      name: "Stock Level Monitor",
-      description: "Monitor inventory levels and send alerts for low stock",
-      status: "paused" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 45,
-      lastRun: "1 day ago",
-      nextRun: "Manual trigger",
-      executionTime: "0.8s avg",
-      tasksProcessed: 1891,
-      successRate: 99
+      id: "inventory-1",
+      name: "Inventory Monitor",
+      description: "Track stock levels and receive alerts",
+      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 0,
+      lastRun: "Not configured",
+      nextRun: "Setup required",
+      executionTime: "N/A",
+      tasksProcessed: 0,
+      successRate: 0
     },
     {
       id: "instagram-1",
       name: "Social Media Scheduler",
-      description: "Schedule and post content to Instagram automatically",
-      status: "completed" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 100,
-      lastRun: "30 minutes ago",
-      nextRun: "Tomorrow 9 AM",
-      executionTime: "2.1s avg",
-      tasksProcessed: 89,
-      successRate: 94
+      description: "Schedule posts with AI-generated captions",
+      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 0,
+      lastRun: "Not configured",
+      nextRun: "Setup required",
+      executionTime: "N/A",
+      tasksProcessed: 0,
+      successRate: 0
     }
   ])
 
+
   const handleStartTask = (taskId: string) => {
-    setAutomationTasks(prev => 
-      prev.map(task => 
+    setAutomationTasks(prev =>
+      prev.map(task =>
         task.id === taskId ? { ...task, status: "running" as "running" | "paused" | "stopped" | "error" | "completed" } : task
       )
     )
   }
 
   const handlePauseTask = (taskId: string) => {
-    setAutomationTasks(prev => 
-      prev.map(task => 
+    setAutomationTasks(prev =>
+      prev.map(task =>
         task.id === taskId ? { ...task, status: "paused" as "running" | "paused" | "stopped" | "error" | "completed" } : task
       )
     )
   }
 
   const handleStopTask = (taskId: string) => {
-    setAutomationTasks(prev => 
-      prev.map(task => 
+    setAutomationTasks(prev =>
+      prev.map(task =>
         task.id === taskId ? { ...task, status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed", progress: 0 } : task
       )
     )
@@ -117,38 +157,39 @@ export default function Dashboard() {
 
   const statsData = [
     {
-      title: "Active Automations",
-      value: automationTasks.filter(t => t.status === "running").length,
-      change: "+1 from last month",
+      title: "Emails Processed",
+      value: stats.totalProcessed.toLocaleString(),
+      change: `${stats.autoReplies} auto-replies sent`,
+      changeType: "positive" as const,
+      icon: Mail,
+      trend: Math.min(stats.totalProcessed, 100)
+    },
+    {
+      title: "Auto Replies",
+      value: stats.autoReplies.toLocaleString(),
+      change: "AI-powered responses",
       changeType: "positive" as const,
       icon: Zap,
-      trend: 75
+      trend: Math.min(stats.autoReplies * 10, 100)
     },
     {
-      title: "Tasks Processed",
-      value: "2,247",
-      change: "+12% from yesterday", 
-      changeType: "positive" as const,
-      icon: BarChart3,
-      trend: 88
-    },
-    {
-      title: "Efficiency Score",
-      value: "98.5%",
-      change: "+2% from last week",
-      changeType: "positive" as const,
+      title: "Success Rate",
+      value: `${stats.successRate}%`,
+      change: "Based on all actions",
+      changeType: parseFloat(stats.successRate) >= 90 ? "positive" as const : "neutral" as const,
       icon: TrendingUp,
-      trend: 98
+      trend: parseFloat(stats.successRate) || 0
     },
     {
-      title: "Response Time",
-      value: "1.2s",
-      change: "-0.3s improvement",
+      title: "Avg Response Time",
+      value: `${stats.avgResponseTime}s`,
+      change: "Per email processed",
       changeType: "positive" as const,
       icon: Clock,
-      trend: 92
+      trend: 100 - Math.min(parseFloat(stats.avgResponseTime) * 10, 100)
     }
   ]
+
 
   const quickActions = [
     {
@@ -320,50 +361,51 @@ export default function Dashboard() {
       {/* Recent Activity */}
       <Card className="card-elevated">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5" />
-            <span>Recent Activity</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Clock className="h-5 w-5" />
+              <span>Recent Activity</span>
+            </div>
+            <Button variant="ghost" size="sm" onClick={fetchStats} disabled={isLoadingStats}>
+              {isLoadingStats ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              {
-                action: "Gmail automation processed 45 emails",
-                time: "2 minutes ago",
-                status: "success"
-              },
-              {
-                action: "Inventory check completed - 3 items need restock",
-                time: "15 minutes ago", 
-                status: "warning"
-              },
-              {
-                action: "Instagram post scheduled successfully",
-                time: "1 hour ago",
-                status: "success"
-              },
-              {
-                action: "New automation workflow created",
-                time: "3 hours ago",
-                status: "info"
-              }
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div className={`w-2 h-2 rounded-full ${
-                  activity.status === "success" ? "bg-emerald-500" :
-                  activity.status === "warning" ? "bg-amber-500" :
-                  "bg-primary"
-                }`} />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{activity.action}</p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
-                </div>
+            {isLoadingStats ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                <span className="text-muted-foreground">Loading activity...</span>
               </div>
-            ))}
+            ) : recentActivity.length > 0 ? (
+              recentActivity.map((activity, index) => (
+                <div key={activity.id || index} className="flex items-center space-x-3">
+                  <div className={`w-2 h-2 rounded-full ${activity.status === "success" ? "bg-emerald-500" :
+                      activity.status === "failed" ? "bg-red-500" :
+                        "bg-primary"
+                    }`} />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {activity.emailSubject || activity.details || activity.action}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {activity.action} • {new Date(activity.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Clock className="h-12 w-12 mx-auto mb-2 opacity-30" />
+                <p className="font-medium">No recent activity</p>
+                <p className="text-sm">Run Gmail automation to see activity here</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
+
     </div>
   )
 }

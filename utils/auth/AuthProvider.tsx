@@ -11,7 +11,13 @@ interface AuthUser {
   avatar_url?: string
   created_at?: string
   updated_at?: string
+  user_metadata?: {
+    full_name?: string
+    avatar_url?: string
+    [key: string]: any
+  }
 }
+
 
 interface RateLimitResult {
   allowed: boolean

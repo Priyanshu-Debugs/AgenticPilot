@@ -4,6 +4,9 @@ import { cookies } from 'next/headers';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: NextRequest) {
+    let context: string | undefined;
+    let tone: string | undefined;
+
     try {
         // Get current user
         const supabase = await createClient(cookies());
@@ -16,7 +19,9 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const { context, tone } = await req.json();
+        const body = await req.json();
+        context = body.context;
+        tone = body.tone;
 
         // Check if Gemini API key is configured
         if (!process.env.GEMINI_API_KEY) {
@@ -76,3 +81,4 @@ Return ONLY the caption text, without any explanations or quotes.`;
         );
     }
 }
+

@@ -11,7 +11,13 @@ export const metadata: Metadata = {
   description:
     "Transform your business with intelligent automation. Gmail replies, inventory management, and social media posting - all powered by AI.",
   generator: "v0.dev",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 }
+
 
 export default function RootLayout({
   children,

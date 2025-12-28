@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Navigation } from "@/components/shared/Navigation"
@@ -9,12 +10,22 @@ import Link from "next/link"
 import Image from "next/image"
 
 export default function LandingPage() {
+  const [showDemoMessage, setShowDemoMessage] = useState(false)
+
   const handleGetStarted = () => {
     window.location.href = "/auth/signup"
   }
 
   const handleSignIn = () => {
     window.location.href = "/auth/signin"
+  }
+
+  const handleWatchDemo = () => {
+    // Show demo message and navigate to dashboard for interactive demo
+    setShowDemoMessage(true)
+    setTimeout(() => {
+      window.location.href = "/dashboard"
+    }, 1500)
   }
 
   const features = [
@@ -26,7 +37,7 @@ export default function LandingPage() {
       stats: "95% accuracy rate"
     },
     {
-      title: "Inventory Management", 
+      title: "Inventory Management",
       description: "Automated inventory tracking, smart stock alerts, and predictive reorder management that prevents stockouts.",
       icon: Package,
       href: "/dashboard/inventory",
@@ -57,7 +68,7 @@ export default function LandingPage() {
       company: "TechFlow"
     },
     {
-      name: "Marcus Rodriguez", 
+      name: "Marcus Rodriguez",
       role: "Operations Manager",
       content: "The inventory automation saved us 20 hours per week and eliminated stockouts completely.",
       avatar: "/placeholder-user.jpg",
@@ -65,7 +76,7 @@ export default function LandingPage() {
     },
     {
       name: "Emily Watson",
-      role: "Marketing Director", 
+      role: "Marketing Director",
       content: "Our social media engagement increased 300% after implementing AgenticPilot's automation.",
       avatar: "/placeholder-user.jpg",
       company: "BrandStudio"
@@ -75,7 +86,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <Navigation 
+      <Navigation
         onSignIn={handleSignIn}
         onSignUp={handleGetStarted}
       />
@@ -85,7 +96,7 @@ export default function LandingPage() {
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(62,207,142,0.1),transparent_50%)]"></div>
-        
+
         <div className="relative container-padding section-spacing">
           <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
             {/* Badge */}
@@ -93,7 +104,7 @@ export default function LandingPage() {
               <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-primary" />
               AI-Powered Business Automation
             </div>
-            
+
             {/* Main Heading */}
             <div className="space-y-4 sm:space-y-6">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
@@ -102,14 +113,14 @@ export default function LandingPage() {
                   AI Agents
                 </span>
               </h1>
-              
+
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Transform your business operations with intelligent automation. From customer support to inventory
                 management, let AI handle the repetitive tasks while you focus on{" "}
                 <span className="text-primary font-medium">growth</span>.
               </p>
             </div>
-            
+
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pt-4">
               <Button
@@ -123,10 +134,12 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={handleWatchDemo}
+                disabled={showDemoMessage}
                 className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base font-medium group"
               >
                 <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Watch Demo
+                {showDemoMessage ? "Opening Dashboard..." : "Watch Demo"}
               </Button>
             </div>
 
@@ -215,7 +228,7 @@ export default function LandingPage() {
                           {feature.stats}
                         </Badge>
                       </div>
-                      
+
                       {/* Content */}
                       <div className="space-y-3 sm:space-y-4">
                         <h3 className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -225,7 +238,7 @@ export default function LandingPage() {
                           {feature.description}
                         </p>
                       </div>
-                      
+
                       {/* Learn More Link */}
                       <Link
                         href={feature.href}
@@ -274,12 +287,12 @@ export default function LandingPage() {
                         <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                       ))}
                     </div>
-                    
+
                     {/* Testimonial Content */}
                     <blockquote className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                       "{testimonial.content}"
                     </blockquote>
-                    
+
                     {/* Author Info */}
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -317,7 +330,7 @@ export default function LandingPage() {
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Join thousands of businesses already using AgenticPilot to streamline their operations and boost productivity.
             </p>
-            
+
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pt-4">
               <Button
@@ -336,7 +349,7 @@ export default function LandingPage() {
                 Contact Sales
               </Button>
             </div>
-            
+
             {/* Trust indicators */}
             <div className="pt-6 sm:pt-8 text-muted-foreground">
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-sm">
@@ -375,7 +388,7 @@ export default function LandingPage() {
                   The AI-powered automation platform that helps businesses scale efficiently and focus on what matters most.
                 </p>
               </div>
-              
+
               {/* Product Links */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-foreground">Product</h4>
@@ -394,7 +407,7 @@ export default function LandingPage() {
                   </Link>
                 </div>
               </div>
-              
+
               {/* Company Links */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-foreground">Company</h4>
@@ -413,7 +426,7 @@ export default function LandingPage() {
                   </Link>
                 </div>
               </div>
-              
+
               {/* Contact Info */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-foreground">Connect</h4>
@@ -438,7 +451,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Footer Bottom */}
             <div className="border-t border-border pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
               <p className="text-sm text-muted-foreground">
