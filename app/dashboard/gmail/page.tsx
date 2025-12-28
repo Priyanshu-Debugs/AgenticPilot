@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -31,8 +31,23 @@ import { ActivityLog } from '@/components/gmail/ActivityLog'
 // Types
 import type { GmailMessage, EmailAnalysis, GmailLog, GmailStats } from '@/lib/gmail/types'
 
+// Wrapper component for Suspense boundary
 export default function GmailAutomationPage() {
+    return (
+        <Suspense fallback={
+            <div className="p-6 flex items-center justify-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-3">Loading Gmail Automation...</span>
+            </div>
+        }>
+            <GmailAutomationContent />
+        </Suspense>
+    )
+}
+
+function GmailAutomationContent() {
     const router = useRouter()
+
     const searchParams = useSearchParams()
 
     // Connection state
