@@ -3,22 +3,45 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Mail, Link2, Loader2, CheckCircle2, XCircle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Mail, Link2, Loader2, CheckCircle2, XCircle, Play, Square, Zap } from 'lucide-react'
+
+interface AutomationResult {
+    emailId: string
+    subject: string
+    from: string
+    status: 'success' | 'error'
+    error?: string
+}
+
+interface AutomationResponse {
+    success: boolean
+    message: string
+    processed: number
+    successCount: number
+    errorCount: number
+    results: AutomationResult[]
+}
 
 interface GmailConnectProps {
     isConnected: boolean
     onConnect: () => Promise<void>
     onDisconnect: () => Promise<void>
     loading?: boolean
+    onAutomationComplete?: () => void
 }
 
 export function GmailConnect({
     isConnected,
     onConnect,
     onDisconnect,
-    loading = false
+    loading = false,
+    onAutomationComplete
 }: GmailConnectProps) {
     const [isLoading, setIsLoading] = useState(false)
+    const [isAutomating, setIsAutomating] = useState(false)
+    const [automationResult, setAutomationResult] = useState<AutomationResponse | null>(null)
 
     const handleConnect = async () => {
         setIsLoading(true)
@@ -39,57 +62,170 @@ export function GmailConnect({
         }
     }
 
+    const handleStartAutomation = async () => {
+        setIsAutomating(true)
+        setAutomationResult(null)
+
+        try {
+            const res = await fetch('/api/gmail/auto-reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maxEmails: 10, tone: 'professional' })
+            })
+
+            const data: AutomationResponse = await res.json()
+            setAutomationResult(data)
+
+            if (onAutomationComplete) {
+                onAutomationComplete()
+            }
+        } catch (error) {
+            console.error('Automation failed:', error)
+            setAutomationResult({
+                success: false,
+                message: 'Automation failed. Please try again.',
+                processed: 0,
+                successCount: 0,
+                errorCount: 0,
+                results: []
+            })
+        } finally {
+            setIsAutomating(false)
+        }
+    }
+
     const isProcessing = isLoading || loading
 
     return (
         <Card className="border-2 border-dashed">
-            <CardContent className="flex items-center justify-between p-6">
-                <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-full ${isConnected ? 'bg-green-100 dark:bg-green-900/30' : 'bg-muted'}`}>
-                        <Mail className={`h-6 w-6 ${isConnected ? 'text-green-600' : 'text-muted-foreground'}`} />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold">Gmail Connection</h3>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            {isConnected ? (
-                                <>
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                    <span className="text-green-600">Connected</span>
-                                </>
-                            ) : (
-                                <>
-                                    <XCircle className="h-4 w-4 text-red-500" />
-                                    <span>Not connected</span>
-                                </>
-                            )}
+            <CardContent className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className={`p-3 rounded-full ${isConnected ? 'bg-green-100 dark:bg-green-900/30' : 'bg-muted'}`}>
+                            <Mail className={`h-6 w-6 ${isConnected ? 'text-green-600' : 'text-muted-foreground'}`} />
                         </div>
+                        <div>
+                            <h3 className="font-semibold">Gmail Connection</h3>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                {isConnected ? (
+                                    <>
+                                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                        <span className="text-green-600">Connected</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <XCircle className="h-4 w-4 text-red-500" />
+                                        <span>Not connected</span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {isConnected && (
+                            <Button
+                                onClick={handleStartAutomation}
+                                disabled={isAutomating || isProcessing}
+                                className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                            >
+                                {isAutomating ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Zap className="h-4 w-4" />
+                                        Start Automation
+                                    </>
+                                )}
+                            </Button>
+                        )}
+
+                        {isConnected ? (
+                            <Button
+                                variant="destructive"
+                                onClick={handleDisconnect}
+                                disabled={isProcessing || isAutomating}
+                            >
+                                {isProcessing ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                ) : null}
+                                Disconnect
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={handleConnect}
+                                disabled={isProcessing}
+                                className="gap-2"
+                            >
+                                {isProcessing ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Link2 className="h-4 w-4" />
+                                )}
+                                Connect Gmail
+                            </Button>
+                        )}
                     </div>
                 </div>
 
-                {isConnected ? (
-                    <Button
-                        variant="destructive"
-                        onClick={handleDisconnect}
-                        disabled={isProcessing}
-                    >
-                        {isProcessing ? (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : null}
-                        Disconnect
-                    </Button>
-                ) : (
-                    <Button
-                        onClick={handleConnect}
-                        disabled={isProcessing}
-                        className="gap-2"
-                    >
-                        {isProcessing ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Link2 className="h-4 w-4" />
+                {/* Automation Progress */}
+                {isAutomating && (
+                    <div className="space-y-2 pt-2 border-t">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                            <span>Analyzing emails and generating AI replies...</span>
+                        </div>
+                        <Progress value={undefined} className="h-2" />
+                    </div>
+                )}
+
+                {/* Automation Result */}
+                {automationResult && !isAutomating && (
+                    <div className="space-y-3 pt-2 border-t">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium">{automationResult.message}</p>
+                            <div className="flex gap-2">
+                                {automationResult.successCount > 0 && (
+                                    <Badge variant="default" className="bg-green-500">
+                                        {automationResult.successCount} Replied
+                                    </Badge>
+                                )}
+                                {automationResult.errorCount > 0 && (
+                                    <Badge variant="destructive">
+                                        {automationResult.errorCount} Failed
+                                    </Badge>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Show individual results */}
+                        {automationResult.results.length > 0 && (
+                            <div className="max-h-40 overflow-y-auto space-y-2">
+                                {automationResult.results.map((result, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`flex items-center justify-between p-2 rounded-lg text-sm ${result.status === 'success'
+                                            ? 'bg-green-50 dark:bg-green-950/30'
+                                            : 'bg-red-50 dark:bg-red-950/30'
+                                            }`}
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-medium truncate">{result.subject}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{result.from}</p>
+                                        </div>
+                                        {result.status === 'success' ? (
+                                            <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 ml-2" />
+                                        ) : (
+                                            <XCircle className="h-4 w-4 text-red-500 flex-shrink-0 ml-2" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         )}
-                        Connect Gmail
-                    </Button>
+                    </div>
                 )}
             </CardContent>
         </Card>

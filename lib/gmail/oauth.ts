@@ -34,7 +34,7 @@ export function getAuthUrl(userId: string): string {
         access_type: 'offline',
         scope: GMAIL_SCOPES,
         prompt: 'consent',
-        state: userId, // Pass userId to callback
+        state: userId,
     })
 }
 
