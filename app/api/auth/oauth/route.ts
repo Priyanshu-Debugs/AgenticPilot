@@ -35,10 +35,15 @@ export async function POST(request: NextRequest) {
     )
 
     // Sign in with Google OAuth
+    // prompt: 'select_account' forces Google to show account picker every time
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback${redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''}`
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback${redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''}`,
+        queryParams: {
+          prompt: 'select_account',
+          access_type: 'offline'
+        }
       }
     })
 
