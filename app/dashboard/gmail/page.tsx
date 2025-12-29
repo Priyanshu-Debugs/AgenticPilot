@@ -307,23 +307,25 @@ function GmailAutomationContent() {
     }
 
     return (
-        <div className="p-6 space-y-6 max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+            {/* Header - stacks vertically on mobile */}
+            <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold flex items-center gap-3">
-                        <Mail className="h-8 w-8 text-primary" />
-                        Gmail Automation
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2 sm:gap-3">
+                        <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary shrink-0" />
+                        <span>Gmail Automation</span>
                     </h1>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                         AI-powered email analysis and automated responses
                     </p>
                 </div>
                 {isConnected && (
                     <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => { loadEmails(); loadLogs(); }}
                         disabled={emailsLoading}
+                        className="w-full sm:w-auto"
                     >
                         <RefreshCw className={`h-4 w-4 mr-2 ${emailsLoading ? 'animate-spin' : ''}`} />
                         Refresh
@@ -343,50 +345,59 @@ function GmailAutomationContent() {
             {/* Main Content */}
             {isConnected && (
                 <Tabs defaultValue="inbox" className="space-y-4">
-                    <TabsList>
-                        <TabsTrigger value="inbox" className="gap-2">
+                    <TabsList className="w-full sm:w-auto">
+                        <TabsTrigger value="inbox" className="gap-1.5 sm:gap-2 flex-1 sm:flex-none">
                             <Inbox className="h-4 w-4" />
-                            Inbox
+                            <span>Inbox</span>
                         </TabsTrigger>
-                        <TabsTrigger value="activity" className="gap-2">
+                        <TabsTrigger value="activity" className="gap-1.5 sm:gap-2 flex-1 sm:flex-none">
                             <Activity className="h-4 w-4" />
-                            Activity
+                            <span>Activity</span>
                         </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="inbox" className="space-y-4">
-                        {/* Search and Filters */}
+                        {/* Search and Filters - stacks on mobile */}
                         <Card>
-                            <CardContent className="p-4">
-                                <div className="flex gap-3">
+                            <CardContent className="p-3 sm:p-4">
+                                <div className="space-y-2 sm:space-y-0 sm:flex sm:gap-3">
                                     <div className="relative flex-1">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                         <Input
                                             placeholder="Search emails..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="pl-10"
+                                            className="pl-10 h-9"
                                             onKeyDown={(e) => e.key === 'Enter' && loadEmails()}
                                         />
                                     </div>
-                                    <Button
-                                        variant={unreadOnly ? 'default' : 'outline'}
-                                        onClick={() => {
-                                            setUnreadOnly(!unreadOnly)
-                                            setTimeout(loadEmails, 100)
-                                        }}
-                                        className="gap-2"
-                                    >
-                                        <Filter className="h-4 w-4" />
-                                        Unread only
-                                    </Button>
-                                    <Button onClick={loadEmails} disabled={emailsLoading}>
-                                        {emailsLoading ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            'Search'
-                                        )}
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant={unreadOnly ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => {
+                                                setUnreadOnly(!unreadOnly)
+                                                setTimeout(loadEmails, 100)
+                                            }}
+                                            className="flex-1 sm:flex-none gap-1.5"
+                                        >
+                                            <Filter className="h-4 w-4" />
+                                            <span className="hidden sm:inline">Unread only</span>
+                                            <span className="sm:hidden">Unread</span>
+                                        </Button>
+                                        <Button
+                                            onClick={loadEmails}
+                                            disabled={emailsLoading}
+                                            size="sm"
+                                            className="flex-1 sm:flex-none"
+                                        >
+                                            {emailsLoading ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                'Search'
+                                            )}
+                                        </Button>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -448,10 +459,10 @@ function GmailAutomationContent() {
             {/* Not Connected State */}
             {!connectionLoading && !isConnected && (
                 <Card className="border-dashed">
-                    <CardContent className="py-12 text-center">
-                        <Mail className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
-                        <h3 className="text-xl font-semibold mb-2">Connect Your Gmail</h3>
-                        <p className="text-muted-foreground max-w-md mx-auto">
+                    <CardContent className="py-8 sm:py-12 px-4 sm:px-6 text-center">
+                        <Mail className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground/30" />
+                        <h3 className="text-lg sm:text-xl font-semibold mb-2">Connect Your Gmail</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto">
                             Connect your Gmail account to start using AI-powered email automation.
                             Analyze emails, generate intelligent responses, and save time.
                         </p>
