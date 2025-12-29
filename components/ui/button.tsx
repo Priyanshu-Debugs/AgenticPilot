@@ -10,19 +10,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md",
+          "bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:bg-primary/90 hover:-translate-y-0.5",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md",
+          "bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:shadow-lg hover:shadow-destructive/30 hover:bg-destructive/90 hover:-translate-y-0.5",
         outline:
-          "border border-border bg-background hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md",
+          "border-2 border-border bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/50 shadow-sm hover:shadow-md hover:-translate-y-0.5",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
+          "bg-secondary text-secondary-foreground shadow-sm hover:shadow-md hover:bg-secondary/80 hover:-translate-y-0.5",
         ghost:
           "hover:bg-accent hover:text-accent-foreground",
-        link: 
+        link:
           "text-primary underline-offset-4 hover:underline",
         success:
-          "bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md",
+          "bg-green-600 text-white shadow-md shadow-green-600/20 hover:shadow-lg hover:shadow-green-600/30 hover:bg-green-700 hover:-translate-y-0.5",
+        glow:
+          "bg-primary text-primary-foreground shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 hover:-translate-y-1 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
+        glass:
+          "bg-background/80 backdrop-blur-md border border-border/50 shadow-lg hover:bg-background/90 hover:shadow-xl hover:-translate-y-0.5",
       },
       size: {
         default: "h-10 px-4 py-2 text-sm",
@@ -40,6 +44,7 @@ const buttonVariants = cva(
     },
   }
 )
+
 
 function Button({
   className,

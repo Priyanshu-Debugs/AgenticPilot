@@ -337,6 +337,7 @@ function GmailAutomationContent() {
                 onConnect={handleConnect}
                 onDisconnect={handleDisconnect}
                 loading={connectionLoading}
+                onAutomationComplete={() => { loadEmails(); loadLogs(); }}
             />
 
             {/* Main Content */}
