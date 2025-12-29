@@ -53,97 +53,90 @@ export function EmailList({
     }
 
     return (
-        <div className="space-y-3 max-h-[calc(100vh-320px)] overflow-y-auto pr-2">
+        <div className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto">
             {emails.map((email) => (
                 <Card
                     key={email.id}
-                    className={`transition-all hover:shadow-lg cursor-pointer ${selectedId === email.id ? 'ring-2 ring-primary shadow-md' : ''
-                        } ${email.isUnread ? 'border-l-4 border-l-primary bg-primary/5' : ''}`}
+                    className={`transition-all hover:shadow-md ${selectedId === email.id ? 'ring-2 ring-primary shadow-md' : ''
+                        } ${email.isUnread ? 'border-l-2 border-l-primary bg-primary/5' : 'border-l-2 border-l-transparent'}`}
                 >
-                    <CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                    <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                                    <span className="text-sm font-medium truncate">
-                                        {extractName(email.from)}
-                                    </span>
-                                    {email.isUnread && (
-                                        <Badge variant="secondary" className="text-xs">New</Badge>
-                                    )}
-                                </div>
-
-                                <h4 className={`font-semibold truncate mb-1 ${email.isUnread ? 'text-foreground' : 'text-muted-foreground'
-                                    }`}>
-                                    {email.subject || '(No Subject)'}
-                                </h4>
-
-                                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                                    {email.snippet}
-                                </p>
-
-                                {expandedId === email.id && (
-                                    <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm whitespace-pre-wrap max-h-48 overflow-y-auto">
-                                        {email.body.substring(0, 1000)}
-                                        {email.body.length > 1000 && '...'}
-                                    </div>
+                    <CardContent className="p-3 sm:p-4">
+                        {/* Email header: sender and date */}
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                <span className="text-xs sm:text-sm font-medium truncate">
+                                    {extractName(email.from)}
+                                </span>
+                                {email.isUnread && (
+                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 shrink-0">New</Badge>
                                 )}
-
-                                <div className="flex items-center gap-2 mt-3 flex-wrap">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            onAnalyze(email)
-                                        }}
-                                        className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-colors"
-                                    >
-                                        <Sparkles className="h-3.5 w-3.5" />
-                                        Analyze
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            onReply(email)
-                                        }}
-                                        className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-colors"
-                                    >
-                                        <Send className="h-3.5 w-3.5" />
-                                        Reply
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            setExpandedId(expandedId === email.id ? null : email.id)
-                                        }}
-                                        className="ml-auto"
-                                    >
-                                        {expandedId === email.id ? (
-                                            <>
-                                                <ChevronUp className="h-4 w-4 mr-1" />
-                                                <span className="text-xs">Hide</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ChevronDown className="h-4 w-4 mr-1" />
-                                                <span className="text-xs">Show</span>
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
                             </div>
-
-                            <div className="flex flex-col items-end text-xs text-muted-foreground flex-shrink-0">
-                                <div className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {formatDate(email.date)}
-                                </div>
+                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
+                                <Clock className="h-3 w-3" />
+                                {formatDate(email.date)}
                             </div>
+                        </div>
+
+                        {/* Subject */}
+                        <h4 className={`text-sm font-semibold truncate mb-1 ${email.isUnread ? 'text-foreground' : 'text-muted-foreground'}`}>
+                            {email.subject || '(No Subject)'}
+                        </h4>
+
+                        {/* Snippet */}
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
+                            {email.snippet}
+                        </p>
+
+                        {/* Expanded content */}
+                        {expandedId === email.id && (
+                            <div className="mt-3 p-2.5 bg-muted/50 rounded-lg text-xs whitespace-pre-wrap max-h-40 overflow-y-auto border border-border/50">
+                                {email.body.substring(0, 1000)}
+                                {email.body.length > 1000 && '...'}
+                            </div>
+                        )}
+
+                        {/* Actions - compact row */}
+                        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-border/30">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    onAnalyze(email)
+                                }}
+                                className="h-7 px-2 gap-1 text-xs hover:bg-primary/10 hover:text-primary"
+                            >
+                                <Sparkles className="h-3.5 w-3.5" />
+                                Analyze
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    onReply(email)
+                                }}
+                                className="h-7 px-2 gap-1 text-xs hover:bg-primary/10 hover:text-primary"
+                            >
+                                <Send className="h-3.5 w-3.5" />
+                                Reply
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setExpandedId(expandedId === email.id ? null : email.id)
+                                }}
+                                className="h-7 w-7 ml-auto text-muted-foreground"
+                            >
+                                {expandedId === email.id ? (
+                                    <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                    <ChevronDown className="h-4 w-4" />
+                                )}
+                            </Button>
                         </div>
                     </CardContent>
                 </Card>

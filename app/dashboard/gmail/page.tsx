@@ -356,48 +356,50 @@ function GmailAutomationContent() {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="inbox" className="space-y-4">
-                        {/* Search and Filters - stacks on mobile */}
-                        <Card>
-                            <CardContent className="p-3 sm:p-4">
-                                <div className="space-y-2 sm:space-y-0 sm:flex sm:gap-3">
-                                    <div className="relative flex-1">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                        <Input
-                                            placeholder="Search emails..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="pl-10 h-9"
-                                            onKeyDown={(e) => e.key === 'Enter' && loadEmails()}
-                                        />
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant={unreadOnly ? 'default' : 'outline'}
-                                            size="sm"
-                                            onClick={() => {
-                                                setUnreadOnly(!unreadOnly)
-                                                setTimeout(loadEmails, 100)
-                                            }}
-                                            className="flex-1 sm:flex-none gap-1.5"
-                                        >
-                                            <Filter className="h-4 w-4" />
-                                            <span className="hidden sm:inline">Unread only</span>
-                                            <span className="sm:hidden">Unread</span>
-                                        </Button>
-                                        <Button
-                                            onClick={loadEmails}
-                                            disabled={emailsLoading}
-                                            size="sm"
-                                            className="flex-1 sm:flex-none"
-                                        >
-                                            {emailsLoading ? (
-                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                            ) : (
-                                                'Search'
-                                            )}
-                                        </Button>
-                                    </div>
+                    <TabsContent value="inbox" className="space-y-3">
+                        {/* Search and Filters - Clean mobile layout */}
+                        <Card className="border-border/50">
+                            <CardContent className="p-3">
+                                {/* Search input - full width */}
+                                <div className="relative mb-2">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                    <Input
+                                        placeholder="Search emails..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="pl-9 h-10 bg-muted/30 border-border/50"
+                                        onKeyDown={(e) => e.key === 'Enter' && loadEmails()}
+                                    />
+                                </div>
+                                {/* Filter buttons - inline row */}
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant={unreadOnly ? 'default' : 'outline'}
+                                        size="sm"
+                                        onClick={() => {
+                                            setUnreadOnly(!unreadOnly)
+                                            setTimeout(loadEmails, 100)
+                                        }}
+                                        className="flex-1 gap-1.5 h-9"
+                                    >
+                                        <Filter className="h-3.5 w-3.5" />
+                                        Unread
+                                    </Button>
+                                    <Button
+                                        onClick={loadEmails}
+                                        disabled={emailsLoading}
+                                        size="sm"
+                                        className="flex-1 h-9"
+                                    >
+                                        {emailsLoading ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <Search className="h-3.5 w-3.5 mr-1.5" />
+                                                Search
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
