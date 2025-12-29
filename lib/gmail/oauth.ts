@@ -66,6 +66,8 @@ export async function saveTokens(userId: string, tokens: GmailToken): Promise<vo
             token_type: tokens.token_type,
             scope: tokens.scope,
             updated_at: new Date().toISOString(),
+        }, {
+            onConflict: 'user_id'
         })
 
     if (error) {

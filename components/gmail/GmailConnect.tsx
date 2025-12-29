@@ -207,7 +207,7 @@ export function GmailConnect({
                         </div>
 
                         {/* Show individual results */}
-                        {automationResult.results.length > 0 && (
+                        {automationResult.results && automationResult.results.length > 0 && (
                             <div className="max-h-40 overflow-y-auto space-y-2">
                                 {automationResult.results.map((result, idx) => (
                                     <div
