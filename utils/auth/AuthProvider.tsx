@@ -83,11 +83,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'sign-in', identifier: email })
       })
-      
+
       const rateLimitResult = await rateLimitResponse.json()
-      
+
       if (!rateLimitResult.allowed) {
-        return { 
+        return {
           success: false,
           error: 'Too many sign in attempts. Please wait before trying again.'
         }
@@ -112,9 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await checkAuthStatus() // Refresh user data
         // Redirect to dashboard after successful sign-in
         router.push(data.redirectTo || '/dashboard')
-        return { 
-          success: true, 
-          redirectTo: data.redirectTo 
+        return {
+          success: true,
+          redirectTo: data.redirectTo
         }
       } else {
         // Record failed attempt for rate limiting
@@ -128,9 +128,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.warn('Failed to record rate limit attempt:', recordError)
         }
 
-        return { 
-          success: false, 
-          error: data.error || 'Sign in failed' 
+        return {
+          success: false,
+          error: data.error || 'Sign in failed'
         }
       }
     } catch (error) {
@@ -145,9 +145,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn('Failed to record rate limit attempt:', recordError)
       }
 
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -161,10 +161,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ 
-          email, 
-          password, 
-          full_name: fullName 
+        body: JSON.stringify({
+          email,
+          password,
+          full_name: fullName
         }),
       })
 
@@ -172,29 +172,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success) {
         if (data.requiresEmailConfirmation) {
-          return { 
-            success: true, 
-            message: data.message 
+          return {
+            success: true,
+            message: data.message
           }
         } else {
           await checkAuthStatus() // Refresh user data
           // Redirect to dashboard after successful sign-up
           router.push(data.redirectTo || '/dashboard')
-          return { 
-            success: true, 
-            redirectTo: data.redirectTo 
+          return {
+            success: true,
+            redirectTo: data.redirectTo
           }
         }
       } else {
-        return { 
-          success: false, 
-          error: data.error || 'Sign up failed' 
+        return {
+          success: false,
+          error: data.error || 'Sign up failed'
         }
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -211,19 +211,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success) {
         setUser(null)
-        // Redirect to landing page after successful sign-out
-        router.push('/')
+        // Full page refresh to completely clear all cached state
+        window.location.href = '/'
         return { success: true }
       } else {
-        return { 
-          success: false, 
-          error: data.error || 'Sign out failed' 
+        return {
+          success: false,
+          error: data.error || 'Sign out failed'
         }
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -237,7 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           provider: 'google',
           redirectTo: '/dashboard'
         }),
@@ -248,20 +248,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.success && data.url) {
         // Redirect to Google OAuth
         window.location.href = data.url
-        return { 
-          success: true, 
-          url: data.url 
+        return {
+          success: true,
+          url: data.url
         }
       } else {
-        return { 
-          success: false, 
-          error: data.error || 'OAuth failed' 
+        return {
+          success: false,
+          error: data.error || 'OAuth failed'
         }
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -275,11 +275,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'password-reset', identifier: email })
       })
-      
+
       const rateLimitResult = await rateLimitResponse.json()
-      
+
       if (!rateLimitResult.allowed) {
-        return { 
+        return {
           success: false,
           error: 'Too many password reset attempts. Please wait before trying again.'
         }
@@ -312,14 +312,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (data.success) {
-        return { 
-          success: true, 
-          message: data.message 
+        return {
+          success: true,
+          message: data.message
         }
       } else {
-        return { 
-          success: false, 
-          error: data.error || 'Password reset failed' 
+        return {
+          success: false,
+          error: data.error || 'Password reset failed'
         }
       }
     } catch (error) {
@@ -334,9 +334,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn('Failed to record rate limit attempt:', recordError)
       }
 
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -350,9 +350,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ 
-          password, 
-          confirmPassword 
+        body: JSON.stringify({
+          password,
+          confirmPassword
         }),
       })
 
@@ -362,21 +362,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await checkAuthStatus() // Refresh user data
         // Redirect to dashboard after successful password reset
         router.push(data.redirectTo || '/dashboard')
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: data.message,
-          redirectTo: data.redirectTo 
+          redirectTo: data.redirectTo
         }
       } else {
-        return { 
-          success: false, 
-          error: data.error || 'Password reset failed' 
+        return {
+          success: false,
+          error: data.error || 'Password reset failed'
         }
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'Network error. Please try again.' 
+      return {
+        success: false,
+        error: 'Network error. Please try again.'
       }
     }
   }
@@ -389,14 +389,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'password-reset' })
       })
-      
+
       if (response.ok) {
         return await response.json()
       }
     } catch (error) {
       console.warn('Failed to check password reset rate limit:', error)
     }
-    
+
     return { allowed: true, remaining: 3, resetTime: 0, isBlocked: false }
   }
 
@@ -407,14 +407,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'sign-in' })
       })
-      
+
       if (response.ok) {
         return await response.json()
       }
     } catch (error) {
       console.warn('Failed to check sign-in rate limit:', error)
     }
-    
+
     return { allowed: true, remaining: 5, resetTime: 0, isBlocked: false }
   }
 
