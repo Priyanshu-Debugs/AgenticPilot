@@ -15,33 +15,33 @@ export async function GET() {
   const config = {
     // What your app THINKS the site URL is
     configuredSiteUrl: process.env.NEXT_PUBLIC_SITE_URL,
-    
+
     // What the ACTUAL URL is (from request)
     actualSiteUrl: actualUrl,
-    
-    // The redirect URI your app will send to Google
-    configuredRedirectUri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/gmail/callback`,
-    
+
+    // The redirect URI your app will send to Google for Gmail OAuth
+    configuredRedirectUri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/gmail/callback`,
+
     // What the redirect URI SHOULD be
-    correctRedirectUri: `${actualUrl}/api/auth/gmail/callback`,
-    
+    correctRedirectUri: `${actualUrl}/api/gmail/callback`,
+
     // OAuth credentials status
     hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
     hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
     googleClientIdPrefix: process.env.GOOGLE_CLIENT_ID?.substring(0, 30) + '...',
-    
+
     // Environment info
     nodeEnv: process.env.NODE_ENV,
     vercelUrl: process.env.VERCEL_URL,
     vercelEnv: process.env.VERCEL_ENV,
-    
+
     // Headers for debugging
     requestHost: host,
     requestProtocol: protocol,
   };
 
   const issues: string[] = [];
-  
+
   // Check for common issues
   if (!process.env.NEXT_PUBLIC_SITE_URL) {
     issues.push('❌ CRITICAL: NEXT_PUBLIC_SITE_URL is not set!');
@@ -50,11 +50,11 @@ export async function GET() {
   } else if (process.env.NEXT_PUBLIC_SITE_URL !== actualUrl) {
     issues.push(`⚠️  WARNING: NEXT_PUBLIC_SITE_URL (${process.env.NEXT_PUBLIC_SITE_URL}) doesn't match actual URL (${actualUrl})`);
   }
-  
+
   if (!process.env.GOOGLE_CLIENT_ID) {
     issues.push('❌ CRITICAL: GOOGLE_CLIENT_ID is not set!');
   }
-  
+
   if (!process.env.GOOGLE_CLIENT_SECRET) {
     issues.push('❌ CRITICAL: GOOGLE_CLIENT_SECRET is not set!');
   }
@@ -72,8 +72,8 @@ export async function GET() {
       step6: 'Redeploy your app (without build cache)',
       step7: 'After fixing, remove this debug endpoint for security',
     },
-    actionRequired: issues.length > 0 ? 
-      'Fix the issues above, then redeploy your application' : 
+    actionRequired: issues.length > 0 ?
+      'Fix the issues above, then redeploy your application' :
       'Configuration looks good. If OAuth still fails, check Google Cloud Console',
   }, {
     headers: {
