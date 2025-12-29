@@ -4,7 +4,7 @@
 export interface GmailToken {
     access_token: string
     refresh_token: string
-    expiry_date: number
+    expires_at: string  // timestamptz format
     token_type: string
     scope: string
 }

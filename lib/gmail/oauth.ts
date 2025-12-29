@@ -46,7 +46,7 @@ export async function exchangeCodeForTokens(code: string): Promise<GmailToken> {
     return {
         access_token: tokens.access_token!,
         refresh_token: tokens.refresh_token!,
-        expiry_date: tokens.expiry_date!,
+        expires_at: new Date(tokens.expiry_date!).toISOString(),
         token_type: tokens.token_type!,
         scope: tokens.scope!,
     }
@@ -62,7 +62,7 @@ export async function saveTokens(userId: string, tokens: GmailToken): Promise<vo
             user_id: userId,
             access_token: tokens.access_token,
             refresh_token: tokens.refresh_token,
-            expiry_date: tokens.expiry_date,
+            expires_at: tokens.expires_at,
             token_type: tokens.token_type,
             scope: tokens.scope,
             updated_at: new Date().toISOString(),
@@ -90,7 +90,7 @@ export async function getTokens(userId: string): Promise<GmailToken | null> {
     return {
         access_token: data.access_token,
         refresh_token: data.refresh_token,
-        expiry_date: data.expiry_date,
+        expires_at: data.expires_at,
         token_type: data.token_type,
         scope: data.scope,
     }
@@ -125,7 +125,8 @@ export async function refreshTokenIfNeeded(userId: string): Promise<GmailToken> 
     }
 
     // Check if token is expired (with 5 min buffer)
-    const isExpired = tokens.expiry_date < Date.now() - 5 * 60 * 1000
+    const expiryTime = new Date(tokens.expires_at).getTime()
+    const isExpired = expiryTime < Date.now() - 5 * 60 * 1000
 
     if (!isExpired) {
         return tokens
@@ -142,7 +143,7 @@ export async function refreshTokenIfNeeded(userId: string): Promise<GmailToken> 
     const newTokens: GmailToken = {
         access_token: credentials.access_token!,
         refresh_token: tokens.refresh_token, // Keep original refresh token
-        expiry_date: credentials.expiry_date!,
+        expires_at: new Date(credentials.expiry_date!).toISOString(),
         token_type: credentials.token_type!,
         scope: tokens.scope,
     }
