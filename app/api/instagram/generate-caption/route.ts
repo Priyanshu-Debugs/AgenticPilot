@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
         // Use Gemini AI to generate caption
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
         const prompt = `You are a social media expert specializing in Instagram content. Generate an engaging Instagram caption.
 

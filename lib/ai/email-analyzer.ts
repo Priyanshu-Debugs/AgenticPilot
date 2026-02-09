@@ -11,7 +11,7 @@ function getGeminiModel() {
         throw new Error('GEMINI_API_KEY not configured')
     }
     const genAI = new GoogleGenerativeAI(apiKey)
-    return genAI.getGenerativeModel({ model: 'gemini-pro' })
+    return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 }
 
 // Analyze email and generate suggested reply
