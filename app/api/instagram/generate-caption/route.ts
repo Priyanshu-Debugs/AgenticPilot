@@ -75,7 +75,7 @@ Return ONLY the caption text, without any explanations or quotes.`;
                 caption: fallbackCaption,
                 aiGenerated: false,
                 fallback: true,
-                error: error.message
+                error: 'AI generation failed; using fallback'
             },
             { status: 200 } // Return 200 with fallback instead of error
         );

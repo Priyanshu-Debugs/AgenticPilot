@@ -4,14 +4,20 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { EmailAnalysis, GmailMessage } from '@/lib/gmail/types'
 
+// Cache Gemini model at module scope to avoid repeated construction
+let cachedGeminiModel: ReturnType<GoogleGenerativeAI['getGenerativeModel']> | null = null
+
 // Initialize Gemini AI
 function getGeminiModel() {
-    const apiKey = process.env.GEMINI_API_KEY
-    if (!apiKey) {
-        throw new Error('GEMINI_API_KEY not configured')
+    if (!cachedGeminiModel) {
+        const apiKey = process.env.GEMINI_API_KEY
+        if (!apiKey) {
+            throw new Error('GEMINI_API_KEY not configured')
+        }
+        const genAI = new GoogleGenerativeAI(apiKey)
+        cachedGeminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
     }
-    const genAI = new GoogleGenerativeAI(apiKey)
-    return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    return cachedGeminiModel
 }
 
 // Analyze email and generate suggested reply

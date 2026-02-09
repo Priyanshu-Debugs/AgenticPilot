@@ -74,11 +74,12 @@ Return ONLY a comma-separated list of hashtags (e.g., #hashtag1, #hashtag2, #has
         const response = await result.response;
         const hashtagsText = response.text().trim();
 
-        // Parse hashtags from the response
-        const hashtags = hashtagsText
-            .split(',')
+        // Parse hashtags from the response in a robust way:
+        // extract all hashtag-like tokens regardless of commas/newlines/bullets.
+        const hashtagMatches = hashtagsText.match(/#\w+/g) || [];
+        const hashtags = hashtagMatches
             .map(tag => tag.trim())
-            .filter(tag => tag.startsWith('#') && tag.length > 1)
+            .filter(tag => tag.length > 1)
             .slice(0, 15); // Limit to 15 hashtags
 
         // Ensure we have at least some hashtags
@@ -111,7 +112,7 @@ Return ONLY a comma-separated list of hashtags (e.g., #hashtag1, #hashtag2, #has
                 hashtags: fallbackHashtags.slice(0, 10),
                 aiGenerated: false,
                 fallback: true,
-                error: error.message,
+                error: 'AI hashtag generation failed; using fallback hashtags.',
             },
             { status: 200 } // Return 200 with fallback instead of error
         );
