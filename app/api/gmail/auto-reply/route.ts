@@ -139,6 +139,33 @@ export async function POST(req: NextRequest) {
         const successCount = results.filter(r => r.status === 'success').length
         const errorCount = results.filter(r => r.status === 'error').length
 
+        // Create in-app notification if any emails were processed
+        if (successCount > 0) {
+            const successfulReplies = results.filter(r => r.status === 'success')
+            const emailList = successfulReplies
+                .slice(0, 3)
+                .map(r => `• "${r.subject}" from ${r.from}`)
+                .join('\n')
+            const remainingCount = successfulReplies.length - 3
+            const remainingText = remainingCount > 0 ? `\n...and ${remainingCount} more` : ''
+
+            try {
+                await supabase.from('notifications').insert({
+                    user_id: user.id,
+                    title: `📧 Auto-replied to ${successCount} email${successCount !== 1 ? 's' : ''}`,
+                    message: `Your AI assistant replied to:\n${emailList}${remainingText}`,
+                    type: 'success',
+                    category: 'automation',
+                    action_url: '/dashboard/gmail',
+                    action_label: 'View Gmail Dashboard',
+                    read: false,
+                    created_at: new Date().toISOString(),
+                })
+            } catch (notifError) {
+                console.warn('Failed to create notification:', notifError)
+            }
+        }
+
         return NextResponse.json({
             success: true,
             message: `Processed ${results.length} emails: ${successCount} replied, ${errorCount} failed`,

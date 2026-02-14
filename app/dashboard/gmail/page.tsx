@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge'
 
 // Icons
 import {
@@ -20,7 +22,8 @@ import {
     Activity,
     Search,
     Filter,
-    Loader2
+    Loader2,
+    Zap,
 } from 'lucide-react'
 
 // Gmail Components
@@ -86,6 +89,10 @@ function GmailAutomationContent() {
     })
     const [logsLoading, setLogsLoading] = useState(false)
 
+    // Automation toggle state
+    const [autoReplyEnabled, setAutoReplyEnabled] = useState(false)
+    const [automationToggling, setAutomationToggling] = useState(false)
+
     // Check connection status on mount
     useEffect(() => {
         checkConnection()
@@ -120,6 +127,7 @@ function GmailAutomationContent() {
             if (data.connected) {
                 loadEmails()
                 loadLogs()
+                fetchAutomationStatus()
             }
         } catch (error) {
             console.error('Connection check failed:', error)
@@ -233,6 +241,49 @@ function GmailAutomationContent() {
         }
     }
 
+    // Fetch automation status
+    const fetchAutomationStatus = async () => {
+        try {
+            const res = await fetch('/api/gmail/automation')
+            if (res.ok) {
+                const data = await res.json()
+                setAutoReplyEnabled(data.enabled)
+            }
+        } catch (error) {
+            console.warn('Could not fetch automation status:', error)
+        }
+    }
+
+    // Toggle automation
+    const handleAutomationToggle = async (enabled: boolean) => {
+        setAutomationToggling(true)
+        try {
+            const res = await fetch('/api/gmail/automation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled }),
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.error || 'Failed to update automation')
+                return
+            }
+
+            setAutoReplyEnabled(enabled)
+            toast.success(
+                enabled
+                    ? '🤖 Background automation enabled! Emails will be auto-replied every 5 minutes.'
+                    : '⏸️ Background automation disabled.'
+            )
+        } catch (error) {
+            toast.error('Failed to update automation setting')
+        } finally {
+            setAutomationToggling(false)
+        }
+    }
+
     // Open reply dialog
     const handleOpenReply = (email: GmailMessage) => {
         setReplyEmail(email)
@@ -332,6 +383,44 @@ function GmailAutomationContent() {
                     </Button>
                 )}
             </div>
+
+            {/* Automation Toggle Card */}
+            {isConnected && (
+                <Card className="card-elevated border-primary/20">
+                    <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                <Zap className={`h-5 w-5 ${autoReplyEnabled ? 'text-primary' : 'text-muted-foreground'}`} />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold text-sm">Background Automation</h3>
+                                    <Badge
+                                        variant={autoReplyEnabled ? 'default' : 'secondary'}
+                                        className={autoReplyEnabled
+                                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs'
+                                            : 'text-xs'
+                                        }
+                                    >
+                                        {autoReplyEnabled ? 'Active' : 'Inactive'}
+                                    </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    {autoReplyEnabled
+                                        ? 'AI will automatically scan and reply to new emails every 5 minutes'
+                                        : 'Enable to auto-scan and reply without opening the website'
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <Switch
+                            checked={autoReplyEnabled}
+                            onCheckedChange={handleAutomationToggle}
+                            disabled={automationToggling}
+                        />
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Connection Card */}
             <GmailConnect
