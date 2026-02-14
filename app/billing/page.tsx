@@ -1,9 +1,12 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bot, ArrowLeft, CreditCard, Download, Calendar, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
+import { toast } from "sonner"
 
 export default function BillingPage() {
   const invoices = [
@@ -60,6 +63,9 @@ export default function BillingPage() {
         <div className="mb-8 sm:mb-12">
           <h1 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight">Billing & Subscription</h1>
           <p className="text-sm sm:text-base text-muted-foreground">Manage your subscription and billing information</p>
+          <Badge variant="outline" className="mt-2 text-xs bg-amber-500/10 text-amber-600 border-amber-500/20">
+            Preview — Billing features are coming soon
+          </Badge>
         </div>
 
         <div className="grid gap-6 sm:gap-8 md:grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto">
@@ -114,8 +120,8 @@ export default function BillingPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button variant="outline" className="flex-1">Change Plan</Button>
-                <Button variant="outline" className="flex-1">Cancel Subscription</Button>
+                <Button variant="outline" className="flex-1" onClick={() => toast.info("Plan changes coming soon.", { description: "You'll be able to upgrade or downgrade your plan here." })}>Change Plan</Button>
+                <Button variant="outline" className="flex-1" onClick={() => toast.info("Subscription cancellation coming soon.", { description: "Contact support for subscription changes." })}>Cancel Subscription</Button>
               </div>
             </CardContent>
           </Card>
@@ -134,7 +140,7 @@ export default function BillingPage() {
                   <p className="text-sm text-muted-foreground">Expires 12/26</p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => toast.info("Payment method update coming soon.", { description: "Secure payment processing is being integrated." })}>
                 Update Payment Method
               </Button>
             </CardContent>
@@ -176,7 +182,7 @@ export default function BillingPage() {
                       <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
                         {invoice.status}
                       </Badge>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => toast.info("Invoice download coming soon.", { description: `Invoice ${invoice.id} will be available for download shortly.` })}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>

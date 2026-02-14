@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
 import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import Link from "next/link"
 // Auth and profile hooks
 import { useAuth } from "@/utils/auth/AuthProvider"
@@ -197,7 +198,7 @@ export default function Dashboard() {
       description: "Set up a new AI automation workflow",
       icon: Plus,
       buttonText: "Create",
-      onAction: () => window.location.href = "/dashboard"
+      onAction: () => toast.info("Navigate to an agent page (Gmail, Inventory, or Instagram) to configure new automations.")
     },
     {
       title: "System Settings",
@@ -234,7 +235,7 @@ export default function Dashboard() {
           )}
         </div>
         <div className="flex items-center space-x-2">
-          <Button>
+          <Button onClick={() => toast.info("Navigate to an agent page (Gmail, Inventory, or Instagram) to configure new automations.")}>
             <Plus className="h-4 w-4 mr-2" />
             New Automation
           </Button>
@@ -287,15 +288,15 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">2,247</div>
+                    <div className="text-2xl font-bold">{stats.totalProcessed.toLocaleString()}</div>
                     <p className="text-sm text-muted-foreground">Total Tasks Processed</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">96.8%</div>
+                    <div className="text-2xl font-bold">{stats.successRate}%</div>
                     <p className="text-sm text-muted-foreground">Success Rate</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">1.2s</div>
+                    <div className="text-2xl font-bold">{stats.avgResponseTime}s</div>
                     <p className="text-sm text-muted-foreground">Avg Response Time</p>
                   </div>
                 </div>
@@ -307,10 +308,11 @@ export default function Dashboard() {
                 <CardTitle>Usage Trends</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  Analytics dashboard would show detailed charts and graphs here.
-                  Integration with charts library like Recharts would provide visual insights.
-                </p>
+                <div className="text-center py-8">
+                  <BarChart3 className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
+                  <p className="font-medium text-muted-foreground">Detailed Charts Coming Soon</p>
+                  <p className="text-sm text-muted-foreground/70 mt-1">Visual analytics and trend graphs will be available in an upcoming update.</p>
+                </div>
               </CardContent>
             </Card>
           </div>

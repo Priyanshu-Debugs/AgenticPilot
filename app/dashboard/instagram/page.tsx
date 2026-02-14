@@ -27,6 +27,7 @@ import {
   Upload,
   Sparkles,
 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function InstagramAutomation() {
   const [isAutomationActive, setIsAutomationActive] = useState(false)
@@ -177,7 +178,7 @@ export default function InstagramAutomation() {
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">{stat.change}</p>
+                <p className="text-xs text-muted-foreground">{stat.change} <span className="opacity-50">(Demo)</span></p>
               </CardContent>
             </Card>
           )
@@ -197,7 +198,7 @@ export default function InstagramAutomation() {
         <TabsContent value="posts" className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Recent Posts</h2>
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => toast.info("Post creation coming soon.", { description: "Use the Create Post tab to start composing." })}>
               <Plus className="h-4 w-4 mr-2" />
               New Post
             </Button>
@@ -307,7 +308,7 @@ export default function InstagramAutomation() {
                     <p className="text-sm sm:text-base text-muted-foreground">
                       Drag and drop your image or video here, or click to browse
                     </p>
-                    <Button variant="outline" className="mt-4">
+                    <Button variant="outline" className="mt-4" onClick={() => toast.info("File upload coming soon.", { description: "Media upload will be available in a future update." })}>
                       <ImageIcon className="h-4 w-4 mr-2" />
                       Choose File
                     </Button>
@@ -321,7 +322,7 @@ export default function InstagramAutomation() {
                     placeholder="Write your caption here..."
                     className="min-h-32"
                   />
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => toast.info("AI caption generation coming soon.", { description: "This feature will use AI to craft engaging captions." })}>
                     <Sparkles className="h-4 w-4 mr-2" />
                     Generate AI Caption
                   </Button>
@@ -333,7 +334,7 @@ export default function InstagramAutomation() {
                     id="hashtags"
                     placeholder="#hashtag1 #hashtag2 #hashtag3"
                   />
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => toast.info("Hashtag suggestions coming soon.", { description: "AI will analyze trends and suggest optimal hashtags." })}>
                     <Hash className="h-4 w-4 mr-2" />
                     Suggest Hashtags
                   </Button>
@@ -356,11 +357,11 @@ export default function InstagramAutomation() {
               </div>
 
               <div className="flex space-x-4">
-                <Button className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                <Button className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => toast.info("Post scheduling coming soon.", { description: "You'll be able to schedule posts directly from here." })}>
                   <Calendar className="h-4 w-4 mr-2" />
                   Schedule Post
                 </Button>
-                <Button variant="outline" className="flex-1">
+                <Button variant="outline" className="flex-1" onClick={() => toast.info("Draft saved!", { description: "Your draft has been saved locally." })}>
                   Save as Draft
                 </Button>
               </div>
@@ -373,7 +374,7 @@ export default function InstagramAutomation() {
             <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Engagement Metrics</CardTitle>
-                <CardDescription>Your Instagram performance overview</CardDescription>
+                <CardDescription>Your Instagram performance overview <span className="opacity-50">(Demo data)</span></CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -408,7 +409,7 @@ export default function InstagramAutomation() {
             <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Content Performance</CardTitle>
-                <CardDescription>Top performing content types</CardDescription>
+                <CardDescription>Top performing content types <span className="opacity-50">(Demo data)</span></CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -499,7 +500,7 @@ export default function InstagramAutomation() {
                 </Select>
               </div>
 
-              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" onClick={() => toast.success("Settings saved!", { description: "Your Instagram automation preferences have been updated." })}>
                 Save Settings
               </Button>
             </CardContent>

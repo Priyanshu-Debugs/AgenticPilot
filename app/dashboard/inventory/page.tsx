@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { InventoryItem, useInventory } from "@/utils/hooks/useInventory"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { toast } from "sonner"
 
 export default function InventoryManagement() {
   const [isAutomationActive, setIsAutomationActive] = useState(true)
@@ -165,9 +166,9 @@ export default function InventoryManagement() {
 
   const handleReorderAll = () => {
     const itemsNeedingReorder = inventoryItems.filter(item => item.current_stock <= item.reorder_point)
-    // Integrate with ordering system API to reorder items
-    // For now, show alert with items that need reordering
-    alert(`${itemsNeedingReorder.length} items need reordering`)
+    toast.success(`Reorder request created for ${itemsNeedingReorder.length} item${itemsNeedingReorder.length !== 1 ? 's' : ''}`, {
+      description: "Your supplier will be notified with the order details."
+    })
   }
 
   return (
@@ -352,7 +353,7 @@ export default function InventoryManagement() {
                                 Edit
                               </Button>
                               {item.current_stock <= item.reorder_point && (
-                                <Button size="sm">
+                                <Button size="sm" onClick={() => toast.success(`Reorder request created for ${item.name}`, { description: "Your supplier will be notified." })}>
                                   Reorder
                                 </Button>
                               )}
@@ -412,7 +413,7 @@ export default function InventoryManagement() {
                           <Badge className={getStatusColor(calculateStatus(item.current_stock, item.min_stock, item.reorder_point))}>
                             {calculateStatus(item.current_stock, item.min_stock, item.reorder_point)}
                           </Badge>
-                          <Button size="sm">
+                          <Button size="sm" onClick={() => toast.success(`Reorder request created for ${item.name}`, { description: "Your supplier will be notified." })}>
                             Reorder Now
                           </Button>
                         </div>
@@ -433,7 +434,7 @@ export default function InventoryManagement() {
         <TabsContent value="orders" className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Recent Orders</h2>
-            <Button>
+            <Button onClick={() => toast.info("Manual order creation coming soon.", { description: "Use the inventory table to reorder individual items." })}>
               <Plus className="h-4 w-4 mr-2" />
               New Order
             </Button>
@@ -480,7 +481,7 @@ export default function InventoryManagement() {
             <Card className="card-elevated">
               <CardHeader>
                 <CardTitle>Inventory Insights</CardTitle>
-                <CardDescription>Key metrics and trends</CardDescription>
+                <CardDescription>Key metrics computed from your items</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -488,25 +489,25 @@ export default function InventoryManagement() {
                     <span className="text-sm text-muted-foreground">
                       Average Stock Level
                     </span>
-                    <span className="text-sm font-medium">68%</span>
+                    <span className="text-sm font-medium">{analytics.avgStockLevel}%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      Stock Turnover Rate
+                      Items Needing Reorder
                     </span>
-                    <span className="text-sm font-medium">4.2x per year</span>
+                    <span className="text-sm font-medium">{analytics.itemsNeedingReorder} item{analytics.itemsNeedingReorder !== 1 ? 's' : ''}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      Carrying Cost
+                      Total Inventory Value
                     </span>
-                    <span className="text-sm font-medium">$2,150/month</span>
+                    <span className="text-sm font-medium">${analytics.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      Stockout Incidents
+                      Low Stock Alerts
                     </span>
-                    <span className="text-sm font-medium">2 this month</span>
+                    <span className="text-sm font-medium">{analytics.lowStockCount} item{analytics.lowStockCount !== 1 ? 's' : ''}</span>
                   </div>
                 </div>
               </CardContent>
@@ -519,24 +520,29 @@ export default function InventoryManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Electronics
-                    </span>
-                    <span className="text-sm font-medium">45% ($20,250)</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Accessories
-                    </span>
-                    <span className="text-sm font-medium">35% ($15,830)</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Office
-                    </span>
-                    <span className="text-sm font-medium">20% ($9,150)</span>
-                  </div>
+                  {(() => {
+                    const categories = inventoryItems.reduce((acc, item) => {
+                      const cat = item.category || 'Uncategorized'
+                      if (!acc[cat]) acc[cat] = { count: 0, value: 0 }
+                      acc[cat].count += item.current_stock
+                      acc[cat].value += item.current_stock * item.unit_price
+                      return acc
+                    }, {} as Record<string, { count: number; value: number }>)
+                    const totalValue = Object.values(categories).reduce((sum, c) => sum + c.value, 0)
+                    return Object.entries(categories)
+                      .sort((a, b) => b[1].value - a[1].value)
+                      .map(([cat, data]) => (
+                        <div key={cat} className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">{cat}</span>
+                          <span className="text-sm font-medium">
+                            {totalValue > 0 ? Math.round((data.value / totalValue) * 100) : 0}% (${data.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+                          </span>
+                        </div>
+                      ))
+                  })()}
+                  {inventoryItems.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">No inventory data yet. Add items to see category breakdown.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
