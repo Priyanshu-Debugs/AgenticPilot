@@ -24,8 +24,10 @@ interface Settings {
     gmailCheckInterval: string
     instagramEnabled: boolean
     instagramPostTime: string
-    inventoryEnabled: boolean
-    inventoryThreshold: string
+    twitterEnabled: boolean
+    twitterPostFrequency: string
+    linkedinEnabled: boolean
+    linkedinPostSchedule: string
     autoReorder: boolean
   }
   security: {
@@ -37,7 +39,8 @@ interface Settings {
   integrations: {
     gmailConnected: boolean
     instagramConnected: boolean
-    inventoryConnected: boolean
+    twitterConnected: boolean
+    linkedinConnected: boolean
     webhookUrl: string
   }
 }
@@ -59,12 +62,12 @@ export function useSettings() {
     try {
       setLoading(true)
       const response = await fetch('/api/settings')
-      
+
       if (!response.ok) {
         const errorText = await response.text()
         throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`)
       }
-      
+
       const data = await response.json()
       setSettings(data)
       setError(null)
@@ -99,7 +102,7 @@ export function useSettings() {
           statusText: response.statusText,
           errorData
         })
-        
+
         throw new Error(`Failed to save settings (${response.status}): ${errorData.error || 'Unknown error'}`)
       }
 

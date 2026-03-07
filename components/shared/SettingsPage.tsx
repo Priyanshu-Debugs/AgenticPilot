@@ -11,16 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { 
-  Settings, 
-  User, 
-  Bell, 
-  Shield, 
-  Zap, 
-  Database, 
-  Mail, 
-  Instagram, 
-  Package,
+import {
+  Settings,
+  User,
+  Bell,
+  Shield,
+  Zap,
+  Database,
+  Mail,
+  Instagram,
+  Twitter,
+  Linkedin,
   Save,
   RefreshCw,
   Trash2,
@@ -38,12 +39,12 @@ interface SettingsProps {
   onImport?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function SettingsPage({ 
+export function SettingsPage({
   settings: initialSettings,
-  onSave = () => {}, 
-  onReset = () => {}, 
-  onExport = () => {}, 
-  onImport = () => {} 
+  onSave = () => { },
+  onReset = () => { },
+  onExport = () => { },
+  onImport = () => { }
 }: SettingsProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [settings, setSettings] = useState(initialSettings || {
@@ -72,8 +73,10 @@ export function SettingsPage({
       gmailCheckInterval: "5",
       instagramEnabled: true,
       instagramPostTime: "09:00",
-      inventoryEnabled: true,
-      inventoryThreshold: "10",
+      twitterEnabled: true,
+      twitterPostFrequency: "5",
+      linkedinEnabled: true,
+      linkedinPostSchedule: "Tue,Thu",
       autoReorder: false
     },
     // Security Settings
@@ -87,7 +90,8 @@ export function SettingsPage({
     integrations: {
       gmailConnected: true,
       instagramConnected: true,
-      inventoryConnected: false,
+      twitterConnected: false,
+      linkedinConnected: false,
       apiKey: "ag_****************************",
       webhookUrl: "https://api.agenticpilot.com/webhook"
     }
@@ -315,8 +319,8 @@ export function SettingsPage({
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label>Low Stock Alerts</Label>
-                      <p className="text-sm text-muted-foreground">When inventory runs low</p>
+                      <Label>Engagement Alerts</Label>
+                      <p className="text-sm text-muted-foreground">When posts get high engagement</p>
                     </div>
                     <Switch
                       checked={settings.notifications.lowStock}
@@ -418,41 +422,61 @@ export function SettingsPage({
               </CardContent>
             </Card>
 
-            {/* Inventory Automation */}
-            <Card className="lg:col-span-2">
+            {/* X/Twitter Automation */}
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Package className="h-5 w-5" />
-                  <span>Inventory Automation</span>
-                  <Badge variant={settings.automation.inventoryEnabled ? "default" : "secondary"}>
-                    {settings.automation.inventoryEnabled ? "Active" : "Inactive"}
+                  <Twitter className="h-5 w-5" />
+                  <span>X/Twitter Automation</span>
+                  <Badge variant={settings.automation.twitterEnabled ? "default" : "secondary"}>
+                    {settings.automation.twitterEnabled ? "Active" : "Inactive"}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center justify-between">
-                    <Label>Enable Inventory Tracking</Label>
-                    <Switch
-                      checked={settings.automation.inventoryEnabled}
-                      onCheckedChange={(checked) => handleSettingChange("automation", "inventoryEnabled", checked)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Low Stock Threshold</Label>
-                    <Input
-                      type="number"
-                      value={settings.automation.inventoryThreshold}
-                      onChange={(e) => handleSettingChange("automation", "inventoryThreshold", e.target.value)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Auto Reorder</Label>
-                    <Switch
-                      checked={settings.automation.autoReorder}
-                      onCheckedChange={(checked) => handleSettingChange("automation", "autoReorder", checked)}
-                    />
-                  </div>
+                <div className="flex items-center justify-between">
+                  <Label>Enable Twitter Automation</Label>
+                  <Switch
+                    checked={settings.automation.twitterEnabled}
+                    onCheckedChange={(checked) => handleSettingChange("automation", "twitterEnabled", checked)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Max Posts Per Day</Label>
+                  <Input
+                    type="number"
+                    value={settings.automation.twitterPostFrequency}
+                    onChange={(e) => handleSettingChange("automation", "twitterPostFrequency", e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* LinkedIn Automation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Linkedin className="h-5 w-5" />
+                  <span>LinkedIn Automation</span>
+                  <Badge variant={settings.automation.linkedinEnabled ? "default" : "secondary"}>
+                    {settings.automation.linkedinEnabled ? "Active" : "Inactive"}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>Enable LinkedIn Automation</Label>
+                  <Switch
+                    checked={settings.automation.linkedinEnabled}
+                    onCheckedChange={(checked) => handleSettingChange("automation", "linkedinEnabled", checked)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Posting Schedule</Label>
+                  <Input
+                    value={settings.automation.linkedinPostSchedule}
+                    onChange={(e) => handleSettingChange("automation", "linkedinPostSchedule", e.target.value)}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -589,18 +613,35 @@ export function SettingsPage({
                   </div>
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <Package className="h-5 w-5" />
+                      <Twitter className="h-5 w-5" />
                       <div>
-                        <Label>Inventory System</Label>
-                        <p className="text-sm text-muted-foreground">External inventory API</p>
+                        <Label>X/Twitter</Label>
+                        <p className="text-sm text-muted-foreground">@agenticpilot</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={settings.integrations.inventoryConnected ? "default" : "secondary"}>
-                        {settings.integrations.inventoryConnected ? "Connected" : "Disconnected"}
+                      <Badge variant={settings.integrations.twitterConnected ? "default" : "secondary"}>
+                        {settings.integrations.twitterConnected ? "Connected" : "Disconnected"}
                       </Badge>
                       <Button variant="outline" size="sm">
-                        {settings.integrations.inventoryConnected ? "Disconnect" : "Connect"}
+                        {settings.integrations.twitterConnected ? "Disconnect" : "Connect"}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <Linkedin className="h-5 w-5" />
+                      <div>
+                        <Label>LinkedIn</Label>
+                        <p className="text-sm text-muted-foreground">AgenticPilot Inc.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={settings.integrations.linkedinConnected ? "default" : "secondary"}>
+                        {settings.integrations.linkedinConnected ? "Connected" : "Disconnected"}
+                      </Badge>
+                      <Button variant="outline" size="sm">
+                        {settings.integrations.linkedinConnected ? "Disconnect" : "Connect"}
                       </Button>
                     </div>
                   </div>

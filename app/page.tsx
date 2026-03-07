@@ -14,7 +14,8 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation"
 import {
   ArrowRight,
   Envelope,
-  Package,
+  TwitterLogo,
+  LinkedinLogo,
   InstagramLogo,
   Robot,
   Star,
@@ -62,11 +63,18 @@ export default function LandingPage() {
       stats: "95% accuracy rate"
     },
     {
-      title: "Inventory Management",
-      description: "Automated inventory tracking, smart stock alerts, and predictive reorder management that prevents stockouts.",
-      icon: Package,
-      href: "/dashboard/inventory",
-      stats: "40% cost reduction"
+      title: "X/Twitter Automation",
+      description: "AI-powered tweet scheduling, thread generation, and smart engagement automation that grows your audience.",
+      icon: TwitterLogo,
+      href: "/dashboard/twitter",
+      stats: "3x follower growth"
+    },
+    {
+      title: "LinkedIn Automation",
+      description: "Automated professional networking, AI-crafted posts, and intelligent connection management for business growth.",
+      icon: LinkedinLogo,
+      href: "/dashboard/linkedin",
+      stats: "5x engagement boost"
     },
     {
       title: "Social Media Automation",
@@ -96,7 +104,7 @@ export default function LandingPage() {
     {
       name: "Marcus Rodriguez",
       role: "Operations Manager",
-      content: "The inventory automation saved us 20 hours per week and eliminated stockouts completely.",
+      content: "The Twitter automation grew our following by 300% and our LinkedIn posts now consistently reach 10K+ impressions.",
       avatar: "/placeholder-user.jpg",
       company: "RetailCorp"
     },
@@ -175,7 +183,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-                Transform your business operations with intelligent automation. From customer support to inventory
+                Transform your business operations with intelligent automation. From customer support to social media
                 management, let AI handle the repetitive tasks while you focus on{" "}
                 <span className="text-primary font-semibold">growth</span>.
               </p>
@@ -342,7 +350,7 @@ export default function LandingPage() {
                 Core Features
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Three Core{" "}
+                Four Core{" "}
                 <span className="text-gradient-static">
                   Automations
                 </span>
@@ -633,8 +641,11 @@ export default function LandingPage() {
                   <Link href="/dashboard/gmail" className="block text-muted-foreground hover:text-primary transition-colors">
                     Email Automation
                   </Link>
-                  <Link href="/dashboard/inventory" className="block text-muted-foreground hover:text-primary transition-colors">
-                    Inventory Management
+                  <Link href="/dashboard/twitter" className="block text-muted-foreground hover:text-primary transition-colors">
+                    X/Twitter Automation
+                  </Link>
+                  <Link href="/dashboard/linkedin" className="block text-muted-foreground hover:text-primary transition-colors">
+                    LinkedIn Automation
                   </Link>
                   <Link href="/dashboard/instagram" className="block text-muted-foreground hover:text-primary transition-colors">
                     Social Media

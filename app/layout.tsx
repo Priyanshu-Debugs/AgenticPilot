@@ -9,7 +9,7 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "AgenticPilot - AI-Powered Business Automation",
   description:
-    "Transform your business with intelligent automation. Gmail replies, inventory management, and social media posting - all powered by AI.",
+    "Transform your business with intelligent automation. Gmail replies, social media management, and content scheduling - all powered by AI.",
   generator: "v0.dev",
   icons: {
     icon: "/favicon.svg",

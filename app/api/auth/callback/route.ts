@@ -31,10 +31,11 @@ export async function GET(request: NextRequest) {
     try {
       // Exchange the code for a session
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-      
+
       if (error) {
-        console.error('Auth callback error:', error)
-        return NextResponse.redirect(`${origin}/auth/signin?error=auth_callback_error`)
+        console.error('Auth callback error:', error.message, error.status, JSON.stringify(error))
+        const errorMessage = encodeURIComponent(error.message || 'Authentication failed')
+        return NextResponse.redirect(`${origin}/auth/signin?error=auth_callback_error&message=${errorMessage}`)
       }
 
       if (data.session) {
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
             }, {
               onConflict: 'user_id'
             })
-          
+
           if (profileError) console.warn('Profile setup warning:', profileError)
           if (settingsError) console.warn('Settings setup warning:', settingsError)
           if (subscriptionError) console.warn('Subscription setup warning:', subscriptionError)
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
         if (type === 'recovery') {
           return NextResponse.redirect(`${origin}/auth/reset-password`)
         }
-        
+
         // For regular authentication, redirect to the requested page
         return NextResponse.redirect(`${origin}${next}`)
       }

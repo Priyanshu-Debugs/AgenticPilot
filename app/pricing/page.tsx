@@ -25,7 +25,7 @@ export default function Pricing() {
       description: "Perfect for small businesses getting started with automation",
       features: [
         "Gmail Auto Reply (up to 500 emails/month)",
-        "Basic Inventory Management",
+        "X/Twitter Automation (basic)",
         "Email Support",
         "Dashboard Access",
         "1 User Account",
@@ -39,7 +39,7 @@ export default function Pricing() {
       description: "Ideal for growing businesses with advanced automation needs",
       features: [
         "Gmail Auto Reply (up to 2,000 emails/month)",
-        "Advanced Inventory Management",
+        "X/Twitter & LinkedIn Automation",
         "Instagram Automation (10 posts/month)",
         "Priority Support",
         "Dashboard & Analytics",
@@ -55,7 +55,7 @@ export default function Pricing() {
       description: "For large organizations requiring unlimited automation",
       features: [
         "Unlimited Gmail Auto Reply",
-        "Full Inventory Management Suite",
+        "Full Social Media Automation Suite",
         "Unlimited Instagram Automation",
         "24/7 Phone Support",
         "Advanced Analytics",
@@ -70,7 +70,7 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <Navigation 
+      <Navigation
         onSignIn={handleSignIn}
         onSignUp={handleGetStarted}
       />
@@ -93,9 +93,8 @@ export default function Pricing() {
           {plans.map((plan, index) => (
             <Card
               key={index}
-              className={`relative card-elevated h-full ${
-                plan.popular ? "ring-2 ring-primary border-primary/50" : ""
-              }`}
+              className={`relative card-elevated h-full ${plan.popular ? "ring-2 ring-primary border-primary/50" : ""
+                }`}
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">

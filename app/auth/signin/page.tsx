@@ -58,24 +58,32 @@ function SignIn() {
   useEffect(() => {
     const urlError = searchParams.get('error')
     const urlMessage = searchParams.get('message')
-    
-    if (urlError && urlMessage) {
+
+    if (urlError) {
       switch (urlError) {
+        case 'auth_callback_error':
+          setError(urlMessage
+            ? `Authentication failed: ${decodeURIComponent(urlMessage)}`
+            : 'Authentication callback failed. Please try signing in again.')
+          break
+        case 'callback_error':
+          setError('An error occurred during authentication. Please try again.')
+          break
         case 'verification_failed':
-          setError(`Email verification failed: ${decodeURIComponent(urlMessage)}`)
+          setError(`Email verification failed: ${urlMessage ? decodeURIComponent(urlMessage) : 'Unknown error'}`)
           break
         case 'no_code':
           setError('Email verification link is invalid or malformed.')
           break
         case 'access_denied':
-          if (urlMessage.includes('expired')) {
+          if (urlMessage?.includes('expired')) {
             setError('Email verification link has expired. Please request a new sign-up.')
           } else {
             setError('Email verification was denied. Please try signing up again.')
           }
           break
         default:
-          setError(decodeURIComponent(urlMessage))
+          setError(urlMessage ? decodeURIComponent(urlMessage) : 'An unknown error occurred.')
       }
     }
   }, [searchParams])
@@ -116,7 +124,7 @@ function SignIn() {
 
     try {
       const result = await signInWithGoogle()
-      
+
       if (result.error) {
         setError(result.error || "An error occurred during Google sign in")
       }
@@ -235,8 +243,8 @@ function SignIn() {
               </Button>
 
               <div className="text-center">
-                <Link 
-                  href="/auth/forgot-password" 
+                <Link
+                  href="/auth/forgot-password"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   Forgot your password?

@@ -102,7 +102,7 @@ export default function BillingPage() {
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
-                    <span>Advanced inventory management</span>
+                    <span>X/Twitter & LinkedIn automation</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />

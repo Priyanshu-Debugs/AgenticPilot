@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
-import { Mail, Package, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2 } from "lucide-react"
+import { Mail, Twitter, Linkedin, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 // Auth and profile hooks
@@ -94,9 +94,21 @@ export default function Dashboard() {
       successRate: parseFloat(stats.successRate) || 0
     },
     {
-      id: "inventory-1",
-      name: "Inventory Monitor",
-      description: "Track stock levels and receive alerts",
+      id: "twitter-1",
+      name: "X/Twitter Automation",
+      description: "Automate tweets, threads, and engagement",
+      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
+      progress: 0,
+      lastRun: "Not configured",
+      nextRun: "Setup required",
+      executionTime: "N/A",
+      tasksProcessed: 0,
+      successRate: 0
+    },
+    {
+      id: "linkedin-1",
+      name: "LinkedIn Automation",
+      description: "Automate posts, connections, and outreach",
       status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
       progress: 0,
       lastRun: "Not configured",
@@ -107,7 +119,7 @@ export default function Dashboard() {
     },
     {
       id: "instagram-1",
-      name: "Social Media Scheduler",
+      name: "Instagram Scheduler",
       description: "Schedule posts with AI-generated captions",
       status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
       progress: 0,
@@ -149,8 +161,10 @@ export default function Dashboard() {
     const task = automationTasks.find(t => t.id === taskId)
     if (task?.id.includes('gmail')) {
       window.location.href = '/dashboard/gmail'
-    } else if (task?.id.includes('inventory')) {
-      window.location.href = '/dashboard/inventory'
+    } else if (task?.id.includes('twitter')) {
+      window.location.href = '/dashboard/twitter'
+    } else if (task?.id.includes('linkedin')) {
+      window.location.href = '/dashboard/linkedin'
     } else if (task?.id.includes('instagram')) {
       window.location.href = '/dashboard/instagram'
     }
@@ -198,7 +212,7 @@ export default function Dashboard() {
       description: "Set up a new AI automation workflow",
       icon: Plus,
       buttonText: "Create",
-      onAction: () => toast.info("Navigate to an agent page (Gmail, Inventory, or Instagram) to configure new automations.")
+      onAction: () => toast.info("Navigate to an agent page (Gmail, Twitter, LinkedIn, or Instagram) to configure new automations.")
     },
     {
       title: "System Settings",
@@ -235,7 +249,7 @@ export default function Dashboard() {
           )}
         </div>
         <div className="flex items-center space-x-2">
-          <Button onClick={() => toast.info("Navigate to an agent page (Gmail, Inventory, or Instagram) to configure new automations.")}>
+          <Button onClick={() => toast.info("Navigate to an agent page (Gmail, Twitter, LinkedIn, or Instagram) to configure new automations.")}>
             <Plus className="h-4 w-4 mr-2" />
             New Automation
           </Button>
@@ -328,11 +342,18 @@ export default function Dashboard() {
               onAction={() => window.location.href = "/dashboard/gmail"}
             />
             <ActionCard
-              title="Inventory System"
-              description="Manage inventory automation workflows"
-              icon={Package}
+              title="X/Twitter Automation"
+              description="Automate tweets, threads, and engagement"
+              icon={Twitter}
               buttonText="Setup"
-              onAction={() => window.location.href = "/dashboard/inventory"}
+              onAction={() => window.location.href = "/dashboard/twitter"}
+            />
+            <ActionCard
+              title="LinkedIn Automation"
+              description="Automate posts, connections, and outreach"
+              icon={Linkedin}
+              buttonText="Setup"
+              onAction={() => window.location.href = "/dashboard/linkedin"}
             />
             <ActionCard
               title="Instagram Integration"
@@ -384,8 +405,8 @@ export default function Dashboard() {
               recentActivity.map((activity, index) => (
                 <div key={activity.id || index} className="flex items-center space-x-3">
                   <div className={`w-2 h-2 rounded-full ${activity.status === "success" ? "bg-emerald-500" :
-                      activity.status === "failed" ? "bg-red-500" :
-                        "bg-primary"
+                    activity.status === "failed" ? "bg-red-500" :
+                      "bg-primary"
                     }`} />
                   <div className="flex-1">
                     <p className="text-sm font-medium">

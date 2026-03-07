@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     )
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -37,9 +37,9 @@ export async function GET(request: NextRequest) {
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
       console.error('Supabase settings fetch error:', error)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: `Failed to fetch settings: ${error.message}`,
-        details: error.code 
+        details: error.code
       }, { status: 500 })
     }
 
@@ -82,8 +82,10 @@ export async function GET(request: NextRequest) {
         gmailConfidenceThreshold: userSettings.gmail_reply_confidence_threshold ?? 0.8,
         instagramEnabled: false,
         instagramPostTime: '09:00',
-        inventoryEnabled: false,
-        inventoryThreshold: '10',
+        twitterEnabled: false,
+        twitterPostFrequency: '5',
+        linkedinEnabled: false,
+        linkedinPostSchedule: 'Tue,Thu',
         autoReorder: false
       },
       security: {
@@ -95,7 +97,8 @@ export async function GET(request: NextRequest) {
       integrations: {
         gmailConnected: false,
         instagramConnected: false,
-        inventoryConnected: false,
+        twitterConnected: false,
+        linkedinConnected: false,
         webhookUrl: ''
       },
       appearance: {
@@ -106,7 +109,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(responseSettings)
   } catch (error) {
     console.error('Settings GET API error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
@@ -134,12 +137,12 @@ export async function PUT(request: NextRequest) {
     )
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError) {
       console.error('Auth error:', authError)
       return NextResponse.json({ error: 'Authentication failed' }, { status: 401 })
     }
-    
+
     if (!user) {
       console.error('No user found in session')
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 })
@@ -178,9 +181,9 @@ export async function PUT(request: NextRequest) {
 
     if (upsertError) {
       console.error('Supabase settings upsert error:', upsertError)
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: `Failed to save settings: ${upsertError.message}`,
-        details: upsertError.code 
+        details: upsertError.code
       }, { status: 500 })
     }
 
@@ -188,7 +191,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Settings PUT API error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })

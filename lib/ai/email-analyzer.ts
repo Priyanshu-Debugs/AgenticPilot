@@ -29,16 +29,15 @@ export async function analyzeEmail(
         tone?: string
     }
 ): Promise<EmailAnalysis> {
-    try {
-        const model = getGeminiModel()
+    const model = getGeminiModel()
 
-        const businessInfo = businessContext?.businessName
-            ? `Business: ${businessContext.businessName} (${businessContext.industry || 'General'})`
-            : 'Business: AgenticPilot AI Platform'
+    const businessInfo = businessContext?.businessName
+        ? `Business: ${businessContext.businessName} (${businessContext.industry || 'General'})`
+        : 'Business: AgenticPilot AI Platform'
 
-        const preferredTone = businessContext?.tone || 'professional'
+    const preferredTone = businessContext?.tone || 'professional'
 
-        const prompt = `You are an AI email assistant. Analyze this email and provide a JSON response.
+    const prompt = `You are an AI email assistant. Analyze this email and provide a JSON response.
 
 ${businessInfo}
 Preferred tone: ${preferredTone}
@@ -48,7 +47,7 @@ From: ${email.from}
 Subject: ${email.subject}
 Body: ${email.body.substring(0, 2000)}
 
-Respond with ONLY valid JSON in this exact format:
+Respond with ONLY valid JSON in this exact format (no markdown, no code blocks, just raw JSON):
 {
   "type": "inquiry|support|complaint|feedback|spam|other",
   "sentiment": "positive|neutral|negative",
@@ -66,31 +65,53 @@ Guidelines for suggestedReply:
 - Include a clear call-to-action if appropriate
 - End with appropriate closing and business name`
 
-        const result = await model.generateContent(prompt)
-        const response = await result.response
-        let text = response.text().trim()
+    // Attempt Gemini API call with retry for JSON parse issues
+    const MAX_RETRIES = 2
+    let lastError: Error | null = null
 
-        // Clean up markdown code blocks if present
-        if (text.startsWith('```')) {
-            text = text.replace(/```json?\n?/, '').replace(/\n?```$/, '')
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
+            const currentPrompt = attempt === 0
+                ? prompt
+                : prompt + '\n\nIMPORTANT: Return ONLY raw JSON. No markdown code blocks, no explanations, just the JSON object.'
+
+            const result = await model.generateContent(currentPrompt)
+            const response = await result.response
+            let text = response.text().trim()
+
+            // Clean up markdown code blocks if present
+            if (text.startsWith('```')) {
+                text = text.replace(/```json?\n?/, '').replace(/\n?```$/, '')
+            }
+
+            const analysis: EmailAnalysis = JSON.parse(text)
+
+            // Validate and normalize
+            return {
+                type: validateType(analysis.type),
+                sentiment: validateSentiment(analysis.sentiment),
+                urgency: validateUrgency(analysis.urgency),
+                confidence: Math.min(1, Math.max(0, analysis.confidence || 0.7)),
+                summary: analysis.summary || 'Email analyzed',
+                keywords: Array.isArray(analysis.keywords) ? analysis.keywords : [],
+                suggestedReply: analysis.suggestedReply || '',
+            }
+        } catch (error: any) {
+            lastError = error
+            // Only retry on JSON parse errors, not API errors
+            if (error instanceof SyntaxError) {
+                console.warn(`Gemini returned non-JSON on attempt ${attempt + 1}, retrying...`)
+                continue
+            }
+            // For API errors (missing key, rate limit, network), fail immediately
+            console.error('Gemini API error:', error?.message || error)
+            throw new Error(`Gemini AI analysis failed: ${error?.message || 'Unknown API error'}`)
         }
-
-        const analysis: EmailAnalysis = JSON.parse(text)
-
-        // Validate and normalize
-        return {
-            type: validateType(analysis.type),
-            sentiment: validateSentiment(analysis.sentiment),
-            urgency: validateUrgency(analysis.urgency),
-            confidence: Math.min(1, Math.max(0, analysis.confidence || 0.7)),
-            summary: analysis.summary || 'Email analyzed',
-            keywords: Array.isArray(analysis.keywords) ? analysis.keywords : [],
-            suggestedReply: analysis.suggestedReply || generateFallbackReply(email, preferredTone),
-        }
-    } catch (error) {
-        console.error('AI analysis error:', error)
-        return getFallbackAnalysis(email)
     }
+
+    // All retries exhausted — JSON parsing kept failing
+    console.error('All Gemini parse retries failed:', lastError)
+    throw new Error(`Gemini AI analysis failed after ${MAX_RETRIES} attempts: Could not parse response as JSON`)
 }
 
 // Generate reply with specific tone
@@ -99,10 +120,9 @@ export async function generateReply(
     tone: string = 'professional',
     additionalContext?: string
 ): Promise<string> {
-    try {
-        const model = getGeminiModel()
+    const model = getGeminiModel()
 
-        const prompt = `Generate a ${tone} email reply.
+    const prompt = `Generate a ${tone} email reply.
 
 ORIGINAL EMAIL:
 From: ${email.from}
@@ -115,12 +135,17 @@ Write ONLY the reply body (no subject line, no explanations).
 Tone: ${tone}
 End with an appropriate sign-off.`
 
+    try {
         const result = await model.generateContent(prompt)
         const response = await result.response
-        return response.text().trim()
-    } catch (error) {
-        console.error('Reply generation error:', error)
-        return generateFallbackReply(email, tone)
+        const text = response.text().trim()
+        if (!text) {
+            throw new Error('Gemini returned empty reply')
+        }
+        return text
+    } catch (error: any) {
+        console.error('Reply generation error:', error?.message || error)
+        throw new Error(`Gemini reply generation failed: ${error?.message || 'Unknown error'}`)
     }
 }
 
@@ -142,31 +167,3 @@ function validateUrgency(urgency: string): EmailAnalysis['urgency'] {
     return valid.includes(urgency) ? urgency as EmailAnalysis['urgency'] : 'medium'
 }
 
-// Fallback analysis when AI fails
-function getFallbackAnalysis(email: GmailMessage): EmailAnalysis {
-    return {
-        type: 'other',
-        sentiment: 'neutral',
-        urgency: 'medium',
-        confidence: 0.5,
-        summary: `Email from ${email.from} about "${email.subject}"`,
-        keywords: email.subject.split(' ').slice(0, 5),
-        suggestedReply: generateFallbackReply(email, 'professional'),
-    }
-}
-
-// Generate fallback reply
-function generateFallbackReply(email: GmailMessage, tone: string): string {
-    const greeting = tone === 'formal' ? 'Dear Sir/Madam' : 'Hello'
-
-    return `${greeting},
-
-Thank you for your email regarding "${email.subject}".
-
-We have received your message and will review it carefully. Our team will get back to you within 24 hours with a detailed response.
-
-If you need immediate assistance, please don't hesitate to reach out.
-
-Best regards,
-AgenticPilot Team`
-}
