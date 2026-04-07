@@ -220,9 +220,18 @@ html {
   100% { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 0.75rem)); }
+}
+
 /* Animation utility classes */
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
 }
 
 .animate-float {

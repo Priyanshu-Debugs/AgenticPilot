@@ -29,10 +29,12 @@ interface NavigationProps {
 }
 
 const defaultNavItems: NavigationItem[] = [
-  { label: "Features", href: "#features" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Blogs", href: "/blog" },
+  { label: "Features", href: "/#features" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Contact", href: "/contact" },
 ]
 
 export function Navigation({ 

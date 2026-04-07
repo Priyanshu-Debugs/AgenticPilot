@@ -171,6 +171,73 @@ function BentoCard({
   )
 }
 
+// New: Spotlight Card
+function SpotlightCard({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
+  const divRef = React.useRef<HTMLDivElement>(null)
+  const [isFocused, setIsFocused] = React.useState(false)
+  const [position, setPosition] = React.useState({ x: 0, y: 0 })
+  const [opacity, setOpacity] = React.useState(0)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!divRef.current || isFocused) return
+
+    const div = divRef.current
+    const rect = div.getBoundingClientRect()
+
+    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+  }
+
+  const handleFocus = () => {
+    setIsFocused(true)
+    setOpacity(1)
+  }
+
+  const handleBlur = () => {
+    setIsFocused(false)
+    setOpacity(0)
+  }
+
+  const handleMouseEnter = () => {
+    setOpacity(1)
+  }
+
+  const handleMouseLeave = () => {
+    setOpacity(0)
+  }
+
+  return (
+    <div
+      ref={divRef}
+      onMouseMove={handleMouseMove}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn(
+        "relative flex h-full w-full overflow-hidden rounded-2xl bg-card text-card-foreground border border-border/70 shadow-sm transition-all duration-300 md:hover:-translate-y-1 hover:shadow-xl group",
+        className
+      )}
+      {...props}
+    >
+      <div
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          opacity,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(62,207,142,0.15), transparent 40%)`,
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative z-10 flex h-full flex-col p-4 sm:p-6 w-full">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export {
   Card,
   CardHeader,
@@ -181,5 +248,6 @@ export {
   CardContent,
   GlowCard,
   BentoCard,
+  SpotlightCard,
   cardVariants,
 }

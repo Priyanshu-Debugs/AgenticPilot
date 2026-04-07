@@ -6,31 +6,30 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Navigation } from "@/components/shared/Navigation"
 import { FeatureCard } from "@/components/shared/Cards"
-import { GlowCard, BentoCard } from "@/components/ui/card"
+import { GlowCard, BentoCard, SpotlightCard } from "@/components/ui/card"
 import { AnimatedCounter } from "@/components/ui/animations"
 import { InfiniteGrid } from "@/components/ui/infinite-grid"
-import { ContainerScroll } from "@/components/ui/container-scroll-animation"
-// Phosphor Icons - More premium and unique than Lucide
+import { cn } from "@/lib/utils"
 import {
   ArrowRight,
-  Envelope,
-  TwitterLogo,
-  LinkedinLogo,
-  InstagramLogo,
-  Robot,
+  Mail,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Bot,
   Star,
   CheckCircle,
-  Sparkle,
-  Lightning,
+  Sparkles,
+  Zap,
   Users,
   ShieldCheck,
   Clock,
   Play,
-  CaretRight,
-  RocketLaunch,
-  ChartLineUp,
-  Gear
-} from "@phosphor-icons/react"
+  ChevronRight,
+  Rocket,
+  TrendingUp,
+  Settings
+} from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -58,35 +57,35 @@ export default function LandingPage() {
     {
       title: "Smart Email Responses",
       description: "AI-powered Gmail automation that responds to customer inquiries instantly with human-like precision and context awareness.",
-      icon: Envelope,
+      icon: Mail,
       href: "/dashboard/gmail",
       stats: "95% accuracy rate"
     },
     {
       title: "X/Twitter Automation",
       description: "AI-powered tweet scheduling, thread generation, and smart engagement automation that grows your audience.",
-      icon: TwitterLogo,
+      icon: Twitter,
       href: "/dashboard/twitter",
       stats: "3x follower growth"
     },
     {
       title: "LinkedIn Automation",
       description: "Automated professional networking, AI-crafted posts, and intelligent connection management for business growth.",
-      icon: LinkedinLogo,
+      icon: Linkedin,
       href: "/dashboard/linkedin",
       stats: "5x engagement boost"
     },
     {
       title: "Social Media Automation",
       description: "Schedule and automatically post engaging content across all your social platforms with AI-generated captions.",
-      icon: InstagramLogo,
+      icon: Instagram,
       href: "/dashboard/instagram",
       stats: "3x engagement boost"
     }
   ]
 
   const stats = [
-    { value: "50K+", label: "Tasks Automated Daily", icon: Lightning },
+    { value: "50K+", label: "Tasks Automated Daily", icon: Zap },
     { value: "99.9%", label: "Uptime Guarantee", icon: ShieldCheck },
     { value: "< 2s", label: "Average Response", icon: Clock },
     { value: "10K+", label: "Active Users", icon: Users }
@@ -114,6 +113,27 @@ export default function LandingPage() {
       content: "Our social media engagement increased 300% after implementing AgenticPilot's automation.",
       avatar: "/placeholder-user.jpg",
       company: "BrandStudio"
+    },
+    {
+      name: "David Kim",
+      role: "Founder",
+      content: "I manage 5 different brands. AgenticPilot saves me over 20 hours a week by automating content scheduling effortlessly.",
+      avatar: "/placeholder-user.jpg",
+      company: "Nexus Brands"
+    },
+    {
+      name: "Olivia Martinez",
+      role: "VP of Sales",
+      content: "Integrating autonomous email replies natively into our pipeline generated a 40% higher lead retention rate within a month.",
+      avatar: "/placeholder-user.jpg",
+      company: "Elevate AI"
+    },
+    {
+      name: "James Wilson",
+      role: "Lead Growth Engineer",
+      content: "The ability to customize ML models for predictive engagement times is an absolute game-changer. Easily the best investment.",
+      avatar: "/placeholder-user.jpg",
+      company: "GrowthX"
     }
   ]
 
@@ -163,7 +183,7 @@ export default function LandingPage() {
                 animate={{ rotate: [0, 15, -15, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Sparkle weight="fill" className="w-4 h-4 mr-2 text-primary" />
+                <Sparkles className="w-4 h-4 mr-2 text-primary" />
               </motion.div>
               AI-Powered Business Automation
             </motion.div>
@@ -171,11 +191,11 @@ export default function LandingPage() {
             {/* Main Heading with Stagger Animation */}
             <motion.div
               className="space-y-4 sm:space-y-6"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ filter: "blur(10px)", opacity: 0, y: 30 }}
+              animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight">
                 Automate Your Business with{" "}
                 <span className="text-gradient-static">
                   AI Agents
@@ -202,9 +222,9 @@ export default function LandingPage() {
                 onClick={handleGetStarted}
                 className="w-full sm:w-auto px-8 py-6 text-base font-semibold group"
               >
-                <RocketLaunch weight="fill" className="mr-2 h-5 w-5" />
+                <Rocket className="mr-2 h-5 w-5" />
                 Start Free Trial
-                <ArrowRight weight="bold" className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
@@ -213,7 +233,7 @@ export default function LandingPage() {
                 disabled={showDemoMessage}
                 className="w-full sm:w-auto px-8 py-6 text-base font-medium group"
               >
-                <Play weight="fill" className="mr-2 h-5 w-5" />
+                <Play className="mr-2 h-5 w-5 fill-current" />
                 {showDemoMessage ? "Opening Dashboard..." : "Watch Demo"}
               </Button>
             </motion.div>
@@ -228,15 +248,15 @@ export default function LandingPage() {
               <p className="text-xs sm:text-sm text-muted-foreground">Trusted by modern teams worldwide</p>
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
                 <span className="flex items-center">
-                  <CheckCircle weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <CheckCircle className="w-4 h-4 mr-1.5 text-primary" />
                   No credit card required
                 </span>
                 <span className="flex items-center">
-                  <ShieldCheck weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <ShieldCheck className="w-4 h-4 mr-1.5 text-primary" />
                   Enterprise security
                 </span>
                 <span className="flex items-center">
-                  <Clock weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <Clock className="w-4 h-4 mr-1.5 text-primary" />
                   5-minute setup
                 </span>
               </div>
@@ -278,7 +298,7 @@ export default function LandingPage() {
                 >
                   <div className="flex items-center justify-center">
                     <div className="p-4 bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl">
-                      <stat.icon weight="fill" className="w-7 h-7 text-primary" />
+                      <stat.icon className="w-7 h-7 text-primary" />
                     </div>
                   </div>
                   <div className="text-3xl sm:text-4xl font-bold text-foreground">
@@ -295,44 +315,91 @@ export default function LandingPage() {
       </section>
 
 
-      {/* Product Showcase Section with 3D Scroll Animation */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background via-primary/5 to-background">
-        <ContainerScroll
-          titleComponent={
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-medium mx-auto">
-                <Robot weight="fill" className="w-4 h-4 mr-2 text-primary" />
-                AI-Powered Technology
-              </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-                AI-Powered <br />
-                <span className="text-gradient-static">
-                  Automation
-                </span>
-              </h2>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Reducing Costs & Boosting Productivity with intelligent automation that works around the clock.
-              </p>
-            </motion.div>
-          }
-        >
-          <Image
-            src="/ai-automation-hero.jpg"
-            alt="AI-Powered Automation"
-            height={720}
-            width={1400}
-            className="mx-auto rounded-2xl object-cover h-full object-center"
-            draggable={false}
-          />
-        </ContainerScroll>
-      </section>
+      {/* Product Showcase Section - Interactive Dashboard Mockup */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-background via-primary/5 to-background py-20 lg:py-32">
+        <div className="container-padding">
+          <motion.div
+            className="space-y-4 text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-medium mx-auto">
+              <Bot className="w-4 h-4 mr-2 text-primary" />
+              AI-Powered Technology
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
+              AI-Powered <br />
+              <span className="text-gradient-static">
+                Automation
+              </span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Reducing Costs & Boosting Productivity with intelligent automation that works around the clock.
+            </p>
+          </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative lg:mx-auto max-w-6xl"
+          >
+            <div className="relative rounded-xl sm:rounded-2xl bg-gray-100/5 dark:bg-zinc-900/40 p-2 sm:p-4 border-2 border-border/50 shadow-2xl backdrop-blur-sm overflow-hidden">
+              <div className="absolute top-4 left-4 flex space-x-2 z-20">
+                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+              </div>
+              <Image
+                src="/ai-automation-hero.jpg"
+                alt="AI-Powered Automation"
+                height={720}
+                width={1400}
+                className="rounded-lg object-cover w-full h-auto mt-4"
+                draggable={false}
+              />
+              
+              {/* Floating UI Elements */}
+              <motion.div 
+                className="absolute -right-4 lg:-right-8 top-1/4 bg-card border border-border shadow-2xl rounded-xl p-4 hidden md:flex items-center space-x-4"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <CheckCircle className="text-primary w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">Campaign Active</div>
+                  <div className="text-xs text-muted-foreground">3 new tasks completed</div>
+                </div>
+              </motion.div>
+              <motion.div 
+                className="absolute -left-4 lg:-left-8 bottom-1/4 bg-card border border-border shadow-2xl rounded-xl p-4 hidden md:flex items-center space-x-4"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+              >
+                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                  <TrendingUp className="text-accent w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">Growth Spike</div>
+                  <div className="text-xs text-muted-foreground">+24% engagement</div>
+                </div>
+              </motion.div>
+            </div>
+            
+            {/* Ambient Background Glow */}
+            <div className="absolute inset-0 max-w-full -z-10 bg-gradient-to-r from-primary/30 to-accent/30 blur-[100px] opacity-40 mix-blend-screen scale-110"></div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section id="features" className="section-spacing">
@@ -361,9 +428,9 @@ export default function LandingPage() {
             </motion.div>
 
 
-            {/* Features Grid with Stagger Animation */}
+            {/* Symmetric Features Grid Layout */}
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
@@ -378,50 +445,51 @@ export default function LandingPage() {
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
-                  className="group relative h-full"
+                  className="group h-full"
                   variants={{
                     hidden: { opacity: 0, y: 30 },
                     visible: { opacity: 1, y: 0 }
                   }}
                 >
-                  <GlowCard className="h-full hover:border-primary/30">
-                    <div className="flex flex-col h-full space-y-4 sm:space-y-6">
-                      {/* Icon and Badge */}
-                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center group-hover:from-primary group-hover:to-primary group-hover:scale-110 transition-all duration-300">
-                          <feature.icon weight="duotone" className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                  <SpotlightCard className="h-full">
+                    <div className="flex flex-col h-full">
+                      {/* Icon and Badge Container */}
+                      <div className="flex flex-col mb-4 w-full">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-500">
+                            <feature.icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-500" />
+                          </div>
+                          <Badge className="text-xs bg-primary/10 text-primary border-primary/20 font-medium">
+                            {feature.stats}
+                          </Badge>
                         </div>
-                        <Badge className="text-xs bg-primary/10 text-primary border-0 font-medium">
-                          {feature.stats}
-                        </Badge>
                       </div>
 
-                      {/* Content */}
-                      <div className="space-y-3 sm:space-y-4">
-                        <h3 className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {/* Content Container */}
+                      <div className="flex flex-col flex-1 w-full">
+                        <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                           {feature.title}
                         </h3>
-                        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                        <p className="text-base text-muted-foreground leading-relaxed mb-6 flex-1">
                           {feature.description}
                         </p>
-                      </div>
 
-                      {/* Learn More Link - pushed to bottom */}
-                      <div className="mt-auto pt-2">
-                        <Link
-                          href={feature.href}
-                          className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors group/link"
-                        >
-                          Learn more
-                          <CaretRight weight="bold" className="ml-1 h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
-                        </Link>
+                        {/* Learn More Link */}
+                        <div className="mt-auto">
+                          <Link
+                            href={feature.href}
+                            className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group/link"
+                          >
+                            Explore capability
+                            <ChevronRight className="ml-1 h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </GlowCard>
+                  </SpotlightCard>
                 </motion.div>
               ))}
             </motion.div>
-
           </div>
         </div>
       </section>
@@ -443,7 +511,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
             >
               <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-medium">
-                <Star weight="fill" className="w-4 h-4 mr-2 text-yellow-500" />
+                <Star className="w-4 h-4 mr-2 text-yellow-500 fill-current" />
                 Customer Stories
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
@@ -454,73 +522,57 @@ export default function LandingPage() {
               </p>
             </motion.div>
 
-            {/* Testimonials Grid */}
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.15 }
-                }
-              }}
-            >
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  className="group"
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
-                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                >
-                  <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-6 sm:p-8 h-full shadow-lg hover:shadow-xl hover:border-primary/30 transition-all duration-300">
-                    <div className="space-y-4 sm:space-y-6">
-                      {/* Star Rating with Animation */}
-                      <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.1 * i, duration: 0.3 }}
-                          >
-                            <Star weight="fill" className="w-5 h-5 text-yellow-400" />
-                          </motion.div>
-                        ))}
-                      </div>
+            {/* Infinite Auto-Scrolling Testimonials */}
+            <div className="relative flex overflow-hidden w-full group py-8 -mx-4 sm:-mx-0 px-4 sm:px-0">
+              <div className="absolute inset-y-0 left-0 w-1/6 bg-gradient-to-r from-background to-transparent z-10 hidden sm:block pointer-events-none"></div>
+              <div className="absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-background to-transparent z-10 hidden sm:block pointer-events-none"></div>
+              
+              <div className="flex w-max animate-marquee hover:[animation-play-state:paused] space-x-6">
+                {[1, 2].map((groupIndex) => (
+                  <div key={groupIndex} className="flex space-x-6">
+                    {testimonials.map((testimonial, index) => (
+                      <div
+                        key={index}
+                        className="w-[300px] sm:w-[400px] shrink-0"
+                      >
+                        <div className="bg-card/40 backdrop-blur-md border border-border/50 rounded-3xl p-6 sm:p-8 h-full shadow-lg hover:shadow-xl hover:border-primary/50 transition-all duration-300 select-none">
+                          <div className="space-y-6">
+                            {/* Star Rating */}
+                            <div className="flex items-center space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                              ))}
+                            </div>
 
-                      {/* Testimonial Content */}
-                      <blockquote className="text-sm sm:text-base text-muted-foreground leading-relaxed italic">
-                        "{testimonial.content}"
-                      </blockquote>
+                            {/* Testimonial Content */}
+                            <blockquote className="text-sm sm:text-base text-foreground leading-relaxed font-medium">
+                              "{testimonial.content}"
+                            </blockquote>
 
-                      {/* Author Info */}
-                      <div className="flex items-center space-x-3 pt-4 border-t border-border/50">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                          <span className="text-sm font-semibold text-primary">
-                            {testimonial.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-semibold text-foreground text-sm">
-                            {testimonial.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {testimonial.role} at {testimonial.company}
+                            {/* Author Info */}
+                            <div className="flex items-center space-x-3 pt-4 border-t border-border/30">
+                              <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-bold text-primary">
+                                  {testimonial.name.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-semibold text-foreground text-sm">
+                                  {testimonial.name}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {testimonial.role} at {testimonial.company}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -574,9 +626,9 @@ export default function LandingPage() {
                 onClick={handleGetStarted}
                 className="w-full sm:w-auto px-8 py-6 text-base font-semibold group"
               >
-                <RocketLaunch weight="fill" className="mr-2 h-5 w-5" />
+                <Rocket className="mr-2 h-5 w-5" />
                 Start Your Free Trial
-                <ArrowRight weight="bold" className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 size="lg"
@@ -597,15 +649,15 @@ export default function LandingPage() {
             >
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-sm">
                 <span className="flex items-center">
-                  <CheckCircle weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <CheckCircle className="w-4 h-4 mr-1.5 text-primary" />
                   No credit card required
                 </span>
                 <span className="flex items-center">
-                  <ShieldCheck weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <ShieldCheck className="w-4 h-4 mr-1.5 text-primary" />
                   Enterprise security
                 </span>
                 <span className="flex items-center">
-                  <Clock weight="fill" className="w-4 h-4 mr-1.5 text-primary" />
+                  <Clock className="w-4 h-4 mr-1.5 text-primary" />
                   Setup in minutes
                 </span>
               </div>
@@ -624,7 +676,7 @@ export default function LandingPage() {
               {/* Company Info */}
               <div className="space-y-4 sm:col-span-2 lg:col-span-1">
                 <div className="flex items-center space-x-2">
-                  <Robot className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+                  <Bot className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
                   <span className="text-lg sm:text-xl font-bold text-foreground">
                     AgenticPilot
                   </span>
@@ -669,9 +721,6 @@ export default function LandingPage() {
                   <Link href="/blog" className="block text-muted-foreground hover:text-primary transition-colors">
                     Blog
                   </Link>
-                  <Link href="/careers" className="block text-muted-foreground hover:text-primary transition-colors">
-                    Careers
-                  </Link>
                 </div>
               </div>
 
@@ -682,20 +731,6 @@ export default function LandingPage() {
                   <a href="mailto:agenticpilot.team@gmail.com" className="block text-muted-foreground hover:text-primary transition-colors">
                     agenticpilot.team@gmail.com
                   </a>
-                  <div className="flex items-center space-x-4 pt-2">
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-base">
-                      <span className="sr-only">Twitter</span>
-                      🐦
-                    </a>
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-base">
-                      <span className="sr-only">GitHub</span>
-                      🐙
-                    </a>
-                    <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-base">
-                      <span className="sr-only">LinkedIn</span>
-                      💼
-                    </a>
-                  </div>
                 </div>
               </div>
             </div>
