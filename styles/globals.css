@@ -121,3 +121,85 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Utilities for Enhanced UI */
+@layer utilities {
+  /* Text Gradients */
+  .text-gradient-static {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60 animate-gradient-x;
+  }
+
+  /* Container Padding */
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section Spacing */
+  .section-spacing {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* Smooth Scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom Animations */
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Custom Button Gradients */
+  .gradient-glow {
+    box-shadow: 0 0 20px rgba(62, 207, 142, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .gradient-glow:hover {
+    box-shadow: 0 0 30px rgba(62, 207, 142, 0.5);
+    transform: translateY(-2px);
+  }
+}
+
+/* Global transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted/80;
+}
+
+/* Selection colors */
+::-moz-selection {
+  @apply bg-primary/30 text-foreground;
+}
+
+::selection {
+  @apply bg-primary/30 text-foreground;
+}

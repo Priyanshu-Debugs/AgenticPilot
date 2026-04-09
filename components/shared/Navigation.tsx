@@ -86,12 +86,12 @@ export function Navigation({
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-1">
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-md hover:bg-accent/50"
               >
                 {item.label}
               </Link>
@@ -99,10 +99,11 @@ export function Navigation({
           </div>
           
           {/* Right side - Desktop buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link href="/notifications">
+          <div className="hidden md:flex items-center space-x-2">
+            <Link href="/notifications" className="relative">
               <Button variant="ghost" size="sm">
                 <Bell className="h-4 w-4" />
+                <span className="sr-only">Notifications</span>
               </Button>
             </Link>
             <ModeToggle />
@@ -259,62 +260,68 @@ export function Navigation({
             )}
 
             {/* Drawer Content */}
-            <div className="flex flex-col h-full">
-              {/* Navigation Links */}
-              <div className="flex-1 px-6 py-6 space-y-2">
+            <div className="flex flex-col h-full overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-4 py-4">
                 <div className="space-y-1">
-                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 px-4">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
                     Navigation
                   </h3>
-                  
+
                   {items.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                      className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
                       onClick={toggleMobileMenu}
                     >
-                      {item.icon && <item.icon className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />}
+                      {item.icon && <item.icon className="h-4 w-4 mr-3 text-muted-foreground" />}
                       {item.label}
                     </Link>
                   ))}
 
                   <Link
                     href="/notifications"
-                    className="flex items-center px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                    className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
                     onClick={toggleMobileMenu}
                   >
-                    <Bell className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-500" />
+                    <Bell className="h-4 w-4 mr-3 text-muted-foreground" />
                     Notifications
                   </Link>
                 </div>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="px-6 py-6 border-t border-border space-y-3">
-                {isAuthenticated ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      onSignOut()
-                      toggleMobileMenu()
-                    }}
-                    className="w-full"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      onSignUp()
-                      toggleMobileMenu()
-                    }}
-                    className="w-full transition-all duration-200"
-                  >
-                    Get Started
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+
+                {isAuthenticated && (
+                  <div className="mt-6 space-y-1">
+                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
+                      Account
+                    </h3>
+                    <Link
+                      href="/profile"
+                      className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <User className="h-4 w-4 mr-3 text-muted-foreground" />
+                      Profile
+                    </Link>
+                    <Link
+                      href="/settings"
+                      className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
+                      onClick={toggleMobileMenu}
+                    >
+                      <Settings className="h-4 w-4 mr-3 text-muted-foreground" />
+                      Settings
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        onSignOut()
+                        toggleMobileMenu()
+                      }}
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Sign Out
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>

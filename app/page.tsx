@@ -353,14 +353,18 @@ export default function LandingPage() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
               </div>
-              <Image
-                src="/ai-automation-hero.jpg"
-                alt="AI-Powered Automation"
-                height={720}
-                width={1400}
-                className="rounded-lg object-cover w-full h-auto mt-4"
-                draggable={false}
-              />
+              <div className="relative w-full rounded-lg overflow-hidden bg-card/30 aspect-video flex items-center justify-center group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10" />
+                <div className="relative z-10 text-center p-6">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Bot className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">AI-Powered Dashboard Preview</h3>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    Experience the future of automation with our sleek, modern interface
+                  </p>
+                </div>
+              </div>
               
               {/* Floating UI Elements */}
               <motion.div 
@@ -633,9 +637,10 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 variant="glass"
+                asChild
                 className="w-full sm:w-auto px-8 py-6 text-base font-medium"
               >
-                Contact Sales
+                <Link href="/contact">Contact Sales</Link>
               </Button>
             </motion.div>
 

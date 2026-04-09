@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
-import { Mail, Twitter, Linkedin, Instagram, BarChart3, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2 } from "lucide-react"
+import { Mail, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2, BarChart3, Twitter, Linkedin, Instagram } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 // Auth and profile hooks

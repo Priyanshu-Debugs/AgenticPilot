@@ -78,8 +78,16 @@ export function AutomationController({ tasks, onStartTask, onPauseTask, onStopTa
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Automation Controller</h2>
-        <Badge variant="outline" className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Zap className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">Automation Controller</h2>
+            <p className="text-sm text-muted-foreground">Manage your AI automation tasks</p>
+          </div>
+        </div>
+        <Badge variant="outline" className="flex items-center space-x-2 bg-muted/50">
           <Zap className="h-3 w-3" />
           <span>{tasks.filter(t => t.status === "running").length} Active</span>
         </Badge>

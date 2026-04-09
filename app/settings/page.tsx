@@ -1,6 +1,7 @@
 "use client"
 
 // Core UI components
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Bot, ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -27,20 +28,20 @@ export default function Settings() {
   const handleSave = async (newSettings: any) => {
     try {
       await saveSettings(newSettings)
-      // Could show a success toast here
+      toast.success("Settings saved successfully!", { description: "Your preferences have been updated." })
     } catch (err) {
       console.error('Failed to save settings:', err)
-      // Could show an error toast here
+      toast.error("Failed to save settings", { description: "Please try again." })
     }
   }
 
   const handleReset = async () => {
     try {
       await resetSettings()
-      // Could show a success toast here
+      toast.success("Settings reset", { description: "All settings have been restored to defaults." })
     } catch (err) {
       console.error('Failed to reset settings:', err)
-      // Could show an error toast here
+      toast.error("Failed to reset settings", { description: "Please try again." })
     }
   }
 

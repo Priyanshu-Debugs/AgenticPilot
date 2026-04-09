@@ -65,13 +65,13 @@ export default function AboutPage() {
           {/* Founders Grid */}
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            initial={{ opacity: 0, Math: 20 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
           >
-            <div className="col-span-full mb-4">
-              <h2 className="text-2xl font-bold border-b border-border/50 pb-4">Meet the Team</h2>
+            <div className="col-span-full mb-6">
+              <h2 className="text-2xl font-bold border-b border-border/50 pb-4 text-center">Meet the Founders</h2>
             </div>
             
             {founders.map((founder, index) => (

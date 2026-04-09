@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bot, ArrowLeft, Upload, Save, Loader2 } from "lucide-react"
+import { Bot, ArrowLeft, Upload, Save, Loader2, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/utils/auth/AuthProvider"
@@ -134,13 +134,17 @@ export default function ProfilePage() {
 
           {/* Success/Error Messages */}
           {success && (
-            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-              <p className="text-emerald-600">{success}</p>
+            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-emerald-500" />
+              <p className="text-emerald-600 font-medium">{success}</p>
             </div>
           )}
           {error && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <p className="text-destructive">{error}</p>
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
+              <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-bold text-destructive">!</span>
+              </div>
+              <p className="text-destructive font-medium">{error}</p>
             </div>
           )}
 
