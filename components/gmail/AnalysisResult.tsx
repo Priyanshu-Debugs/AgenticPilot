@@ -10,7 +10,8 @@ import {
     Minus,
     AlertTriangle,
     Copy,
-    Sparkles
+    Sparkles,
+    ShieldAlert,
 } from 'lucide-react'
 import type { EmailAnalysis } from '@/lib/gmail/types'
 
@@ -36,7 +37,7 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
         return (
             <div className="border-dashed border-2 rounded-lg p-6 text-center text-muted-foreground">
                 <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                <p>Select an email and click "Analyze" to see AI insights</p>
+                <p>Select an email and click &quot;Analyze&quot; to see AI insights</p>
             </div>
         )
     }
@@ -75,6 +76,19 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
                 </Badge>
             </div>
 
+            {/* Escalation Banner */}
+            {analysis.escalated && (
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                    <ShieldAlert className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+                    <div>
+                        <p className="font-medium text-sm text-amber-400">Flagged for Human Review</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            {analysis.escalationReason || 'This email was flagged as too risky for AI to auto-reply.'}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* Classification badges */}
             <div className="flex flex-wrap gap-2">
                 <Badge className={typeColor[analysis.type]}>
@@ -110,24 +124,26 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
                 </div>
             )}
 
-            {/* Suggested Reply */}
-            <div className="pt-2 border-t">
-                <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-sm">Suggested Reply</h4>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onUseReply(analysis.suggestedReply)}
-                        className="gap-1"
-                    >
-                        <Copy className="h-3 w-3" />
-                        Use This
-                    </Button>
+            {/* Suggested Reply — only show when NOT escalated and reply exists */}
+            {!analysis.escalated && analysis.suggestedReply && (
+                <div className="pt-2 border-t">
+                    <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-sm">Suggested Reply</h4>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onUseReply(analysis.suggestedReply)}
+                            className="gap-1"
+                        >
+                            <Copy className="h-3 w-3" />
+                            Use This
+                        </Button>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-3 text-sm whitespace-pre-wrap max-h-64 overflow-y-auto">
+                        {analysis.suggestedReply}
+                    </div>
                 </div>
-                <div className="bg-muted/50 rounded-lg p-3 text-sm whitespace-pre-wrap max-h-64 overflow-y-auto">
-                    {analysis.suggestedReply}
-                </div>
-            </div>
+            )}
         </div>
     )
 }

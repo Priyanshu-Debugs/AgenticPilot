@@ -46,15 +46,18 @@ const EmailAnalysisState = Annotation.Root({
     analysis: Annotation<EmailAnalysis | null>,
 })
 
-// ── Escalation Rules ─────────────────────────────────────────
-
 function getEscalationReason(analysis: {
     type: string
     sentiment: string
     urgency: string
     confidence: number
+    suggestedReply?: string
 }): string | null {
-    const { type, sentiment, urgency, confidence } = analysis
+    const { type, sentiment, urgency, confidence, suggestedReply } = analysis
+
+    if (suggestedReply !== undefined && !suggestedReply.trim()) {
+        return 'AI failed to generate a valid reply'
+    }
 
     if (confidence < 0.7) {
         return `Low AI confidence (${(confidence * 100).toFixed(0)}%) — email may be misclassified`
@@ -107,7 +110,10 @@ Instructions:
 5. Generate a ${tone} reply that addresses the sender's needs. Be concise but complete. Include a call-to-action if appropriate. Write ONLY the reply body — no subject line, no greeting, no sign-off.`
     )
 
-    const suggestedReply = formatReplyWithTemplate(result.suggestedReply, email.from)
+    const rawReply = result.suggestedReply?.trim() || ''
+    const suggestedReply = rawReply.length > 0 
+        ? formatReplyWithTemplate(rawReply, email.from)
+        : ''
 
     const analysis: EmailAnalysis = {
         type: result.type,
