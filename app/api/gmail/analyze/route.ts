@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { getEmail } from '@/lib/gmail/client'
 import { analyzeEmail, generateReply } from '@/lib/ai/email-analyzer'
+import { formatReplyWithTemplate } from '@/lib/gmail/reply-template'
 
 export async function POST(req: NextRequest) {
     try {
@@ -44,7 +45,8 @@ export async function POST(req: NextRequest) {
 
         if (generateReplyOnly) {
             // Just generate a reply
-            const reply = await generateReply(email, tone)
+            const rawReply = await generateReply(email, tone)
+            const reply = formatReplyWithTemplate(rawReply, email.from)
 
             return NextResponse.json({
                 reply,

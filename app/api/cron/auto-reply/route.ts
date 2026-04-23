@@ -7,6 +7,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 import { getAutomationEnabledUsers } from '@/lib/gmail/oauth-admin'
 import { fetchEmailsAdmin, getEmailAdmin, sendReplyAdmin, markAsReadAdmin } from '@/lib/gmail/client-admin'
 import { analyzeEmail, generateReply } from '@/lib/ai/email-analyzer'
+import { formatReplyWithTemplate } from '@/lib/gmail/reply-template'
 
 // Vercel Cron calls GET endpoints
 export async function GET(req: NextRequest) {
@@ -100,11 +101,13 @@ export async function GET(req: NextRequest) {
                             continue
                         }
 
+                        const formattedReply = formatReplyWithTemplate(analysis.suggestedReply, email.from)
+
                         // Send the reply
                         await sendReplyAdmin(userId, {
                             to: email.from,
                             subject: email.subject?.startsWith('Re:') ? email.subject : `Re: ${email.subject}`,
-                            body: analysis.suggestedReply,
+                            body: formattedReply,
                             inReplyTo: email.id,
                             threadId: email.threadId,
                         })
@@ -125,7 +128,7 @@ export async function GET(req: NextRequest) {
                             email_subject: email.subject,
                             email_from: email.from,
                             action: 'auto_replied',
-                            reply_text: analysis.suggestedReply,
+                            reply_text: formattedReply,
                             confidence: analysis.confidence,
                             response_time_ms: responseTime,
                             success: true,

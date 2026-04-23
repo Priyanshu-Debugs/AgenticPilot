@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { sendReply, markAsRead } from '@/lib/gmail/client'
+import { formatReplyWithTemplate } from '@/lib/gmail/reply-template'
 
 export async function POST(req: NextRequest) {
     try {
@@ -24,12 +25,13 @@ export async function POST(req: NextRequest) {
         }
 
         const startTime = Date.now()
+        const formattedMessage = formatReplyWithTemplate(message, to)
 
         // Send the email
         const messageId = await sendReply(user.id, {
             to,
             subject,
-            body: message,
+            body: formattedMessage,
             inReplyTo: replyToId,
             threadId,
         })
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
             email_subject: subject,
             email_from: to,
             action: replyToId ? 'replied' : 'sent',
-            reply_text: message,
+            reply_text: formattedMessage,
             response_time_ms: responseTime,
             success: true,
         })

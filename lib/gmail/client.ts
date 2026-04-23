@@ -4,6 +4,7 @@
 import { google, gmail_v1 } from 'googleapis'
 import { createOAuth2Client, refreshTokenIfNeeded } from './oauth'
 import type { GmailMessage } from './types'
+import { buildReplyEmailMime } from './mime'
 
 // Create authenticated Gmail client
 export async function getGmailClient(userId: string): Promise<gmail_v1.Gmail> {
@@ -135,21 +136,12 @@ export async function sendReply(
 
     const { to, subject, body, inReplyTo, threadId } = options
 
-    // Build email in RFC 2822 format
-    const emailLines = [
-        `To: ${to}`,
-        `Subject: ${subject}`,
-        'Content-Type: text/plain; charset=utf-8',
-    ]
-
-    if (inReplyTo) {
-        emailLines.push(`In-Reply-To: ${inReplyTo}`)
-        emailLines.push(`References: ${inReplyTo}`)
-    }
-
-    emailLines.push('', body)
-
-    const rawEmail = Buffer.from(emailLines.join('\r\n'))
+    const rawEmail = Buffer.from(buildReplyEmailMime({
+        to,
+        subject,
+        body,
+        inReplyTo,
+    }))
         .toString('base64')
         .replace(/\+/g, '-')
         .replace(/\//g, '_')

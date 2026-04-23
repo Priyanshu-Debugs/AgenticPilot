@@ -5,6 +5,7 @@ import { google, gmail_v1 } from 'googleapis'
 import { createOAuth2Client } from './oauth'
 import { refreshTokenIfNeededAdmin } from './oauth-admin'
 import type { GmailMessage } from './types'
+import { buildReplyEmailMime } from './mime'
 
 // Create authenticated Gmail client (admin version)
 export async function getGmailClientAdmin(userId: string): Promise<gmail_v1.Gmail> {
@@ -131,15 +132,12 @@ export async function sendReplyAdmin(
 
     const { to, subject, body, inReplyTo, threadId } = options
 
-    const rawEmail = [
-        `To: ${to}`,
-        `Subject: ${subject}`,
-        `Content-Type: text/plain; charset=utf-8`,
-        inReplyTo ? `In-Reply-To: ${inReplyTo}` : '',
-        inReplyTo ? `References: ${inReplyTo}` : '',
-        '',
+    const rawEmail = buildReplyEmailMime({
+        to,
+        subject,
         body,
-    ].filter(Boolean).join('\r\n')
+        inReplyTo,
+    })
 
     const encodedMessage = Buffer.from(rawEmail)
         .toString('base64')

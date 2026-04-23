@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { fetchEmails, getEmail, sendReply, markAsRead } from '@/lib/gmail/client'
 import { analyzeEmail, generateReply } from '@/lib/ai/email-analyzer'
+import { formatReplyWithTemplate } from '@/lib/gmail/reply-template'
 
 export async function POST(req: NextRequest) {
     try {
@@ -80,11 +81,13 @@ export async function POST(req: NextRequest) {
                     continue
                 }
 
+                const formattedReply = formatReplyWithTemplate(analysis.suggestedReply, email.from)
+
                 // Send the reply
                 const messageId = await sendReply(user.id, {
                     to: email.from,
                     subject: email.subject?.startsWith('Re:') ? email.subject : `Re: ${email.subject}`,
-                    body: analysis.suggestedReply,
+                    body: formattedReply,
                     inReplyTo: email.id,
                     threadId: email.threadId,
                 })
@@ -105,7 +108,7 @@ export async function POST(req: NextRequest) {
                     email_subject: email.subject,
                     email_from: email.from,
                     action: 'auto_replied',
-                    reply_text: analysis.suggestedReply,
+                    reply_text: formattedReply,
                     confidence: analysis.confidence,
                     response_time_ms: responseTime,
                     success: true,

@@ -3,6 +3,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { EmailAnalysis, GmailMessage } from '@/lib/gmail/types'
+import { formatReplyWithTemplate } from '@/lib/gmail/reply-template'
 
 // Cache Gemini model at module scope to avoid repeated construction
 let cachedGeminiModel: ReturnType<GoogleGenerativeAI['getGenerativeModel']> | null = null
@@ -54,8 +55,8 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks, 
   "urgency": "low|medium|high",
   "confidence": 0.0 to 1.0,
   "summary": "One sentence summary of the email",
-  "keywords": ["key", "words", "from", "email"],
-  "suggestedReply": "A complete, helpful reply in ${preferredTone} tone. Sign off with the business name."
+    "keywords": ["key", "words", "from", "email"],
+    "suggestedReply": "A complete, helpful reply in ${preferredTone} tone. Do NOT include greeting or sign-off lines."
 }
 
 Guidelines for suggestedReply:
@@ -63,7 +64,8 @@ Guidelines for suggestedReply:
 - Match the ${preferredTone} tone
 - Keep it concise but complete
 - Include a clear call-to-action if appropriate
-- End with appropriate closing and business name`
+- Do NOT include greeting lines (e.g., Hello, Dear)
+- Do NOT include closing/sign-off lines (e.g., Sincerely, Thank You)`
 
     // Attempt Gemini API call with retry for JSON parse issues
     const MAX_RETRIES = 2
@@ -94,7 +96,7 @@ Guidelines for suggestedReply:
                 confidence: Math.min(1, Math.max(0, analysis.confidence || 0.7)),
                 summary: analysis.summary || 'Email analyzed',
                 keywords: Array.isArray(analysis.keywords) ? analysis.keywords : [],
-                suggestedReply: analysis.suggestedReply || '',
+                suggestedReply: formatReplyWithTemplate(analysis.suggestedReply || '', email.from),
             }
         } catch (error: any) {
             lastError = error
@@ -133,7 +135,7 @@ ${additionalContext ? `Additional context: ${additionalContext}` : ''}
 
 Write ONLY the reply body (no subject line, no explanations).
 Tone: ${tone}
-End with an appropriate sign-off.`
+Do NOT include greeting or sign-off lines.`
 
     try {
         const result = await model.generateContent(prompt)
@@ -142,7 +144,7 @@ End with an appropriate sign-off.`
         if (!text) {
             throw new Error('Gemini returned empty reply')
         }
-        return text
+        return formatReplyWithTemplate(text, email.from)
     } catch (error: any) {
         console.error('Reply generation error:', error?.message || error)
         throw new Error(`Gemini reply generation failed: ${error?.message || 'Unknown error'}`)
