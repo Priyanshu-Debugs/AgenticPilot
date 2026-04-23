@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { captionGraph } from '@/lib/ai/graphs/instagram-caption-graph';
 
 export async function POST(req: NextRequest) {
     let context: string | undefined;
@@ -34,31 +34,15 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Use Gemini AI to generate caption
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-        const prompt = `You are a social media expert specializing in Instagram content. Generate an engaging Instagram caption.
-
-Context: ${context || 'General post'}
-Tone: ${tone || 'professional'}
-
-Requirements:
-1. Use ${tone || 'professional'} tone
-2. Make it engaging and authentic
-3. Include 2-3 relevant emojis (not excessive)
-4. Keep it concise (100-150 characters ideal) 
-5. Include a subtle call-to-action if appropriate
-6. Do NOT include hashtags (they will be added separately)
-
-Return ONLY the caption text, without any explanations or quotes.`;
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const caption = response.text().trim();
+        // Use LangGraph caption agent
+        const result = await captionGraph.invoke({
+            context: context || 'General post',
+            tone: tone || 'professional',
+            caption: '',
+        });
 
         return NextResponse.json({
-            caption,
+            caption: result.caption,
             aiGenerated: true,
         });
 
@@ -81,4 +65,3 @@ Return ONLY the caption text, without any explanations or quotes.`;
         );
     }
 }
-

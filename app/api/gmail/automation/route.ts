@@ -1,5 +1,5 @@
 // Gmail Automation Toggle API
-// Enables/disables background auto-reply for the current user
+// Enables/disables background auto-reply and human review for the current user
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
@@ -17,19 +17,20 @@ export async function GET() {
 
         const { data } = await supabase
             .from('gmail_tokens')
-            .select('auto_reply_enabled')
+            .select('auto_reply_enabled, human_review_enabled')
             .eq('user_id', user.id)
             .single()
 
         return NextResponse.json({
             enabled: data?.auto_reply_enabled ?? false,
+            humanReviewEnabled: data?.human_review_enabled ?? false,
         })
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
 
-// POST: Toggle automation on/off
+// POST: Toggle automation or human review on/off
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient(cookies())
@@ -39,11 +40,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const { enabled } = await req.json()
-
-        if (typeof enabled !== 'boolean') {
-            return NextResponse.json({ error: 'enabled must be a boolean' }, { status: 400 })
-        }
+        const body = await req.json()
+        const { enabled, humanReviewEnabled } = body
 
         // Check if user has Gmail connected
         const { data: tokens } = await supabase
@@ -59,10 +57,39 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // Update the automation setting
+        // Build update object based on what was sent
+        const updateFields: Record<string, boolean> = {}
+        let notificationTitle = ''
+        let notificationMessage = ''
+
+        if (typeof enabled === 'boolean') {
+            updateFields.auto_reply_enabled = enabled
+            notificationTitle = enabled
+                ? '🤖 Background Automation Enabled'
+                : '⏸️ Background Automation Disabled'
+            notificationMessage = enabled
+                ? 'Your AI assistant will now automatically scan and reply to new emails every 5 minutes.'
+                : 'Background email automation has been paused. You can still trigger auto-reply manually.'
+        }
+
+        if (typeof humanReviewEnabled === 'boolean') {
+            updateFields.human_review_enabled = humanReviewEnabled
+            notificationTitle = humanReviewEnabled
+                ? '🛡️ Human Review Enabled'
+                : '⚡ Human Review Disabled'
+            notificationMessage = humanReviewEnabled
+                ? 'Risky emails (complaints, low confidence, high urgency) will be flagged for your review instead of auto-replied.'
+                : 'AI will now reply to all emails automatically, including risky ones.'
+        }
+
+        if (Object.keys(updateFields).length === 0) {
+            return NextResponse.json({ error: 'enabled or humanReviewEnabled must be a boolean' }, { status: 400 })
+        }
+
+        // Update the settings
         const { error: updateError } = await supabase
             .from('gmail_tokens')
-            .update({ auto_reply_enabled: enabled })
+            .update(updateFields)
             .eq('user_id', user.id)
 
         if (updateError) {
@@ -76,12 +103,8 @@ export async function POST(req: NextRequest) {
         // Create a notification about the change
         await supabase.from('notifications').insert({
             user_id: user.id,
-            title: enabled
-                ? '🤖 Background Automation Enabled'
-                : '⏸️ Background Automation Disabled',
-            message: enabled
-                ? 'Your AI assistant will now automatically scan and reply to new emails every 5 minutes.'
-                : 'Background email automation has been paused. You can still trigger auto-reply manually.',
+            title: notificationTitle,
+            message: notificationMessage,
             type: 'info',
             category: 'automation',
             action_url: '/dashboard/gmail',
@@ -92,10 +115,9 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            enabled,
-            message: enabled
-                ? 'Background automation enabled'
-                : 'Background automation disabled',
+            enabled: typeof enabled === 'boolean' ? enabled : undefined,
+            humanReviewEnabled: typeof humanReviewEnabled === 'boolean' ? humanReviewEnabled : undefined,
+            message: notificationTitle,
         })
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

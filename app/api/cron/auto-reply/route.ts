@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
             userId: string
             processed: number
             successCount: number
+            escalatedCount: number
             errorCount: number
             errors: string[]
         }> = []
@@ -48,6 +49,7 @@ export async function GET(req: NextRequest) {
                 userId,
                 processed: 0,
                 successCount: 0,
+                escalatedCount: 0,
                 errorCount: 0,
                 errors: [] as string[],
             }
@@ -73,7 +75,17 @@ export async function GET(req: NextRequest) {
 
                 const businessInfo = businessInfoData as Record<string, string> | null
 
+                // Get human review setting
+                const { data: tokenSettings } = await supabase
+                    .from('gmail_tokens')
+                    .select('human_review_enabled')
+                    .eq('user_id', userId)
+                    .single()
+
+                const humanReviewEnabled = tokenSettings?.human_review_enabled ?? false
+
                 const repliedEmails: Array<{ subject: string; from: string }> = []
+                const escalatedEmails: Array<{ subject: string; from: string; reason: string }> = []
 
                 // Process each email
                 for (const emailSummary of emails) {
@@ -88,16 +100,50 @@ export async function GET(req: NextRequest) {
                             continue
                         }
 
-                        // Analyze and generate reply using Gemini
+                        // Analyze and generate reply using LangGraph
                         const analysis = await analyzeEmail(email, {
                             businessName: businessInfo?.business_name,
                             industry: businessInfo?.industry,
                             tone: 'professional',
-                        })
+                        }, { humanReviewEnabled })
+
+                        const responseTime = Date.now() - startTime
+
+                        // Escalation: risky email — notify owner, skip reply
+                        if (analysis.escalated) {
+                            await supabase.from('gmail_logs').insert({
+                                user_id: userId,
+                                email_id: email.id,
+                                email_subject: email.subject,
+                                email_from: email.from,
+                                action: 'escalated',
+                                confidence: analysis.confidence,
+                                response_time_ms: responseTime,
+                                success: true,
+                                details: JSON.stringify({
+                                    type: analysis.type,
+                                    sentiment: analysis.sentiment,
+                                    urgency: analysis.urgency,
+                                    escalationReason: analysis.escalationReason,
+                                    source: 'cron',
+                                }),
+                            })
+
+                            escalatedEmails.push({
+                                subject: email.subject || 'No Subject',
+                                from: email.from || 'Unknown',
+                                reason: analysis.escalationReason || 'Needs review',
+                            })
+
+                            userResult.escalatedCount++
+                            userResult.processed++
+                            continue
+                        }
 
                         if (!analysis.suggestedReply) {
                             userResult.errorCount++
                             userResult.errors.push(`No reply generated for: ${email.subject}`)
+                            userResult.processed++
                             continue
                         }
 
@@ -119,8 +165,6 @@ export async function GET(req: NextRequest) {
                             console.warn('Could not mark as read:', e)
                         }
 
-                        const responseTime = Date.now() - startTime
-
                         // Log the auto-reply action
                         await supabase.from('gmail_logs').insert({
                             user_id: userId,
@@ -136,7 +180,7 @@ export async function GET(req: NextRequest) {
                                 type: analysis.type,
                                 sentiment: analysis.sentiment,
                                 urgency: analysis.urgency,
-                                source: 'cron', // Mark as cron-triggered
+                                source: 'cron',
                             }),
                         })
 
@@ -155,10 +199,10 @@ export async function GET(req: NextRequest) {
                     userResult.processed++
                 }
 
-                // Create in-app notification for this user if any emails were processed
+                // Notification for auto-replied emails
                 if (repliedEmails.length > 0) {
                     const emailList = repliedEmails
-                        .slice(0, 3) // Show first 3
+                        .slice(0, 3)
                         .map(e => `• "${e.subject}" from ${e.from}`)
                         .join('\n')
 
@@ -178,6 +222,29 @@ export async function GET(req: NextRequest) {
                     })
                 }
 
+                // Notification for escalated emails that need human review
+                if (escalatedEmails.length > 0) {
+                    const escList = escalatedEmails
+                        .slice(0, 3)
+                        .map(e => `• "${e.subject}" from ${e.from}\n  Reason: ${e.reason}`)
+                        .join('\n')
+
+                    const remainingEsc = escalatedEmails.length - 3
+                    const remainingEscText = remainingEsc > 0 ? `\n...and ${remainingEsc} more` : ''
+
+                    await supabase.from('notifications').insert({
+                        user_id: userId,
+                        title: `⚠️ ${escalatedEmails.length} email${escalatedEmails.length !== 1 ? 's need' : ' needs'} your review`,
+                        message: `AI skipped auto-reply for these emails:\n${escList}${remainingEscText}\n\nPlease review and reply manually.`,
+                        type: 'warning',
+                        category: 'automation',
+                        action_url: '/dashboard/gmail',
+                        action_label: 'Review Emails',
+                        read: false,
+                        created_at: new Date().toISOString(),
+                    })
+                }
+
             } catch (userError: any) {
                 console.error(`Error processing user ${userId}:`, userError)
                 userResult.errors.push(`User-level error: ${userError.message}`)
@@ -188,14 +255,16 @@ export async function GET(req: NextRequest) {
 
         const totalProcessed = allResults.reduce((sum, r) => sum + r.processed, 0)
         const totalSuccess = allResults.reduce((sum, r) => sum + r.successCount, 0)
+        const totalEscalated = allResults.reduce((sum, r) => sum + r.escalatedCount, 0)
         const totalErrors = allResults.reduce((sum, r) => sum + r.errorCount, 0)
 
         return NextResponse.json({
             success: true,
-            message: `Cron completed: ${users.length} users, ${totalProcessed} emails processed, ${totalSuccess} replied, ${totalErrors} failed`,
+            message: `Cron completed: ${users.length} users, ${totalProcessed} emails processed, ${totalSuccess} replied, ${totalEscalated} escalated, ${totalErrors} failed`,
             usersProcessed: users.length,
             totalProcessed,
             totalSuccess,
+            totalEscalated,
             totalErrors,
             results: allResults,
         })

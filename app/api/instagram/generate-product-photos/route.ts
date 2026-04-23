@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { productPhotoGraph } from '@/lib/ai/graphs/product-photo-graph';
 
 interface GenerateRequest {
     productName: string;
@@ -9,14 +9,6 @@ interface GenerateRequest {
     style: 'studio' | 'lifestyle' | 'flat-lay' | 'minimal' | 'dramatic';
     originalImageUrl?: string;
 }
-
-const STYLE_DESCRIPTIONS: Record<string, string> = {
-    studio: 'Studio shot — clean white background, professional softbox lighting',
-    lifestyle: 'Lifestyle shot — natural setting, warm ambient lighting, aspirational context',
-    'flat-lay': 'Flat lay — top-down view, styled arrangement, editorial look',
-    minimal: 'Minimal — solid color background, hero shot, elegant simplicity',
-    dramatic: 'Dramatic — dark moody background, rim lighting, cinematic luxury feel',
-};
 
 const STYLE_SEEDS: Record<string, number> = {
     studio: 100,
@@ -46,58 +38,27 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) {
+        if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json(
-                { error: 'Gemini API not configured', details: 'Add GEMINI_API_KEY to .env.local' },
+                { error: 'AI API not configured', details: 'Add GEMINI_API_KEY to .env.local' },
                 { status: 500 }
             );
         }
 
-        // 1. Use Gemini to generate a rich product photo description, caption & posting tips
-        const genAI = new GoogleGenerativeAI(geminiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        // 1. Use LangGraph product photo agent for structured content generation
+        const result = await productPhotoGraph.invoke({
+            productName,
+            productDescription,
+            style,
+            aiContent: null,
+        });
 
-        const styleDesc = STYLE_DESCRIPTIONS[style] || STYLE_DESCRIPTIONS.studio;
-
-        const prompt = `You are a professional product photography director and Instagram marketing expert.
-
-Product: ${productName}
-Description: ${productDescription}
-Photo Style: ${styleDesc}
-
-Generate the following as valid JSON (no markdown):
-{
-  "photoDescription": "A vivid 2-sentence description of how this product photo looks in the ${style} style (describe the lighting, composition, mood, background, and props)",
-  "caption": "An engaging Instagram caption for this product photo (include emojis, 2-3 sentences, call to action)",
-  "hashtags": ["array", "of", "10", "relevant", "hashtags", "without", "#", "symbol"],
-  "postingTip": "One short tip on the best way to post this style of photo on Instagram"
-}`;
-
-        const geminiResult = await model.generateContent(prompt);
-        const responseText = geminiResult.response.text();
-
-        // Parse AI response
-        let aiContent: {
-            photoDescription: string;
-            caption: string;
-            hashtags: string[];
-            postingTip: string;
+        const aiContent = result.aiContent || {
+            photoDescription: `Beautiful ${style} style product photo of ${productName} — ${productDescription}`,
+            caption: `Check out our amazing ${productName}! ✨ ${productDescription} #newproduct`,
+            hashtags: ['product', 'photography', 'instagram', productName.toLowerCase().replace(/\s+/g, '')],
+            postingTip: 'Post during peak engagement hours for maximum reach.',
         };
-        try {
-            const cleanJson = responseText
-                .replace(/```json\s*/g, '')
-                .replace(/```\s*/g, '')
-                .trim();
-            aiContent = JSON.parse(cleanJson);
-        } catch {
-            aiContent = {
-                photoDescription: `Beautiful ${style} style product photo of ${productName} — ${productDescription}`,
-                caption: `Check out our amazing ${productName}! ✨ ${productDescription} #newproduct`,
-                hashtags: ['product', 'photography', 'instagram', productName.toLowerCase().replace(/\s+/g, '')],
-                postingTip: 'Post during peak engagement hours for maximum reach.',
-            };
-        }
 
         // 2. Fetch a high-quality image from picsum (reliable, free, no auth needed)
         //    Use a deterministic seed per style so the user gets variety across styles

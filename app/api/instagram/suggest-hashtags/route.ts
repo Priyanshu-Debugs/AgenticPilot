@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { hashtagGraph } from '@/lib/ai/graphs/instagram-hashtag-graph';
 
 export async function POST(req: NextRequest) {
     let category: string | undefined;
@@ -51,44 +51,20 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // Use Gemini AI to suggest hashtags
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-        const prompt = `You are a social media expert specializing in Instagram hashtag strategy. Suggest relevant hashtags for an Instagram post.
-
-Post Caption: "${caption}"
-Category: ${category || 'general'}
-
-Requirements:
-1. Provide 10-15 highly relevant hashtags
-2. Mix of popular, medium, and niche hashtags for better reach
-3. All hashtags must start with #
-4. Focus on current trends and high engagement potential
-5. Relevant to the content and category
-6. No banned or spam hashtags
-
-Return ONLY a comma-separated list of hashtags (e.g., #hashtag1, #hashtag2, #hashtag3), nothing else.`;
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const hashtagsText = response.text().trim();
-
-        // Parse hashtags from the response in a robust way:
-        // extract all hashtag-like tokens regardless of commas/newlines/bullets.
-        const hashtagMatches = hashtagsText.match(/#\w+/g) || [];
-        const hashtags = hashtagMatches
-            .map(tag => tag.trim())
-            .filter(tag => tag.length > 1)
-            .slice(0, 15); // Limit to 15 hashtags
+        // Use LangGraph hashtag agent
+        const result = await hashtagGraph.invoke({
+            caption,
+            category,
+            hashtags: [],
+        });
 
         // Ensure we have at least some hashtags
-        if (hashtags.length === 0) {
+        if (!result.hashtags || result.hashtags.length === 0) {
             throw new Error('No valid hashtags generated');
         }
 
         return NextResponse.json({
-            hashtags,
+            hashtags: result.hashtags,
             aiGenerated: true,
         });
 

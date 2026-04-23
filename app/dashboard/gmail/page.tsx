@@ -24,6 +24,7 @@ import {
     Filter,
     Loader2,
     Zap,
+    Shield,
 } from 'lucide-react'
 
 // Gmail Components
@@ -92,6 +93,10 @@ function GmailAutomationContent() {
     // Automation toggle state
     const [autoReplyEnabled, setAutoReplyEnabled] = useState(false)
     const [automationToggling, setAutomationToggling] = useState(false)
+
+    // Human review toggle state
+    const [humanReviewEnabled, setHumanReviewEnabled] = useState(false)
+    const [humanReviewToggling, setHumanReviewToggling] = useState(false)
 
     // Check connection status on mount
     useEffect(() => {
@@ -248,6 +253,7 @@ function GmailAutomationContent() {
             if (res.ok) {
                 const data = await res.json()
                 setAutoReplyEnabled(data.enabled)
+                setHumanReviewEnabled(data.humanReviewEnabled ?? false)
             }
         } catch (error) {
             console.warn('Could not fetch automation status:', error)
@@ -281,6 +287,36 @@ function GmailAutomationContent() {
             toast.error('Failed to update automation setting')
         } finally {
             setAutomationToggling(false)
+        }
+    }
+
+    // Toggle human review
+    const handleHumanReviewToggle = async (enabled: boolean) => {
+        setHumanReviewToggling(true)
+        try {
+            const res = await fetch('/api/gmail/automation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ humanReviewEnabled: enabled }),
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.error || 'Failed to update setting')
+                return
+            }
+
+            setHumanReviewEnabled(enabled)
+            toast.success(
+                enabled
+                    ? '🛡️ Human review enabled — risky emails will be flagged for your review.'
+                    : '⚡ Human review disabled — AI will reply to all emails.'
+            )
+        } catch (error) {
+            toast.error('Failed to update human review setting')
+        } finally {
+            setHumanReviewToggling(false)
         }
     }
 
@@ -384,12 +420,13 @@ function GmailAutomationContent() {
                 )}
             </div>
 
-            {/* Automation Toggle Card */}
+            {/* Automation Toggle Cards */}
             {isConnected && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="card-elevated border-primary/20">
-                    <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-4">
+                    <CardContent className="flex items-center justify-between gap-3 py-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                                 <Zap className={`h-5 w-5 ${autoReplyEnabled ? 'text-primary' : 'text-muted-foreground'}`} />
                             </div>
                             <div>
@@ -407,8 +444,8 @@ function GmailAutomationContent() {
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-0.5">
                                     {autoReplyEnabled
-                                        ? 'AI will automatically scan and reply to new emails every 5 minutes'
-                                        : 'Enable to auto-scan and reply without opening the website'
+                                        ? 'Auto-scan & reply every 5 minutes'
+                                        : 'Enable to auto-reply without opening the site'
                                     }
                                 </p>
                             </div>
@@ -420,6 +457,42 @@ function GmailAutomationContent() {
                         />
                     </CardContent>
                 </Card>
+
+                <Card className="card-elevated border-amber-500/20">
+                    <CardContent className="flex items-center justify-between gap-3 py-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                                <Shield className={`h-5 w-5 ${humanReviewEnabled ? 'text-amber-500' : 'text-muted-foreground'}`} />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold text-sm">Human Review</h3>
+                                    <Badge
+                                        variant={humanReviewEnabled ? 'default' : 'secondary'}
+                                        className={humanReviewEnabled
+                                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs'
+                                            : 'text-xs'
+                                        }
+                                    >
+                                        {humanReviewEnabled ? 'On' : 'Off'}
+                                    </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    {humanReviewEnabled
+                                        ? 'Risky emails flagged for your review'
+                                        : 'AI replies to all emails including risky ones'
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <Switch
+                            checked={humanReviewEnabled}
+                            onCheckedChange={handleHumanReviewToggle}
+                            disabled={humanReviewToggling}
+                        />
+                    </CardContent>
+                </Card>
+                </div>
             )}
 
             {/* Connection Card */}
@@ -523,6 +596,7 @@ function GmailAutomationContent() {
                         {/* Reply Modal */}
                         <Dialog open={replyModalOpen} onOpenChange={setReplyModalOpen}>
                             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                                <DialogTitle className="sr-only">Compose Reply</DialogTitle>
                                 {replyEmail && (
                                     <ComposeReply
                                         email={replyEmail}

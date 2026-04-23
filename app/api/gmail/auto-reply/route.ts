@@ -37,12 +37,22 @@ export async function POST(req: NextRequest) {
             .eq('user_id', user.id)
             .single()
 
+        // Get human review setting
+        const { data: tokenSettings } = await supabase
+            .from('gmail_tokens')
+            .select('human_review_enabled')
+            .eq('user_id', user.id)
+            .single()
+
+        const humanReviewEnabled = tokenSettings?.human_review_enabled ?? false
+
         const results: Array<{
             emailId: string
             subject: string
             from: string
-            status: 'success' | 'error'
+            status: 'success' | 'escalated' | 'error'
             error?: string
+            escalationReason?: string
         }> = []
 
         // Process each email
@@ -68,7 +78,54 @@ export async function POST(req: NextRequest) {
                     businessName: businessInfo?.business_name,
                     industry: businessInfo?.industry,
                     tone,
-                })
+                }, { humanReviewEnabled })
+
+                const responseTime = Date.now() - startTime
+
+                // Escalation: risky email — notify owner, skip reply
+                if (analysis.escalated) {
+                    await supabase.from('gmail_logs').insert({
+                        user_id: user.id,
+                        email_id: email.id,
+                        email_subject: email.subject,
+                        email_from: email.from,
+                        action: 'escalated',
+                        confidence: analysis.confidence,
+                        response_time_ms: responseTime,
+                        success: true,
+                        details: JSON.stringify({
+                            type: analysis.type,
+                            sentiment: analysis.sentiment,
+                            urgency: analysis.urgency,
+                            escalationReason: analysis.escalationReason,
+                        }),
+                    })
+
+                    try {
+                        await supabase.from('notifications').insert({
+                            user_id: user.id,
+                            title: '\u26a0\ufe0f Email needs your review',
+                            message: `AI skipped auto-reply for "${email.subject}" from ${email.from}.\n\nReason: ${analysis.escalationReason}\n\nPlease review and reply manually.`,
+                            type: 'warning',
+                            category: 'automation',
+                            action_url: '/dashboard/gmail',
+                            action_label: 'Review Email',
+                            read: false,
+                            created_at: new Date().toISOString(),
+                        })
+                    } catch (notifError) {
+                        console.warn('Failed to create escalation notification:', notifError)
+                    }
+
+                    results.push({
+                        emailId: email.id,
+                        subject: email.subject || 'Unknown',
+                        from: email.from || 'Unknown',
+                        status: 'escalated',
+                        escalationReason: analysis.escalationReason,
+                    })
+                    continue
+                }
 
                 if (!analysis.suggestedReply) {
                     results.push({
@@ -98,8 +155,6 @@ export async function POST(req: NextRequest) {
                 } catch (e) {
                     console.warn('Could not mark as read:', e)
                 }
-
-                const responseTime = Date.now() - startTime
 
                 // Log the auto-reply action
                 await supabase.from('gmail_logs').insert({
@@ -140,9 +195,10 @@ export async function POST(req: NextRequest) {
         }
 
         const successCount = results.filter(r => r.status === 'success').length
+        const escalatedCount = results.filter(r => r.status === 'escalated').length
         const errorCount = results.filter(r => r.status === 'error').length
 
-        // Create in-app notification if any emails were processed
+        // Create in-app notification if any emails were auto-replied
         if (successCount > 0) {
             const successfulReplies = results.filter(r => r.status === 'success')
             const emailList = successfulReplies
@@ -155,7 +211,7 @@ export async function POST(req: NextRequest) {
             try {
                 await supabase.from('notifications').insert({
                     user_id: user.id,
-                    title: `📧 Auto-replied to ${successCount} email${successCount !== 1 ? 's' : ''}`,
+                    title: `\ud83d\udce7 Auto-replied to ${successCount} email${successCount !== 1 ? 's' : ''}`,
                     message: `Your AI assistant replied to:\n${emailList}${remainingText}`,
                     type: 'success',
                     category: 'automation',
@@ -171,9 +227,10 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            message: `Processed ${results.length} emails: ${successCount} replied, ${errorCount} failed`,
+            message: `Processed ${results.length} emails: ${successCount} replied, ${escalatedCount} escalated, ${errorCount} failed`,
             processed: results.length,
             successCount,
+            escalatedCount,
             errorCount,
             results
         })

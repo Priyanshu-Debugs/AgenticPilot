@@ -30,6 +30,10 @@ export interface EmailAnalysis {
     suggestedReply: string
     summary: string
     keywords: string[]
+    /** True when the AI decides the email is too risky for auto-reply */
+    escalated?: boolean
+    /** Human-readable reason why the email was escalated */
+    escalationReason?: string
 }
 
 export interface GmailSettings {
