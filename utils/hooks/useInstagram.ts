@@ -47,11 +47,32 @@ export interface UpdatePostInput extends Partial<CreatePostInput> {
     id: string;
 }
 
+export type PhotoStyle = 'studio' | 'lifestyle' | 'flat-lay' | 'minimal' | 'dramatic';
+
+export interface GeneratedPhoto {
+    imageBase64: string;
+    imageUrl: string | null;
+    style: PhotoStyle;
+    uploaded: boolean;
+    aiContent?: {
+        photoDescription: string;
+        caption: string;
+        hashtags: string[];
+        postingTip: string;
+    };
+}
+
 export function useInstagram() {
     const [posts, setPosts] = useState<InstagramPost[]>([]);
     const [settings, setSettings] = useState<InstagramSettings | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Product Studio state
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+    const [productPhotos, setProductPhotos] = useState<GeneratedPhoto[]>([]);
+    const [isGeneratingPhotos, setIsGeneratingPhotos] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const supabase = createClient();
 
@@ -329,6 +350,140 @@ export function useInstagram() {
         return posts.filter(post => post.status === status);
     };
 
+    // Upload product image (falls back to local preview if storage not configured)
+    const uploadProductImage = async (file: File) => {
+        try {
+            setIsUploading(true);
+
+            // Create a local data URL as fallback
+            const localUrl = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.readAsDataURL(file);
+            });
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('/api/instagram/upload-product-image', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUploadedImageUrl(data.imageUrl);
+                    toast.success('Image uploaded successfully! 📸');
+                    return data.imageUrl;
+                }
+
+                // Upload failed — fall back to local preview
+                console.warn('Cloud upload failed, using local preview instead');
+            } catch (uploadErr) {
+                console.warn('Cloud upload unavailable, using local preview:', uploadErr);
+            }
+
+            // Use local data URL as fallback
+            setUploadedImageUrl(localUrl);
+            toast.success('Image ready! 📸');
+            return localUrl;
+        } catch (err: any) {
+            console.error('Error processing product image:', err);
+            toast.error(err.message || 'Failed to process image');
+            throw err;
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    // Generate a single product photo
+    const generateProductPhoto = async (
+        productName: string,
+        productDescription: string,
+        style: PhotoStyle
+    ): Promise<GeneratedPhoto | null> => {
+        try {
+            const response = await fetch('/api/instagram/generate-product-photos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productName,
+                    productDescription,
+                    style,
+                    originalImageUrl: uploadedImageUrl,
+                }),
+            });
+
+            if (response.status === 503) {
+                const data = await response.json();
+                toast.info(data.details || 'Model is loading, please wait...');
+                return null;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to generate photo');
+            }
+
+            const data = await response.json();
+            return {
+                imageBase64: data.imageBase64,
+                imageUrl: data.imageUrl,
+                style: data.style,
+                uploaded: data.uploaded,
+                aiContent: data.aiContent,
+            } as GeneratedPhoto;
+        } catch (err: any) {
+            console.error(`Error generating ${style} photo:`, err);
+            return null;
+        }
+    };
+
+    // Generate all product photos (batch)
+    const generateProductPhotos = async (
+        productName: string,
+        productDescription: string,
+        styles: PhotoStyle[] = ['studio', 'lifestyle', 'flat-lay', 'minimal']
+    ) => {
+        try {
+            setIsGeneratingPhotos(true);
+            setProductPhotos([]);
+            toast.info('Generating professional photos... This may take a minute ⏳');
+
+            const results: GeneratedPhoto[] = [];
+
+            // Generate one at a time to avoid rate limits
+            for (const style of styles) {
+                const photo = await generateProductPhoto(productName, productDescription, style);
+                if (photo) {
+                    results.push(photo);
+                    setProductPhotos([...results]);
+                }
+            }
+
+            if (results.length > 0) {
+                toast.success(`Generated ${results.length} professional photos! 🎨`);
+            } else {
+                toast.error('Failed to generate photos. Please try again.');
+            }
+
+            return results;
+        } catch (err: any) {
+            console.error('Error generating product photos:', err);
+            toast.error(err.message || 'Failed to generate photos');
+            throw err;
+        } finally {
+            setIsGeneratingPhotos(false);
+        }
+    };
+
+    // Clear product studio state
+    const clearProductStudio = () => {
+        setUploadedImageUrl(null);
+        setProductPhotos([]);
+    };
+
     // Subscribe to real-time changes
     useEffect(() => {
         fetchPosts();
@@ -363,15 +518,26 @@ export function useInstagram() {
         settings,
         loading,
         error,
+        // CRUD
         createPost,
         updatePost,
         deletePost,
+        // AI
         generateCaption,
         suggestHashtags,
+        // Settings
         updateSettings,
         updateEngagement,
         getAnalytics,
         getPostsByStatus,
         refresh: fetchPosts,
+        // Product Studio
+        uploadedImageUrl,
+        productPhotos,
+        isGeneratingPhotos,
+        isUploading,
+        uploadProductImage,
+        generateProductPhotos,
+        clearProductStudio,
     };
 }

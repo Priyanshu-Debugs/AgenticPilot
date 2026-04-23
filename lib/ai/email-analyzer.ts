@@ -15,7 +15,7 @@ function getGeminiModel() {
             throw new Error('GEMINI_API_KEY not configured')
         }
         const genAI = new GoogleGenerativeAI(apiKey)
-        cachedGeminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+        cachedGeminiModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
     }
     return cachedGeminiModel
 }
