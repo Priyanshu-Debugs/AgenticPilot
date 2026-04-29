@@ -51,8 +51,14 @@ function SignIn() {
   const [error, setError] = useState("")
   const [rateLimitResult, setRateLimitResult] = useState<RateLimitResult | null>(null)
 
-  const { signIn, signInWithGoogle, checkSignInRateLimit } = useAuth()
+  const { signIn, signInWithGoogle, checkSignInRateLimit, user, loading } = useAuth()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (!loading && user) {
+      window.location.replace("/dashboard")
+    }
+  }, [loading, user])
 
   // Check for URL parameters with error messages
   useEffect(() => {

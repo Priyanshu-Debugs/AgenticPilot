@@ -4,10 +4,12 @@ import { useAuth } from '@/utils/auth/AuthProvider'
 
 interface UserProfile {
   id: string
+  user_id?: string
   full_name: string | null
   avatar_url: string | null
   plan: 'starter' | 'professional' | 'enterprise'
   company: string | null
+  company_name?: string | null
   bio: string | null
   website: string | null
   location: string | null
@@ -31,6 +33,22 @@ export function useUserProfile(): UserProfileHook {
   const { user } = useAuth()
   const supabase = createClient()
 
+  const normalizeProfile = (record: any): UserProfile => ({
+    id: record?.id || record?.user_id || user?.id || '',
+    user_id: record?.user_id || user?.id,
+    full_name: record?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+    avatar_url: record?.avatar_url || user?.user_metadata?.avatar_url || null,
+    plan: record?.plan || 'starter',
+    company: record?.company || record?.company_name || null,
+    company_name: record?.company_name || record?.company || null,
+    bio: record?.bio || null,
+    website: record?.website || null,
+    location: record?.location || null,
+    timezone: record?.timezone || 'UTC',
+    created_at: record?.created_at || new Date().toISOString(),
+    updated_at: record?.updated_at || new Date().toISOString(),
+  })
+
   const fetchProfile = async () => {
     if (!user) {
       setLoading(false)
@@ -42,38 +60,32 @@ export function useUserProfile(): UserProfileHook {
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
-        .eq('id', user.id)
-        .single()
+        .eq('user_id', user.id)
+        .maybeSingle()
 
       if (error) {
-        if (error.code === 'PGRST116') {
-          // Profile doesn't exist, create one
-          const { data: newProfile, error: insertError } = await supabase
-            .from('user_profiles')
-            .insert({
-              id: user.id,
-              full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-              avatar_url: user.user_metadata?.avatar_url || null,
-              plan: 'starter',
-              company: null,
-              bio: null,
-              website: null,
-              location: null,
-              timezone: 'UTC'
-            })
-            .select()
-            .single()
+        setError(error.message)
+      } else if (!data) {
+        const { data: newProfile, error: insertError } = await supabase
+          .from('user_profiles')
+          .upsert({
+            user_id: user.id,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+            avatar_url: user.user_metadata?.avatar_url || null,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id'
+          })
+          .select()
+          .single()
 
-          if (insertError) {
-            setError(insertError.message)
-          } else {
-            setProfile(newProfile)
-          }
+        if (insertError) {
+          setError(insertError.message)
         } else {
-          setError(error.message)
+          setProfile(normalizeProfile(newProfile))
         }
       } else {
-        setProfile(data)
+        setProfile(normalizeProfile(data))
       }
     } catch (err) {
       setError('An unexpected error occurred')
@@ -91,8 +103,13 @@ export function useUserProfile(): UserProfileHook {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
-        .update(updates)
-        .eq('id', user.id)
+        .upsert({
+          user_id: user.id,
+          ...updates,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        })
         .select()
         .single()
 
@@ -100,7 +117,7 @@ export function useUserProfile(): UserProfileHook {
         return { error }
       }
 
-      setProfile(data)
+      setProfile(normalizeProfile(data))
       return { error: null }
     } catch (err) {
       return { error: err }

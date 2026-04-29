@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
-import { useRouter } from 'next/navigation'
 
 interface AuthUser {
   id: string
@@ -46,12 +45,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+
+  const redirectAfterAuth = (redirectTo?: string) => {
+    window.location.assign(redirectTo || '/dashboard')
+  }
 
   // Check authentication status via API
   const checkAuthStatus = async () => {
@@ -110,8 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success) {
         await checkAuthStatus() // Refresh user data
-        // Redirect to dashboard after successful sign-in
-        router.push(data.redirectTo || '/dashboard')
+        // Use a full navigation so Supabase cookies are visible to middleware.
+        redirectAfterAuth(data.redirectTo)
         return {
           success: true,
           redirectTo: data.redirectTo
@@ -178,8 +180,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         } else {
           await checkAuthStatus() // Refresh user data
-          // Redirect to dashboard after successful sign-up
-          router.push(data.redirectTo || '/dashboard')
+          // Use a full navigation so Supabase cookies are visible to middleware.
+          redirectAfterAuth(data.redirectTo)
           return {
             success: true,
             redirectTo: data.redirectTo
@@ -360,8 +362,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success) {
         await checkAuthStatus() // Refresh user data
-        // Redirect to dashboard after successful password reset
-        router.push(data.redirectTo || '/dashboard')
+        // Use a full navigation so Supabase cookies are visible to middleware.
+        redirectAfterAuth(data.redirectTo)
         return {
           success: true,
           message: data.message,

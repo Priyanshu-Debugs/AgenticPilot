@@ -362,9 +362,9 @@ export default function TwitterAutomation() {
                             <div className="rounded-lg bg-muted/50 p-4 space-y-3">
                                 <h4 className="font-medium text-sm">Recent Auto-Engagements</h4>
                                 <div className="space-y-2 text-sm text-muted-foreground">
-                                    <p>• Liked @techstartup's mention about AgenticPilot — 2h ago</p>
-                                    <p>• Auto-replied to @devloper_x's question about pricing — 4h ago</p>
-                                    <p>• Liked @ai_enthusiast's retweet of your thread — 6h ago</p>
+                                    <p>- Liked @techstartup&apos;s mention about AgenticPilot - 2h ago</p>
+                                    <p>- Auto-replied to @developer_x&apos;s question about pricing - 4h ago</p>
+                                    <p>- Liked @ai_enthusiast&apos;s retweet of your thread - 6h ago</p>
                                 </div>
                             </div>
                         </CardContent>

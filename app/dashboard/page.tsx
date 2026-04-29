@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Icons from Lucide React
-import { Mail, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2, BarChart3, Twitter, Linkedin, Instagram } from "lucide-react"
+import { Mail, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2, BarChart3, Twitter, Linkedin, Instagram, Bot } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 // Auth and profile hooks
@@ -131,6 +131,20 @@ export default function Dashboard() {
     }
   ])
 
+  useEffect(() => {
+    setAutomationTasks(prev =>
+      prev.map(task =>
+        task.id === "gmail-1"
+          ? {
+            ...task,
+            executionTime: `${stats.avgResponseTime}s avg`,
+            tasksProcessed: stats.totalProcessed,
+            successRate: parseFloat(stats.successRate) || 0,
+          }
+          : task
+      )
+    )
+  }, [stats])
 
   const handleStartTask = (taskId: string) => {
     setAutomationTasks(prev =>
@@ -233,26 +247,43 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
       {/* Dashboard Header */}
-      <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
-            Monitor and control your AI automation workflows
-          </p>
-          {profile && (
-            <div className="flex items-center mt-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
-              <span className="text-xs text-muted-foreground">
-                {profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)} Plan Active
-              </span>
+      <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Bot className="h-6 w-6 text-primary" />
             </div>
-          )}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={() => toast.info("Navigate to an agent page (Gmail, Twitter, LinkedIn, or Instagram) to configure new automations.")}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Automation
-          </Button>
+            <div>
+              <p className="text-sm font-medium text-primary">Command center</p>
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Welcome{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}.
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+                Monitor automation health, jump into agents, and review recent work from one dashboard.
+              </p>
+              {profile && (
+                <div className="mt-3 flex items-center">
+                  <div className="mr-2 h-2 w-2 rounded-full bg-emerald-500" />
+                  <span className="text-xs text-muted-foreground">
+                    {profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)} Plan Active
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button asChild variant="outline">
+              <Link href="/dashboard/gmail">
+                <Mail className="h-4 w-4" />
+                Configure Gmail
+              </Link>
+            </Button>
+            <Button onClick={() => toast.info("Choose Gmail, X/Twitter, LinkedIn, or Instagram from the integrations tab to configure an automation.")}>
+              <Plus className="h-4 w-4" />
+              New Automation
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -273,7 +304,7 @@ export default function Dashboard() {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="automations" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-1 md:grid-cols-4">
+        <TabsList className="grid h-auto w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="automations">Automations</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
@@ -413,7 +444,7 @@ export default function Dashboard() {
                       {activity.emailSubject || activity.details || activity.action}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {activity.action} • {new Date(activity.timestamp).toLocaleString()}
+                      {activity.action} - {new Date(activity.timestamp).toLocaleString()}
                     </p>
                   </div>
                 </div>

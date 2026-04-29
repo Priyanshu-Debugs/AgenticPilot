@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -48,7 +48,13 @@ export default function SignUp() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  const { signUp, signInWithGoogle } = useAuth()
+  const { signUp, signInWithGoogle, user, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && user) {
+      window.location.replace("/dashboard")
+    }
+  }, [loading, user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

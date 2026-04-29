@@ -125,7 +125,7 @@ export default function ForgotPassword() {
                 <CheckCircle className="h-12 w-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Please check your email and click the reset link to continue.
-                  If you don't see the email, check your spam folder.
+                  If you don&apos;t see the email, check your spam folder.
                 </p>
                 <div className="space-y-3">
                   <Button
