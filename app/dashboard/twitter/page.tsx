@@ -1,427 +1,615 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
+
 import {
     Twitter,
-    Play,
-    Pause,
-    TrendingUp,
-    Users,
-    BarChart3,
-    MessageSquare,
-    Heart,
-    Repeat2,
+    Loader2,
+    RefreshCw,
+    Send,
+    Sparkles,
+    Unplug,
+    CheckCircle2,
+    XCircle,
+    Clock,
+    FileEdit,
     Eye,
-    Calendar,
-    Zap,
-} from "lucide-react"
+    ExternalLink,
+    KeyRound,
+    ChevronDown,
+    ChevronUp,
+} from 'lucide-react'
 
-// Hardcoded demo data
-const scheduledTweets = [
-    {
-        id: "1",
-        content: "🚀 Excited to announce our new AI-powered automation features! #AI #Automation #AgenticPilot",
-        scheduledFor: "2026-03-02T10:00:00",
-        status: "Scheduled",
-        type: "Tweet",
-        likes: 0,
-        retweets: 0,
-        impressions: 0,
-    },
-    {
-        id: "2",
-        content: "Thread 🧵: 5 ways AI is transforming business operations in 2026...\n\n1/ Automated customer support with context-aware responses",
-        scheduledFor: "2026-03-02T14:30:00",
-        status: "Scheduled",
-        type: "Thread",
-        likes: 0,
-        retweets: 0,
-        impressions: 0,
-    },
-    {
-        id: "3",
-        content: "Just shipped a major update to our Gmail automation! Your inbox, managed by AI 📧✨ #ProductUpdate",
-        scheduledFor: "2026-03-01T09:00:00",
-        status: "Published",
-        type: "Tweet",
-        likes: 142,
-        retweets: 38,
-        impressions: 5420,
-    },
-    {
-        id: "4",
-        content: "Pro tip: Use automation to handle repetitive tasks so you can focus on what matters most 💡 #Productivity",
-        scheduledFor: "2026-02-28T16:00:00",
-        status: "Published",
-        type: "Tweet",
-        likes: 89,
-        retweets: 22,
-        impressions: 3180,
-    },
-    {
-        id: "5",
-        content: "We're hiring! Looking for passionate engineers who love building with AI. DM us or check the link in bio 👇",
-        scheduledFor: "2026-03-03T11:00:00",
-        status: "Draft",
-        type: "Tweet",
-        likes: 0,
-        retweets: 0,
-        impressions: 0,
-    },
-]
+import type { TwitterConnectionPublic, TwitterTweet, TweetTone } from '@/lib/twitter/types'
 
-const analyticsData = {
-    followers: 12847,
-    followersGrowth: "+324 this month",
-    engagement: "4.8%",
-    engagementChange: "+0.6% from last month",
-    impressions: 284500,
-    impressionsChange: "+18.2% from last month",
-    tweetsPosted: 47,
-    tweetsChange: "+12 this month",
+export default function TwitterAutomationPage() {
+    return (
+        <Suspense fallback={
+            <div className="p-6 flex items-center justify-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-3">Loading X/Twitter Automation...</span>
+            </div>
+        }>
+            <TwitterAutomationContent />
+        </Suspense>
+    )
 }
 
-export default function TwitterAutomation() {
-    const [isAutomationActive, setIsAutomationActive] = useState(false)
-    const [autoEngageEnabled, setAutoEngageEnabled] = useState(false)
-    const [aiCaptionsEnabled, setAiCaptionsEnabled] = useState(true)
+function TwitterAutomationContent() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
-    const statsDisplay = [
-        { metric: "Followers", value: analyticsData.followers.toLocaleString(), change: analyticsData.followersGrowth, icon: Users },
-        { metric: "Engagement Rate", value: analyticsData.engagement, change: analyticsData.engagementChange, icon: Heart },
-        { metric: "Impressions", value: analyticsData.impressions.toLocaleString(), change: analyticsData.impressionsChange, icon: Eye },
-        { metric: "Tweets Posted", value: String(analyticsData.tweetsPosted), change: analyticsData.tweetsChange, icon: MessageSquare },
-    ]
+    const [isConnected, setIsConnected] = useState(false)
+    const [connectionLoading, setConnectionLoading] = useState(true)
+    const [connectionInfo, setConnectionInfo] = useState<TwitterConnectionPublic | null>(null)
+    const [callbackUrl, setCallbackUrl] = useState('')
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case "Published":
-                return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-            case "Scheduled":
-                return "bg-blue-500/20 text-blue-400 border-blue-500/30"
-            case "Draft":
-                return "bg-amber-500/20 text-amber-400 border-amber-500/30"
-            default:
-                return "bg-muted text-muted-foreground border-border"
+    const [clientId, setClientId] = useState('')
+    const [clientSecret, setClientSecret] = useState('')
+    const [connecting, setConnecting] = useState(false)
+    const [showSetup, setShowSetup] = useState(false)
+
+    const [productName, setProductName] = useState('')
+    const [productDescription, setProductDescription] = useState('')
+    const [productUrl, setProductUrl] = useState('')
+    const [tone, setTone] = useState<TweetTone>('professional')
+    const [generatedContent, setGeneratedContent] = useState('')
+    const [isGenerating, setIsGenerating] = useState(false)
+    const [isPosting, setIsPosting] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
+    const [editContent, setEditContent] = useState('')
+
+    const [tweets, setTweets] = useState<TwitterTweet[]>([])
+    const [tweetsLoading, setTweetsLoading] = useState(false)
+    const [disconnecting, setDisconnecting] = useState(false)
+
+    useEffect(() => {
+        checkConnection()
+
+        const connected = searchParams.get('connected')
+        const error = searchParams.get('error')
+
+        if (connected === 'true') {
+            toast.success('X account connected successfully!')
+            router.replace('/dashboard/twitter')
+        } else if (error) {
+            const errorMessages: Record<string, string> = {
+                oauth_denied: 'X authorization was denied',
+                state_mismatch: 'Security check failed — please try again',
+                callback_failed: 'Connection failed — please try again',
+                missing_params: 'Invalid callback — please try again',
+                unauthorized: 'Please sign in first',
+                save_failed: 'Failed to save connection — please try again',
+                missing_verifier: 'PKCE verification failed — please try again',
+            }
+            toast.error(errorMessages[error] || 'Connection failed')
+            router.replace('/dashboard/twitter')
+        }
+    }, [searchParams, router])
+
+    const checkConnection = async () => {
+        setConnectionLoading(true)
+        try {
+            const res = await fetch('/api/twitter/connect')
+            const data = await res.json()
+            setIsConnected(data.connected)
+            setConnectionInfo(data.connection || null)
+            if (data.callbackUrl) setCallbackUrl(data.callbackUrl)
+            if (data.connected) loadTweets()
+        } catch (err) {
+            console.error('Connection check failed:', err)
+        } finally {
+            setConnectionLoading(false)
         }
     }
 
+    const handleConnect = async () => {
+        if (!clientId.trim() || !clientSecret.trim()) {
+            toast.error('Please enter your X Client ID and Client Secret')
+            return
+        }
+        setConnecting(true)
+        try {
+            const res = await fetch('/api/twitter/connect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clientId: clientId.trim(), clientSecret: clientSecret.trim() }),
+            })
+            const data = await res.json()
+            if (data.authUrl) {
+                window.location.href = data.authUrl
+            } else {
+                toast.error(data.error || 'Failed to get authorization URL')
+            }
+        } catch {
+            toast.error('Connection failed')
+        } finally {
+            setConnecting(false)
+        }
+    }
+
+    const handleDisconnect = async () => {
+        setDisconnecting(true)
+        try {
+            const res = await fetch('/api/twitter/disconnect', { method: 'DELETE' })
+            const data = await res.json()
+            if (data.success) {
+                setIsConnected(false)
+                setConnectionInfo(null)
+                setGeneratedContent('')
+                setTweets([])
+                toast.success('X account disconnected')
+            } else {
+                toast.error('Disconnect failed')
+            }
+        } catch {
+            toast.error('Disconnect failed')
+        } finally {
+            setDisconnecting(false)
+        }
+    }
+
+    const loadTweets = useCallback(async () => {
+        setTweetsLoading(true)
+        try {
+            const res = await fetch('/api/twitter/tweets')
+            const data = await res.json()
+            setTweets(data.tweets || [])
+        } catch (err) {
+            console.error('Failed to load tweets:', err)
+        } finally {
+            setTweetsLoading(false)
+        }
+    }, [])
+
+    const handleGenerate = async () => {
+        if (!productName.trim()) {
+            toast.error('Please enter a product name')
+            return
+        }
+        setIsGenerating(true)
+        setGeneratedContent('')
+        setIsEditing(false)
+        try {
+            const res = await fetch('/api/twitter/tweet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productName, productDescription, productUrl: productUrl || undefined, tone, aiGenerate: true,
+                }),
+            })
+            const data = await res.json()
+            if (data.error) throw new Error(data.error)
+            setGeneratedContent(data.content)
+            setEditContent(data.content)
+            toast.success('Tweet generated and published!')
+            loadTweets()
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to generate tweet'
+            toast.error(message)
+        } finally {
+            setIsGenerating(false)
+        }
+    }
+
+    const handlePublish = async () => {
+        const content = isEditing ? editContent : generatedContent
+        if (!content.trim()) { toast.error('No content to publish'); return }
+        setIsPosting(true)
+        try {
+            const res = await fetch('/api/twitter/tweet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ aiGenerate: false, content, tone }),
+            })
+            const data = await res.json()
+            if (data.error) throw new Error(data.error)
+            toast.success('Posted to X!')
+            setGeneratedContent('')
+            setEditContent('')
+            setProductName('')
+            setProductDescription('')
+            setProductUrl('')
+            setIsEditing(false)
+            loadTweets()
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to publish'
+            toast.error(message)
+        } finally {
+            setIsPosting(false)
+        }
+    }
+
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'published':
+                return (<Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"><CheckCircle2 className="h-3 w-3 mr-1" />Published</Badge>)
+            case 'failed':
+                return (<Badge className="bg-red-500/20 text-red-400 border-red-500/30"><XCircle className="h-3 w-3 mr-1" />Failed</Badge>)
+            case 'draft':
+                return (<Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30"><Clock className="h-3 w-3 mr-1" />Draft</Badge>)
+            default:
+                return <Badge variant="secondary">{status}</Badge>
+        }
+    }
+
+    const formatRelativeTime = (dateString: string): string => {
+        const diffMs = Date.now() - new Date(dateString).getTime()
+        const diffMins = Math.floor(diffMs / 60000)
+        const diffHours = Math.floor(diffMs / 3600000)
+        const diffDays = Math.floor(diffMs / 86400000)
+        if (diffMins < 1) return 'Just now'
+        if (diffMins < 60) return `${diffMins}m ago`
+        if (diffHours < 24) return `${diffHours}h ago`
+        if (diffDays < 7) return `${diffDays}d ago`
+        return new Date(dateString).toLocaleDateString()
+    }
+
+    const currentContent = isEditing ? editContent : generatedContent
+    const charCount = currentContent.length
+
     return (
-        <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+            <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500/20 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500/20 rounded-lg flex items-center justify-center shrink-0">
                         <Twitter className="h-5 w-5 sm:h-6 sm:w-6 text-sky-500" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">X/Twitter Automation</h1>
-                        <p className="text-sm sm:text-base text-muted-foreground">
-                            AI-powered tweet scheduling, threads, and engagement automation
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
+                            X/Twitter Automation
+                        </h1>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                            AI-powered product tweet generation and publishing
                         </p>
                     </div>
                 </div>
-
-                <div className="flex items-center space-x-2 sm:space-x-4">
-                    <Badge
-                        variant={isAutomationActive ? "default" : "secondary"}
-                        className={
-                            isAutomationActive
-                                ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                                : "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                        }
-                    >
-                        {isAutomationActive ? "Active" : "Paused"}
-                    </Badge>
-                    <Button
-                        onClick={() => setIsAutomationActive(!isAutomationActive)}
-                        variant={isAutomationActive ? "destructive" : "default"}
-                        size="sm"
-                    >
-                        {isAutomationActive ? (
-                            <>
-                                <Pause className="h-4 w-4 mr-2" />
-                                Pause
-                            </>
-                        ) : (
-                            <>
-                                <Play className="h-4 w-4 mr-2" />
-                                Start
-                            </>
-                        )}
+                {isConnected && (
+                    <Button variant="outline" size="sm" onClick={loadTweets} disabled={tweetsLoading} className="w-full sm:w-auto">
+                        <RefreshCw className={`h-4 w-4 mr-2 ${tweetsLoading ? 'animate-spin' : ''}`} />
+                        Refresh
                     </Button>
+                )}
+            </div>
+
+            {/* Loading */}
+            {connectionLoading && (
+                <div className="flex items-center justify-center py-16">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <span className="ml-3 text-muted-foreground">Checking connection...</span>
                 </div>
-            </div>
+            )}
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                {statsDisplay.map((stat, index) => {
-                    const IconComponent = stat.icon
-                    const colors = ["text-sky-500", "text-rose-500", "text-violet-500", "text-amber-500"]
-
-                    return (
-                        <Card key={stat.metric} className="card-elevated">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">{stat.metric}</CardTitle>
-                                <IconComponent className={`h-4 w-4 ${colors[index]}`} />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</div>
-                                <p className="text-xs text-muted-foreground">{stat.change}</p>
-                            </CardContent>
-                        </Card>
-                    )
-                })}
-            </div>
-
-            {/* Main Content Tabs */}
-            <Tabs defaultValue="scheduled" className="space-y-6">
-                <TabsList className="bg-muted">
-                    <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                    <TabsTrigger value="engagement">Auto Engage</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="scheduled" className="space-y-6">
-                    <Card className="card-elevated">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Calendar className="h-5 w-5" />
-                                Scheduled Content
-                            </CardTitle>
-                            <CardDescription>
-                                Manage your upcoming tweets and threads
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="whitespace-nowrap">Content</TableHead>
-                                            <TableHead className="whitespace-nowrap">Type</TableHead>
-                                            <TableHead className="whitespace-nowrap">Scheduled For</TableHead>
-                                            <TableHead className="whitespace-nowrap">Status</TableHead>
-                                            <TableHead className="whitespace-nowrap">Engagement</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {scheduledTweets.map((tweet) => (
-                                            <TableRow key={tweet.id}>
-                                                <TableCell className="font-medium max-w-xs">
-                                                    <p className="truncate text-sm">{tweet.content}</p>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Badge variant="outline" className="text-xs">
-                                                        {tweet.type}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell className="text-sm">
-                                                    {new Date(tweet.scheduledFor).toLocaleString()}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Badge className={getStatusColor(tweet.status)}>
-                                                        {tweet.status}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                                        <span className="flex items-center gap-1">
-                                                            <Heart className="h-3 w-3" /> {tweet.likes}
-                                                        </span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Repeat2 className="h-3 w-3" /> {tweet.retweets}
-                                                        </span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Eye className="h-3 w-3" /> {tweet.impressions.toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+            {/* Not Connected */}
+            {!connectionLoading && !isConnected && (
+                <Card className="border-dashed">
+                    <CardContent className="py-10 sm:py-14 px-4 sm:px-6">
+                        <div className="text-center mb-8">
+                            <div className="w-20 h-20 mx-auto mb-6 bg-sky-500/10 rounded-2xl flex items-center justify-center">
+                                <Twitter className="h-10 w-10 text-sky-500" />
                             </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                            <h3 className="text-lg sm:text-xl font-semibold mb-2">Connect Your X Account</h3>
+                            <p className="text-sm sm:text-base text-muted-foreground max-w-lg mx-auto">
+                                Connect your X account to generate AI-powered product tweets and publish them directly.
+                                You&apos;ll need your own X Developer App credentials.
+                            </p>
+                        </div>
 
-                <TabsContent value="analytics" className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <Card className="card-elevated">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <TrendingUp className="h-5 w-5" />
-                                    Growth Metrics
-                                </CardTitle>
-                                <CardDescription>Account performance over time</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Follower Growth Rate</span>
-                                        <span className="text-sm font-medium text-emerald-400">+2.6%</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Avg Likes per Tweet</span>
-                                        <span className="text-sm font-medium">87</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Avg Retweets per Tweet</span>
-                                        <span className="text-sm font-medium">24</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Best Posting Time</span>
-                                        <span className="text-sm font-medium">10:00 AM - 12:00 PM</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Top Hashtag</span>
-                                        <span className="text-sm font-medium">#AI</span>
-                                    </div>
+                        {/* Setup Instructions */}
+                        <div className="max-w-lg mx-auto space-y-6">
+                            <button
+                                onClick={() => setShowSetup(!showSetup)}
+                                className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors text-sm font-medium"
+                            >
+                                <span className="flex items-center gap-2">
+                                    <KeyRound className="h-4 w-4 text-sky-500" />
+                                    How to get your X API credentials
+                                </span>
+                                {showSetup ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                            </button>
+
+                            {showSetup && (
+                                <div className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-3 text-sm">
+                                    <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
+                                        <li>Go to <a href="https://developer.x.com" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline inline-flex items-center gap-1">developer.x.com <ExternalLink className="h-3 w-3" /></a> and create a Project + App</li>
+                                        <li>In your App settings, go to <strong className="text-foreground">User Authentication Settings</strong> → Set up</li>
+                                        <li>Set App permissions to <strong className="text-foreground">Read and Write</strong></li>
+                                        <li>Set Type of App to <strong className="text-foreground">Web App</strong></li>
+                                        <li>Set Callback URL to: <code className="px-1.5 py-0.5 rounded bg-muted text-xs text-foreground break-all">{callbackUrl || `${window.location.origin}/api/twitter/callback`}</code></li>
+                                        <li>Set Website URL to your site URL</li>
+                                        <li>Copy the <strong className="text-foreground">Client ID</strong> and <strong className="text-foreground">Client Secret</strong> below</li>
+                                    </ol>
+                                    <p className="text-xs text-muted-foreground/70 pt-1">
+                                        Note: X API uses pay-per-use pricing (~$0.01/tweet). You control your own costs.
+                                    </p>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            )}
 
-                        <Card className="card-elevated">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <BarChart3 className="h-5 w-5" />
-                                    Content Performance
-                                </CardTitle>
-                                <CardDescription>Breakdown by content type</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Single Tweets</span>
-                                        <span className="text-sm font-medium">68% of content • 3.2% engagement</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Threads</span>
-                                        <span className="text-sm font-medium">22% of content • 6.8% engagement</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Replies</span>
-                                        <span className="text-sm font-medium">10% of content • 8.1% engagement</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Link Clicks (Total)</span>
-                                        <span className="text-sm font-medium">1,847</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Profile Visits</span>
-                                        <span className="text-sm font-medium">3,241</span>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="engagement" className="space-y-6">
-                    <Card className="card-elevated">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Zap className="h-5 w-5" />
-                                Auto Engagement
-                            </CardTitle>
-                            <CardDescription>
-                                AI-powered automatic engagement with your audience
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-0.5">
-                                    <Label className="text-base">Auto Like Mentions</Label>
-                                    <div className="text-sm text-muted-foreground">
-                                        Automatically like tweets that mention your account
-                                    </div>
-                                </div>
-                                <Switch checked={autoEngageEnabled} onCheckedChange={setAutoEngageEnabled} />
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-0.5">
-                                    <Label className="text-base">AI Reply Suggestions</Label>
-                                    <div className="text-sm text-muted-foreground">
-                                        Generate smart reply suggestions for mentions and DMs
-                                    </div>
-                                </div>
-                                <Switch checked={aiCaptionsEnabled} onCheckedChange={setAiCaptionsEnabled} />
-                            </div>
-
-                            <div className="rounded-lg bg-muted/50 p-4 space-y-3">
-                                <h4 className="font-medium text-sm">Recent Auto-Engagements</h4>
-                                <div className="space-y-2 text-sm text-muted-foreground">
-                                    <p>- Liked @techstartup&apos;s mention about AgenticPilot - 2h ago</p>
-                                    <p>- Auto-replied to @developer_x&apos;s question about pricing - 4h ago</p>
-                                    <p>- Liked @ai_enthusiast&apos;s retweet of your thread - 6h ago</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="settings" className="space-y-6">
-                    <Card className="card-elevated">
-                        <CardHeader>
-                            <CardTitle>Twitter Automation Settings</CardTitle>
-                            <CardDescription>Configure your X/Twitter automation preferences</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
+                            {/* Credential Inputs */}
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="default-hashtags">Default Hashtags</Label>
+                                    <Label htmlFor="x-client-id">Client ID</Label>
                                     <Input
-                                        id="default-hashtags"
-                                        defaultValue="#AI #Automation #AgenticPilot"
-                                        placeholder="Enter default hashtags..."
+                                        id="x-client-id"
+                                        placeholder="Paste your X Client ID..."
+                                        value={clientId}
+                                        onChange={(e) => setClientId(e.target.value)}
+                                        className="bg-muted/30 border-border/50"
                                     />
                                 </div>
-
                                 <div className="space-y-2">
-                                    <Label htmlFor="posting-frequency">Max Posts Per Day</Label>
+                                    <Label htmlFor="x-client-secret">Client Secret</Label>
                                     <Input
-                                        id="posting-frequency"
-                                        type="number"
-                                        defaultValue="5"
+                                        id="x-client-secret"
+                                        type="password"
+                                        placeholder="Paste your X Client Secret..."
+                                        value={clientSecret}
+                                        onChange={(e) => setClientSecret(e.target.value)}
+                                        className="bg-muted/30 border-border/50"
                                     />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="optimal-time">Preferred Posting Window</Label>
-                                    <Input
-                                        id="optimal-time"
-                                        defaultValue="9:00 AM - 6:00 PM"
-                                        placeholder="Enter preferred time window..."
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div className="space-y-0.5">
-                                        <Label className="text-base">AI-Generated Captions</Label>
-                                        <div className="text-sm text-muted-foreground">
-                                            Use Gemini AI to enhance tweet copy
-                                        </div>
-                                    </div>
-                                    <Switch defaultChecked />
                                 </div>
                             </div>
 
-                            <Button>Save Settings</Button>
+                            <Button
+                                onClick={handleConnect}
+                                disabled={connecting || !clientId.trim() || !clientSecret.trim()}
+                                size="lg"
+                                className="w-full gap-2"
+                            >
+                                {connecting ? (
+                                    <><Loader2 className="h-4 w-4 animate-spin" /> Connecting...</>
+                                ) : (
+                                    <><Twitter className="h-5 w-5" /> Connect X Account</>
+                                )}
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Connected State */}
+            {!connectionLoading && isConnected && (
+                <div className="space-y-4 sm:space-y-6">
+                    {/* Profile Row */}
+                    <Card className="card-elevated">
+                        <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                {connectionInfo?.x_profile_image ? (
+                                    <img
+                                        src={connectionInfo.x_profile_image}
+                                        alt={connectionInfo.x_name || 'X profile'}
+                                        className="w-12 h-12 rounded-full border-2 border-sky-500/30 shrink-0"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center shrink-0">
+                                        <Twitter className="h-6 w-6 text-sky-500" />
+                                    </div>
+                                )}
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <h3 className="font-semibold text-sm sm:text-base truncate">
+                                            {connectionInfo?.x_name || 'X User'}
+                                        </h3>
+                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
+                                            Connected
+                                        </Badge>
+                                    </div>
+                                    <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                                        @{connectionInfo?.x_username || ''}
+                                    </p>
+                                </div>
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleDisconnect}
+                                disabled={disconnecting}
+                                className="w-full sm:w-auto text-destructive hover:text-destructive"
+                            >
+                                {disconnecting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Unplug className="h-4 w-4 mr-2" />}
+                                Disconnect
+                            </Button>
                         </CardContent>
                     </Card>
-                </TabsContent>
-            </Tabs>
+
+                    {/* AI Tweet Generator */}
+                    <Card className="card-elevated border-sky-500/20">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Sparkles className="h-5 w-5 text-sky-500" />
+                                AI Tweet Generator
+                            </CardTitle>
+                            <CardDescription>
+                                Generate product tweets powered by Gemini AI
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="tweet-product-name">Product Name</Label>
+                                    <Input
+                                        id="tweet-product-name"
+                                        placeholder="e.g. AgenticPilot"
+                                        value={productName}
+                                        onChange={(e) => setProductName(e.target.value)}
+                                        className="bg-muted/30 border-border/50"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="tweet-product-url">Product URL (optional)</Label>
+                                    <Input
+                                        id="tweet-product-url"
+                                        placeholder="https://your-product.com"
+                                        value={productUrl}
+                                        onChange={(e) => setProductUrl(e.target.value)}
+                                        className="bg-muted/30 border-border/50"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="tweet-product-desc">Product Description</Label>
+                                <Textarea
+                                    id="tweet-product-desc"
+                                    placeholder="Describe your product in a few sentences..."
+                                    value={productDescription}
+                                    onChange={(e) => setProductDescription(e.target.value)}
+                                    rows={2}
+                                    className="bg-muted/30 border-border/50"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Tone</Label>
+                                <Select value={tone} onValueChange={(v) => setTone(v as TweetTone)}>
+                                    <SelectTrigger className="w-full sm:w-64 bg-muted/30 border-border/50">
+                                        <SelectValue placeholder="Select tone" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="professional">Professional</SelectItem>
+                                        <SelectItem value="casual">Casual</SelectItem>
+                                        <SelectItem value="witty">Witty / Fun</SelectItem>
+                                        <SelectItem value="hype">Hype 🔥</SelectItem>
+                                        <SelectItem value="educational">Educational</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <Button onClick={handleGenerate} disabled={isGenerating || !productName.trim()} className="gap-2">
+                                {isGenerating ? (
+                                    <><Loader2 className="h-4 w-4 animate-spin" /> Generating &amp; Publishing...</>
+                                ) : (
+                                    <><Sparkles className="h-4 w-4" /> Generate with AI</>
+                                )}
+                            </Button>
+
+                            {/* Preview / Editor */}
+                            {generatedContent && (
+                                <div className="space-y-3 pt-2">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-sm font-medium flex items-center gap-2">
+                                            {isEditing ? <><FileEdit className="h-4 w-4" /> Edit Tweet</> : <><Eye className="h-4 w-4" /> Tweet Preview</>}
+                                        </h4>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-xs ${charCount > 280 ? 'text-red-400' : 'text-muted-foreground'}`}>
+                                                {charCount} / 280
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs text-muted-foreground">Edit</span>
+                                                <Switch
+                                                    checked={isEditing}
+                                                    onCheckedChange={(checked) => {
+                                                        setIsEditing(checked)
+                                                        if (checked) setEditContent(generatedContent)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {isEditing ? (
+                                        <Textarea
+                                            value={editContent}
+                                            onChange={(e) => setEditContent(e.target.value)}
+                                            rows={4}
+                                            className="bg-muted/30 border-border/50 font-mono text-sm"
+                                        />
+                                    ) : (
+                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4">
+                                            <p className="text-sm whitespace-pre-wrap leading-relaxed">{generatedContent}</p>
+                                        </div>
+                                    )}
+
+                                    <div className="flex flex-wrap gap-2">
+                                        <Button onClick={handlePublish} disabled={isPosting || charCount === 0} className="gap-2">
+                                            {isPosting ? <><Loader2 className="h-4 w-4 animate-spin" /> Publishing...</> : <><Send className="h-4 w-4" /> Post to X</>}
+                                        </Button>
+                                        <Button variant="outline" onClick={handleGenerate} disabled={isGenerating || !productName.trim()} className="gap-2">
+                                            <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                                            Regenerate
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Recent Tweets */}
+                    <Card className="card-elevated">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Clock className="h-5 w-5" />
+                                Recent Tweets
+                            </CardTitle>
+                            <CardDescription>Your latest X posts</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {tweetsLoading ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                    <span className="ml-2 text-sm text-muted-foreground">Loading tweets...</span>
+                                </div>
+                            ) : tweets.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <p className="text-sm text-muted-foreground">
+                                        No tweets yet. Use the AI Tweet Generator above to create your first tweet!
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {tweets.map((tweet) => (
+                                        <div
+                                            key={tweet.id}
+                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-2 transition-colors hover:bg-muted/30"
+                                        >
+                                            <div className="flex items-start justify-between gap-3">
+                                                <p className="text-sm leading-relaxed line-clamp-3 flex-1">{tweet.content}</p>
+                                                {getStatusBadge(tweet.status)}
+                                            </div>
+                                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                                <span>{formatRelativeTime(tweet.created_at)}</span>
+                                                {tweet.ai_generated && (
+                                                    <Badge variant="outline" className="text-xs py-0">
+                                                        <Sparkles className="h-3 w-3 mr-1" />
+                                                        AI Generated
+                                                    </Badge>
+                                                )}
+                                                {tweet.tone && <span className="capitalize">{tweet.tone}</span>}
+                                                {tweet.product_name && (
+                                                    <span className="truncate max-w-[150px]">{tweet.product_name}</span>
+                                                )}
+                                                {tweet.error_message && (
+                                                    <span className="text-red-400 truncate max-w-[200px]" title={tweet.error_message}>
+                                                        {tweet.error_message}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     )
 }
