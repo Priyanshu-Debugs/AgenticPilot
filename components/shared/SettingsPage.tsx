@@ -30,77 +30,106 @@ import {
   CheckCircle,
   AlertTriangle
 } from "lucide-react"
+import { toast } from "sonner"
 
 interface SettingsProps {
   settings?: any
   onSave?: (settings: any) => void
   onReset?: () => void
   onExport?: () => void
-  onImport?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
+
+const defaultSettings = {
+  profile: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    timezone: "UTC",
+    language: "en"
+  },
+  notifications: {
+    emailNotifications: true,
+    pushNotifications: true,
+    smsNotifications: false,
+    taskCompletion: true,
+    lowStock: true,
+    systemUpdates: true,
+    weeklyReport: true
+  },
+  automation: {
+    gmailEnabled: false,
+    gmailCheckInterval: "5",
+    instagramEnabled: false,
+    instagramPostTime: "09:00",
+    twitterEnabled: false,
+    twitterPostFrequency: "5",
+    linkedinEnabled: false,
+    linkedinPostSchedule: "Tue,Thu",
+    autoReorder: false
+  },
+  security: {
+    twoFactorEnabled: false,
+    sessionTimeout: "30",
+    passwordExpiry: "90",
+    loginNotifications: true
+  },
+  integrations: {
+    gmailConnected: false,
+    instagramConnected: false,
+    twitterConnected: false,
+    linkedinConnected: false,
+    apiKey: "",
+    webhookUrl: ""
+  },
+  appearance: {
+    theme: "system"
+  }
+}
+
+const mergeSettings = (incoming?: any) => ({
+  ...defaultSettings,
+  ...incoming,
+  profile: {
+    ...defaultSettings.profile,
+    ...incoming?.profile,
+  },
+  notifications: {
+    ...defaultSettings.notifications,
+    ...incoming?.notifications,
+  },
+  automation: {
+    ...defaultSettings.automation,
+    ...incoming?.automation,
+  },
+  security: {
+    ...defaultSettings.security,
+    ...incoming?.security,
+  },
+  integrations: {
+    ...defaultSettings.integrations,
+    ...incoming?.integrations,
+  },
+  appearance: {
+    ...defaultSettings.appearance,
+    ...incoming?.appearance,
+  },
+})
 
 export function SettingsPage({
   settings: initialSettings,
   onSave = () => { },
   onReset = () => { },
   onExport = () => { },
-  onImport = () => { }
 }: SettingsProps) {
   const [showPassword, setShowPassword] = useState(false)
-  const [settings, setSettings] = useState(initialSettings || {
-    // Profile Settings
-    profile: {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      company: "AgenticPilot Inc.",
-      timezone: "America/New_York",
-      language: "en"
-    },
-    // Notification Settings
-    notifications: {
-      emailNotifications: true,
-      pushNotifications: true,
-      smsNotifications: false,
-      taskCompletion: true,
-      lowStock: true,
-      systemUpdates: true,
-      weeklyReport: true
-    },
-    // Automation Settings
-    automation: {
-      gmailEnabled: true,
-      gmailCheckInterval: "5",
-      instagramEnabled: true,
-      instagramPostTime: "09:00",
-      twitterEnabled: true,
-      twitterPostFrequency: "5",
-      linkedinEnabled: true,
-      linkedinPostSchedule: "Tue,Thu",
-      autoReorder: false
-    },
-    // Security Settings
-    security: {
-      twoFactorEnabled: false,
-      sessionTimeout: "30",
-      passwordExpiry: "90",
-      loginNotifications: true
-    },
-    // Integration Settings
-    integrations: {
-      gmailConnected: true,
-      instagramConnected: true,
-      twitterConnected: false,
-      linkedinConnected: false,
-      apiKey: "ag_****************************",
-      webhookUrl: "https://api.agenticpilot.com/webhook"
-    }
-  })
+  const [integrationLoading, setIntegrationLoading] = useState<string | null>(null)
+  const [settings, setSettings] = useState(() => mergeSettings(initialSettings))
 
   // Update settings when initialSettings prop changes
   React.useEffect(() => {
     if (initialSettings) {
-      setSettings(initialSettings)
+      setSettings(mergeSettings(initialSettings))
     }
   }, [initialSettings])
 
@@ -120,6 +149,87 @@ export function SettingsPage({
 
   const handleReset = () => {
     onReset()
+  }
+
+  const updateIntegration = (key: string, value: boolean) => {
+    setSettings((prev: any) => ({
+      ...prev,
+      integrations: {
+        ...prev.integrations,
+        [key]: value
+      }
+    }))
+  }
+
+  const handleIntegrationAction = async (provider: 'gmail' | 'twitter' | 'linkedin' | 'instagram') => {
+    if (!settings) return
+
+    setIntegrationLoading(provider)
+    try {
+      if (provider === 'gmail') {
+        if (settings.integrations.gmailConnected) {
+          const res = await fetch('/api/gmail/disconnect', { method: 'POST' })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Failed to disconnect Gmail')
+          updateIntegration('gmailConnected', false)
+          toast.success('Gmail disconnected')
+          return
+        }
+
+        const res = await fetch('/api/gmail/connect', { method: 'POST' })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to connect Gmail')
+        if (data.authUrl) {
+          window.location.href = data.authUrl
+          return
+        }
+        throw new Error('Missing authorization URL')
+      }
+
+      if (provider === 'linkedin') {
+        if (settings.integrations.linkedinConnected) {
+          const res = await fetch('/api/linkedin/disconnect', { method: 'DELETE' })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Failed to disconnect LinkedIn')
+          updateIntegration('linkedinConnected', false)
+          toast.success('LinkedIn disconnected')
+          return
+        }
+
+        const res = await fetch('/api/linkedin/connect', { method: 'POST' })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to connect LinkedIn')
+        if (data.authUrl) {
+          window.location.href = data.authUrl
+          return
+        }
+        throw new Error('Missing authorization URL')
+      }
+
+      if (provider === 'twitter') {
+        if (settings.integrations.twitterConnected) {
+          const res = await fetch('/api/twitter/disconnect', { method: 'DELETE' })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Failed to disconnect X/Twitter')
+          updateIntegration('twitterConnected', false)
+          toast.success('X/Twitter disconnected')
+          return
+        }
+
+        toast.info('Add your X client credentials to connect.')
+        window.location.href = '/dashboard/twitter'
+        return
+      }
+
+      if (provider === 'instagram') {
+        toast.info('Open Instagram Studio to start creating posts.')
+        window.location.href = '/dashboard/instagram'
+      }
+    } catch (error: any) {
+      toast.error(error?.message || 'Integration action failed')
+    } finally {
+      setIntegrationLoading(null)
+    }
   }
 
   return (
@@ -209,7 +319,8 @@ export function SettingsPage({
                   id="email"
                   type="email"
                   value={settings.profile.email}
-                  onChange={(e) => handleSettingChange("profile", "email", e.target.value)}
+                  disabled
+                  className="bg-muted/50"
                 />
               </div>
               <div className="space-y-2">
@@ -582,15 +693,26 @@ export function SettingsPage({
                       <Mail className="h-5 w-5" />
                       <div>
                         <Label>Gmail</Label>
-                        <p className="text-sm text-muted-foreground">john.doe@gmail.com</p>
+                        <p className="text-sm text-muted-foreground">
+                          {settings.integrations.gmailConnected
+                            ? (settings.profile.email || "Connected")
+                            : "Not connected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={settings.integrations.gmailConnected ? "default" : "secondary"}>
                         {settings.integrations.gmailConnected ? "Connected" : "Disconnected"}
                       </Badge>
-                      <Button variant="outline" size="sm">
-                        {settings.integrations.gmailConnected ? "Disconnect" : "Connect"}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleIntegrationAction('gmail')}
+                        disabled={integrationLoading === 'gmail'}
+                      >
+                        {integrationLoading === 'gmail'
+                          ? "Working..."
+                          : (settings.integrations.gmailConnected ? "Disconnect" : "Connect")}
                       </Button>
                     </div>
                   </div>
@@ -599,15 +721,22 @@ export function SettingsPage({
                       <Instagram className="h-5 w-5" />
                       <div>
                         <Label>Instagram</Label>
-                        <p className="text-sm text-muted-foreground">@agenticpilot</p>
+                        <p className="text-sm text-muted-foreground">
+                          {settings.integrations.instagramConnected ? "Connected account" : "Not connected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={settings.integrations.instagramConnected ? "default" : "secondary"}>
                         {settings.integrations.instagramConnected ? "Connected" : "Disconnected"}
                       </Badge>
-                      <Button variant="outline" size="sm">
-                        {settings.integrations.instagramConnected ? "Disconnect" : "Connect"}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleIntegrationAction('instagram')}
+                        disabled={integrationLoading === 'instagram'}
+                      >
+                        {integrationLoading === 'instagram' ? "Working..." : "Open Studio"}
                       </Button>
                     </div>
                   </div>
@@ -616,15 +745,24 @@ export function SettingsPage({
                       <Twitter className="h-5 w-5" />
                       <div>
                         <Label>X/Twitter</Label>
-                        <p className="text-sm text-muted-foreground">@agenticpilot</p>
+                        <p className="text-sm text-muted-foreground">
+                          {settings.integrations.twitterConnected ? "Connected account" : "Not connected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={settings.integrations.twitterConnected ? "default" : "secondary"}>
                         {settings.integrations.twitterConnected ? "Connected" : "Disconnected"}
                       </Badge>
-                      <Button variant="outline" size="sm">
-                        {settings.integrations.twitterConnected ? "Disconnect" : "Connect"}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleIntegrationAction('twitter')}
+                        disabled={integrationLoading === 'twitter'}
+                      >
+                        {integrationLoading === 'twitter'
+                          ? "Working..."
+                          : (settings.integrations.twitterConnected ? "Disconnect" : "Connect")}
                       </Button>
                     </div>
                   </div>
@@ -633,15 +771,26 @@ export function SettingsPage({
                       <Linkedin className="h-5 w-5" />
                       <div>
                         <Label>LinkedIn</Label>
-                        <p className="text-sm text-muted-foreground">AgenticPilot Inc.</p>
+                        <p className="text-sm text-muted-foreground">
+                          {settings.integrations.linkedinConnected
+                            ? (settings.profile.company || "Connected organization")
+                            : "Not connected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={settings.integrations.linkedinConnected ? "default" : "secondary"}>
                         {settings.integrations.linkedinConnected ? "Connected" : "Disconnected"}
                       </Badge>
-                      <Button variant="outline" size="sm">
-                        {settings.integrations.linkedinConnected ? "Disconnect" : "Connect"}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleIntegrationAction('linkedin')}
+                        disabled={integrationLoading === 'linkedin'}
+                      >
+                        {integrationLoading === 'linkedin'
+                          ? "Working..."
+                          : (settings.integrations.linkedinConnected ? "Disconnect" : "Connect")}
                       </Button>
                     </div>
                   </div>
@@ -657,7 +806,7 @@ export function SettingsPage({
                     <div className="flex space-x-2">
                       <Input
                         type={showPassword ? "text" : "password"}
-                        value={settings.integrations.apiKey}
+                        value={settings.integrations.apiKey || ""}
                         onChange={(e) => handleSettingChange("integrations", "apiKey", e.target.value)}
                         className="flex-1"
                       />
@@ -675,7 +824,7 @@ export function SettingsPage({
                   <div className="space-y-2">
                     <Label>Webhook URL</Label>
                     <Input
-                      value={settings.integrations.webhookUrl}
+                      value={settings.integrations.webhookUrl || ""}
                       onChange={(e) => handleSettingChange("integrations", "webhookUrl", e.target.value)}
                     />
                   </div>
@@ -695,23 +844,9 @@ export function SettingsPage({
 
       {/* Save/Reset Actions */}
       <div className="flex justify-between items-center pt-6">
-        <div className="flex space-x-2">
           <Button variant="outline" onClick={onExport}>
             Export Settings
           </Button>
-          <div>
-            <input
-              type="file"
-              accept=".json"
-              onChange={onImport}
-              className="hidden"
-              id="import-settings"
-            />
-            <Button variant="outline" onClick={() => document.getElementById('import-settings')?.click()}>
-              Import Settings
-            </Button>
-          </div>
-        </div>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={onReset}>
             <RefreshCw className="h-4 w-4 mr-2" />

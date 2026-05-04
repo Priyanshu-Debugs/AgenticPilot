@@ -240,7 +240,14 @@ export async function POST(req: NextRequest) {
 
         if (error.message?.includes('No tokens found')) {
             return NextResponse.json(
-                { error: 'Gmail not connected' },
+                { error: 'Gmail not connected', code: 'NOT_CONNECTED' },
+                { status: 401 }
+            )
+        }
+
+        if (error.message?.includes('GMAIL_REAUTH_REQUIRED')) {
+            return NextResponse.json(
+                { error: 'Gmail connection expired. Please reconnect.', code: 'REAUTH_REQUIRED' },
                 { status: 401 }
             )
         }

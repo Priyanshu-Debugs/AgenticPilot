@@ -128,7 +128,7 @@ export async function refreshTokenIfNeeded(userId: string): Promise<GmailToken> 
 
     // Check if token is expired (with 5 min buffer)
     const expiryTime = new Date(tokens.expires_at).getTime()
-    const isExpired = expiryTime < Date.now() - 5 * 60 * 1000
+    const isExpired = expiryTime <= Date.now() + 5 * 60 * 1000
 
     if (!isExpired) {
         return tokens
@@ -140,7 +140,17 @@ export async function refreshTokenIfNeeded(userId: string): Promise<GmailToken> 
         refresh_token: tokens.refresh_token,
     })
 
-    const { credentials } = await oauth2Client.refreshAccessToken()
+    let credentials
+    try {
+        const refreshResponse = await oauth2Client.refreshAccessToken()
+        credentials = refreshResponse.credentials
+    } catch (error: any) {
+        const errorPayload = error?.response?.data?.error || error?.message || JSON.stringify(error)
+        if (typeof errorPayload === 'string' && errorPayload.includes('invalid_grant')) {
+            throw new Error('GMAIL_REAUTH_REQUIRED')
+        }
+        throw error
+    }
 
     const newTokens: GmailToken = {
         access_token: credentials.access_token!,

@@ -3,7 +3,7 @@
 // Core UI components
 import { Button } from "@/components/ui/button"
 // Icon imports for navigation items
-import { Mail, Twitter, Linkedin, Instagram, Bot } from "lucide-react"
+import { Mail, Twitter, Linkedin, Instagram, Bot, Settings, User, Bell, Home } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -27,7 +27,6 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSidebarProps) {
   const pathname = usePathname()
 
-  // Overview/main dashboard navigation item
   const overviewItem = {
     id: "dashboard",
     title: "Overview",
@@ -66,7 +65,7 @@ export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSide
   return (
     // Fixed sidebar with Supabase-inspired design
     <div
-      className={`fixed top-14 sm:top-16 left-0 bottom-0 z-40 w-64 sm:w-72 lg:w-80 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+      className={`fixed top-16 left-0 bottom-0 z-40 w-64 sm:w-72 lg:w-80 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
     >
       <div className="flex flex-col h-full">
 
@@ -82,7 +81,7 @@ export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSide
           <div className="space-y-6">
             {/* Overview Section */}
             <div className="space-y-1">
-              <div key={overviewItem.id} onClick={toggleSidebar}>
+              <div onClick={toggleSidebar}>
                 <Link href={overviewItem.href}>
                   <div
                     className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 group ${pathname === overviewItem.href
@@ -133,6 +132,8 @@ export function DashboardSidebar({ isSidebarOpen, toggleSidebar }: DashboardSide
                 )
               })}
             </div>
+
+            
           </div>
         </div>
       </div>

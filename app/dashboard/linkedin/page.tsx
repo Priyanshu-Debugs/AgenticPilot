@@ -373,6 +373,26 @@ function LinkedInAutomationContent() {
                 )}
             </div>
 
+            {/* Setup Guide */}
+            <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
+                    <div className="flex items-center gap-2">
+                        <Linkedin className="h-4 w-4 text-blue-500" />
+                        How to Connect & Use LinkedIn Automation
+                    </div>
+                    <span className="transition group-open:rotate-180">
+                        <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </span>
+                </summary>
+                <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-blue-500/20 ml-2">
+                    <p>1. Go to <a href="https://www.linkedin.com/developers/apps" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">LinkedIn Developers</a> and create an App.</p>
+                    <p>2. Go to the Products tab and add <strong className="text-foreground">Sign In with LinkedIn</strong> and <strong className="text-foreground">Share on LinkedIn</strong>.</p>
+                    <p>3. Under Auth, set your OAuth 2.0 redirect URL to: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/linkedin/callback</code></p>
+                    <p>4. Add your Client ID and Client Secret in your <strong className="text-foreground">.env.local</strong> file.</p>
+                    <p>5. Click <strong className="text-foreground">Connect LinkedIn</strong> below to authorize your account and start generating posts.</p>
+                </div>
+            </details>
+
             {/* Loading State */}
             {connectionLoading && (
                 <div className="flex items-center justify-center py-16">

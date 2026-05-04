@@ -147,15 +147,15 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
               </Button>
             </Link>
 
-            {/* Settings button - Hidden on mobile */}
-            <Link href="/settings" className="hidden md:block">
-              <Button variant="ghost" size="icon">
+            {/* Settings button */}
+            <Link href="/settings">
+              <Button variant="ghost" size="icon" title="Settings">
                 <Settings className="h-4 w-4" />
               </Button>
             </Link>
 
-            {/* Theme toggle - Hidden on mobile */}
-            <div className="hidden md:block">
+            {/* Theme toggle */}
+            <div className="block">
               <ModeToggle />
             </div>
 
@@ -164,7 +164,7 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
                   <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                    <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt="User" />
+                    <AvatarImage src={user?.user_metadata?.avatar_url || ''} alt="User" referrerPolicy="no-referrer" />
                     <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                       {getUserInitials()}
                     </AvatarFallback>
@@ -205,17 +205,6 @@ export function DashboardNavbar({ toggleSidebar, isSidebarOpen }: DashboardNavba
                     <span>Billing</span>
                   </Link>
                 </DropdownMenuItem>
-
-                {/* Mobile-only settings */}
-                <div className="md:hidden">
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </div>
 
                 <DropdownMenuSeparator />
 

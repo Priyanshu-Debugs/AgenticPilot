@@ -114,7 +114,6 @@ export async function POST(request: NextRequest) {
         .upsert({
           user_id: data.user.id,
           full_name: full_name || '',
-          avatar_url: '',
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'user_id'

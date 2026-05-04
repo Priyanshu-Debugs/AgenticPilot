@@ -185,6 +185,11 @@ function GmailAutomationContent() {
                 if (data.code === 'NOT_CONNECTED') {
                     setIsConnected(false)
                 }
+                if (data.code === 'REAUTH_REQUIRED') {
+                    setIsConnected(false)
+                    toast.error('Gmail connection expired. Please reconnect.')
+                    return
+                }
                 throw new Error(data.error)
             }
 
@@ -419,6 +424,26 @@ function GmailAutomationContent() {
                     </Button>
                 )}
             </div>
+
+            {/* Setup Guide */}
+            <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
+                    <div className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-primary" />
+                        How to Connect & Use Gmail Automation
+                    </div>
+                    <span className="transition group-open:rotate-180">
+                        <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </span>
+                </summary>
+                <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-primary/20 ml-2">
+                    <p>1. Click <strong className="text-foreground">Connect Your Gmail</strong> and sign in with your Google account.</p>
+                    <p>2. Grant AgenticPilot permission to read and send emails.</p>
+                    <p>3. Once connected, your inbox will load automatically.</p>
+                    <p>4. Enable <strong className="text-foreground">Background Automation</strong> to have AI scan and draft replies every 5 minutes without opening the site.</p>
+                    <p>5. Review drafted responses or use the <strong className="text-foreground">Analyze</strong> feature for single emails.</p>
+                </div>
+            </details>
 
             {/* Automation Toggle Cards */}
             {isConnected && (

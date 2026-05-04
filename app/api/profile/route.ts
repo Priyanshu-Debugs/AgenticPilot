@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       id: user.id,
       email: user.email,
       full_name: profile?.full_name || user.user_metadata?.full_name || '',
-      avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || '',
+      avatar_url: user.user_metadata?.avatar_url || '',
       company_name: profile?.company_name || '',
       job_title: profile?.job_title || '',
       phone: profile?.phone || '',
@@ -83,7 +83,7 @@ export async function PUT(request: NextRequest) {
     const profileData = await request.json()
     
     // Validate profile data - allow all profile fields per RLS schema
-    const allowedFields = ['full_name', 'avatar_url', 'company_name', 'job_title', 'phone', 'bio']
+    const allowedFields = ['full_name', 'company_name', 'job_title', 'phone', 'bio']
     const filteredData = Object.keys(profileData)
       .filter(key => allowedFields.includes(key))
       .reduce((obj, key) => {

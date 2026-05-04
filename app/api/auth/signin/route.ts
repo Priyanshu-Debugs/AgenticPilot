@@ -92,7 +92,6 @@ export async function POST(request: NextRequest) {
         .upsert({
           user_id: data.user.id,
           full_name: data.user.user_metadata?.full_name || '',
-          avatar_url: data.user.user_metadata?.avatar_url || '',
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'user_id'

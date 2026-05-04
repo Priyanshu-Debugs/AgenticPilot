@@ -304,6 +304,26 @@ export default function InstagramAutomation() {
         </div>
       </div>
 
+      {/* Setup Guide */}
+      <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
+          <div className="flex items-center gap-2">
+            <Instagram className="h-4 w-4 text-pink-500" />
+            How to Use Instagram Product Studio
+          </div>
+          <span className="transition group-open:rotate-180">
+            <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </summary>
+        <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-pink-500/20 ml-2">
+          <p>1. Go to the <strong className="text-foreground">Product Studio</strong> tab.</p>
+          <p>2. Upload a raw product photo (JPEG, PNG, or WebP).</p>
+          <p>3. Fill in the product details and select your desired photo styles (Studio, Lifestyle, etc.).</p>
+          <p>4. Click Generate to let AI create professional lifestyle and studio shots.</p>
+          <p>5. Select an image and click <strong className="text-foreground">Create Post</strong> to automatically draft a caption and schedule it.</p>
+        </div>
+      </details>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {[

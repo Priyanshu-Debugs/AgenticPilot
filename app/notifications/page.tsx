@@ -4,24 +4,19 @@
 import { Button } from "@/components/ui/button"
 import { Bot } from "lucide-react"
 import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
+import { Navigation } from "@/components/shared/Navigation"
 import { NotificationSystem } from "@/components/shared/NotificationSystem"
 import { useNotifications } from "@/utils/hooks/useNotifications"
+import { useAuth } from "@/utils/auth/AuthProvider"
 
 /**
  * NotificationsPage Component
  * 
  * Standalone page for viewing and managing notifications.
- * Uses "use client" directive because it passes event handlers to child components.
- * 
- * Features:
- * - Full-page notification interface with API integration
- * - Mark as read functionality
- * - Notification filtering and categorization
- * - Action buttons for notification responses
- * - Back to dashboard navigation
+ * Uses shared Navigation component for consistent UI.
  */
 export default function NotificationsPage() {
+  const { user, signOut } = useAuth()
   const { 
     notifications, 
     loading, 
@@ -62,27 +57,23 @@ export default function NotificationsPage() {
     }
   }
 
+  const navUser = user
+    ? {
+        name: user.full_name || user.email?.split("@")[0] || "User",
+        email: user.email || "",
+        avatar: user.user_metadata?.avatar_url || "",
+      }
+    : undefined
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container-padding">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-              <Link href="/" className="text-lg sm:text-xl font-bold">
-                AgenticPilot
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ModeToggle />
-              <Button variant="outline" asChild>
-                <Link href="/dashboard">Back to Dashboard</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation
+        isAuthenticated={!!user}
+        user={navUser}
+        onSignIn={() => window.location.assign("/auth/signin")}
+        onSignUp={() => window.location.assign("/auth/signup")}
+        onSignOut={() => { void signOut() }}
+      />
 
       {/* Notifications Content */}
       <div className="container-padding section-spacing">

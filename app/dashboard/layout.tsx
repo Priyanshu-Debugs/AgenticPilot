@@ -34,7 +34,6 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   // State for mobile sidebar visibility
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-
   // Toggle function for sidebar open/close
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 

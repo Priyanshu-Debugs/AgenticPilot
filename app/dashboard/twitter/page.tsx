@@ -290,6 +290,26 @@ function TwitterAutomationContent() {
                 )}
             </div>
 
+            {/* Setup Guide */}
+            <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
+                    <div className="flex items-center gap-2">
+                        <Twitter className="h-4 w-4 text-sky-500" />
+                        How to Connect & Use X/Twitter Automation
+                    </div>
+                    <span className="transition group-open:rotate-180">
+                        <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </span>
+                </summary>
+                <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-sky-500/20 ml-2">
+                    <p>1. Go to the <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-sky-500 hover:underline">X Developer Portal</a> and create a Project and App.</p>
+                    <p>2. Set up User authentication settings with OAuth 2.0. Type: Web App, App permissions: Read and write.</p>
+                    <p>3. Set the Callback URI to <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/twitter/callback</code></p>
+                    <p>4. Copy your <strong className="text-foreground">Client ID</strong> and <strong className="text-foreground">Client Secret</strong> into the fields below and click Connect.</p>
+                    <p>5. Once connected, use the <strong className="text-foreground">AI Tweet Generator</strong> to create optimized posts.</p>
+                </div>
+            </details>
+
             {/* Loading */}
             {connectionLoading && (
                 <div className="flex items-center justify-center py-16">

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ArrowRight, Mail, Package, Instagram, Bot, Bell, Menu, X, User, Settings, LogOut } from "lucide-react"
+import { ArrowRight, Mail, Package, Instagram, Bot, Bell, Menu, X, User, Settings, LogOut, Home } from "lucide-react"
 import Link from "next/link"
 
 interface NavigationItem {
@@ -26,6 +26,9 @@ interface NavigationProps {
   onSignIn?: () => void
   onSignUp?: () => void
   onSignOut?: () => void
+  onToggleSidebar?: () => void
+  isSidebarOpen?: boolean
+  disableMobileMenu?: boolean
 }
 
 const defaultNavItems: NavigationItem[] = [
@@ -43,12 +46,24 @@ export function Navigation({
   user,
   onSignIn = () => window.location.href = "/auth/signin",
   onSignUp = () => window.location.href = "/auth/signup",
-  onSignOut = () => window.location.href = "/auth/signin"
+  onSignOut = () => window.location.href = "/auth/signin",
+  onToggleSidebar,
+  isSidebarOpen = false,
+  disableMobileMenu = false
 }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSignInLoading, setIsSignInLoading] = useState(false)
+  const isSidebarMode = typeof onToggleSidebar === "function"
+  const menuIsOpen = isSidebarMode ? isSidebarOpen : isMobileMenuOpen
 
   const toggleMobileMenu = () => {
+    if (isSidebarMode) {
+      onToggleSidebar?.()
+      return
+    }
+    if (disableMobileMenu) {
+      return
+    }
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
@@ -75,8 +90,8 @@ export function Navigation({
               aria-label="Toggle navigation menu"
             >
               <div className="relative w-5 h-5">
-                <Menu className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`} />
-                <X className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`} />
+                <Menu className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${menuIsOpen ? 'rotate-180 opacity-0' : 'rotate-0 opacity-100'}`} />
+                <X className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${menuIsOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`} />
               </div>
             </Button>
             <Link href="/" className="flex items-center space-x-2">
@@ -113,7 +128,7 @@ export function Navigation({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={user.avatar || ''} alt={user.name} referrerPolicy="no-referrer" />
                       <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -126,13 +141,17 @@ export function Navigation({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onSignOut}>
@@ -169,7 +188,7 @@ export function Navigation({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-6 w-6">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={user.avatar || ''} alt={user.name} referrerPolicy="no-referrer" />
                       <AvatarFallback className="text-xs">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -182,13 +201,17 @@ export function Navigation({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onSignOut}>
@@ -213,7 +236,7 @@ export function Navigation({
       </div>
 
       {/* Mobile Side Drawer Menu */}
-      {isMobileMenuOpen && (
+      {(!disableMobileMenu && !isSidebarMode && isMobileMenuOpen) && (
         <>
           {/* Backdrop Overlay */}
           <div 
@@ -248,7 +271,7 @@ export function Navigation({
               <div className="p-6 border-b border-border">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage src={user.avatar || ''} alt={user.name} referrerPolicy="no-referrer" />
                     <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">

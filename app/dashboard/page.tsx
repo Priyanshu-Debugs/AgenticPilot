@@ -10,8 +10,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 // Icons from Lucide React
-import { Mail, Zap, Plus, Settings, Bell, TrendingUp, Clock, Loader2, BarChart3, Twitter, Linkedin, Instagram, Bot } from "lucide-react"
+import { Mail, Zap, Settings, Bell, TrendingUp, Clock, Loader2, BarChart3, Twitter, Linkedin, Instagram, Bot, Lightbulb, Send } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 // Auth and profile hooks
@@ -57,6 +61,14 @@ export default function Dashboard() {
   })
   const [recentActivity, setRecentActivity] = useState<Activity[]>([])
   const [isLoadingStats, setIsLoadingStats] = useState(true)
+  const [activeTab, setActiveTab] = useState<'automations' | 'analytics' | 'integrations'>('automations')
+
+  // Suggest Automation state
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const [suggestName, setSuggestName] = useState('')
+  const [suggestEmail, setSuggestEmail] = useState('')
+  const [suggestText, setSuggestText] = useState('')
+  const [suggestLoading, setSuggestLoading] = useState(false)
 
   // Fetch real stats on mount
   useEffect(() => {
@@ -80,107 +92,75 @@ export default function Dashboard() {
   }
 
   // Automation tasks - derived from real connection status
-  const [automationTasks, setAutomationTasks] = useState([
+  const automationTasks = [
     {
-      id: "gmail-1",
+      id: "gmail",
       name: "Gmail AI Assistant",
       description: "AI-powered email responses with Gemini",
-      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 0,
-      lastRun: "Not run yet",
-      nextRun: "Manual trigger",
-      executionTime: `${stats.avgResponseTime}s avg`,
-      tasksProcessed: stats.totalProcessed,
-      successRate: parseFloat(stats.successRate) || 0
+      href: "/dashboard/gmail",
+      actionLabel: "Gmail AI Assistant",
     },
     {
-      id: "twitter-1",
+      id: "twitter",
       name: "X/Twitter Automation",
       description: "Automate tweets, threads, and engagement",
-      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 0,
-      lastRun: "Not configured",
-      nextRun: "Setup required",
-      executionTime: "N/A",
-      tasksProcessed: 0,
-      successRate: 0
+      href: "/dashboard/twitter",
+      actionLabel: "X/Twitter Automation",
     },
     {
-      id: "linkedin-1",
+      id: "linkedin",
       name: "LinkedIn Automation",
       description: "Automate posts, connections, and outreach",
-      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 0,
-      lastRun: "Not configured",
-      nextRun: "Setup required",
-      executionTime: "N/A",
-      tasksProcessed: 0,
-      successRate: 0
+      href: "/dashboard/linkedin",
+      actionLabel: "LinkedIn Automation",
     },
     {
-      id: "instagram-1",
-      name: "Instagram Scheduler",
-      description: "Schedule posts with AI-generated captions",
-      status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed",
-      progress: 0,
-      lastRun: "Not configured",
-      nextRun: "Setup required",
-      executionTime: "N/A",
-      tasksProcessed: 0,
-      successRate: 0
+      id: "instagram",
+      name: "Instagram Studio",
+      description: "Generate product visuals and schedule captions",
+      href: "/dashboard/instagram",
+      actionLabel: "Instagram Studio",
     }
-  ])
+  ]
 
-  useEffect(() => {
-    setAutomationTasks(prev =>
-      prev.map(task =>
-        task.id === "gmail-1"
-          ? {
-            ...task,
-            executionTime: `${stats.avgResponseTime}s avg`,
-            tasksProcessed: stats.totalProcessed,
-            successRate: parseFloat(stats.successRate) || 0,
-          }
-          : task
-      )
-    )
-  }, [stats])
-
-  const handleStartTask = (taskId: string) => {
-    setAutomationTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, status: "running" as "running" | "paused" | "stopped" | "error" | "completed" } : task
-      )
-    )
+  const handleSuggestAutomation = async () => {
+    if (!suggestText.trim()) {
+      toast.error('Please describe the automation you want')
+      return
+    }
+    setSuggestLoading(true)
+    try {
+      const res = await fetch('/api/suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: suggestName || profile?.full_name || '',
+          email: suggestEmail || user?.email || '',
+          suggestion: suggestText,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('🎉 Suggestion submitted! We\'ll review it soon.')
+        setSuggestName('')
+        setSuggestEmail('')
+        setSuggestText('')
+        setSuggestOpen(false)
+      } else {
+        toast.error(data.error || 'Failed to submit suggestion')
+      }
+    } catch {
+      toast.error('Failed to submit suggestion')
+    } finally {
+      setSuggestLoading(false)
+    }
   }
 
-  const handlePauseTask = (taskId: string) => {
-    setAutomationTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, status: "paused" as "running" | "paused" | "stopped" | "error" | "completed" } : task
-      )
-    )
-  }
-
-  const handleStopTask = (taskId: string) => {
-    setAutomationTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, status: "stopped" as "running" | "paused" | "stopped" | "error" | "completed", progress: 0 } : task
-      )
-    )
-  }
-
-  const handleConfigureTask = (taskId: string) => {
-    // Navigate to specific task configuration
-    const task = automationTasks.find(t => t.id === taskId)
-    if (task?.id.includes('gmail')) {
-      window.location.href = '/dashboard/gmail'
-    } else if (task?.id.includes('twitter')) {
-      window.location.href = '/dashboard/twitter'
-    } else if (task?.id.includes('linkedin')) {
-      window.location.href = '/dashboard/linkedin'
-    } else if (task?.id.includes('instagram')) {
-      window.location.href = '/dashboard/instagram'
+  const handleOpenIntegrations = () => {
+    setActiveTab('integrations')
+    const tabs = document.getElementById('dashboard-tabs')
+    if (tabs) {
+      tabs.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
@@ -222,11 +202,11 @@ export default function Dashboard() {
 
   const quickActions = [
     {
-      title: "Create New Automation",
-      description: "Set up a new AI automation workflow",
-      icon: Plus,
-      buttonText: "Create",
-      onAction: () => toast.info("Navigate to an agent page (Gmail, Twitter, LinkedIn, or Instagram) to configure new automations.")
+      title: "Suggest Automation",
+      description: "Have an idea for a new automation? Let us know!",
+      icon: Lightbulb,
+      buttonText: "Suggest",
+      onAction: () => setSuggestOpen(true)
     },
     {
       title: "System Settings",
@@ -273,16 +253,73 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button asChild variant="outline">
-              <Link href="/dashboard/gmail">
-                <Mail className="h-4 w-4" />
-                Configure Gmail
-              </Link>
+            <Button variant="outline" onClick={handleOpenIntegrations}>
+              <Settings className="h-4 w-4" />
+              View Integrations
             </Button>
-            <Button onClick={() => toast.info("Choose Gmail, X/Twitter, LinkedIn, or Instagram from the integrations tab to configure an automation.")}>
-              <Plus className="h-4 w-4" />
-              New Automation
-            </Button>
+            <Dialog open={suggestOpen} onOpenChange={setSuggestOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Lightbulb className="h-4 w-4" />
+                  Suggest Automation
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-primary" />
+                    Suggest an Automation
+                  </DialogTitle>
+                  <DialogDescription>
+                    Have an idea for a new automation? Tell us what you&apos;d like to automate and we&apos;ll consider adding it.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="suggest-name">Your Name</Label>
+                      <Input
+                        id="suggest-name"
+                        placeholder="John Doe"
+                        value={suggestName}
+                        onChange={(e) => setSuggestName(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="suggest-email">Email</Label>
+                      <Input
+                        id="suggest-email"
+                        type="email"
+                        placeholder="john@example.com"
+                        value={suggestEmail}
+                        onChange={(e) => setSuggestEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="suggest-text">Your Suggestion *</Label>
+                    <Textarea
+                      id="suggest-text"
+                      placeholder="I'd love to see an automation for... (describe the platform, use case, and how it would help you)"
+                      value={suggestText}
+                      onChange={(e) => setSuggestText(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSuggestAutomation}
+                    disabled={suggestLoading || !suggestText.trim()}
+                    className="w-full"
+                  >
+                    {suggestLoading ? (
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
+                    ) : (
+                      <><Send className="h-4 w-4 mr-2" /> Submit Suggestion</>
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -303,21 +340,16 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="automations" className="space-y-6">
-        <TabsList className="grid h-auto w-full grid-cols-2 md:grid-cols-4">
+      <Tabs id="dashboard-tabs" value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)} className="space-y-6">
+        <TabsList className="grid h-auto w-full grid-cols-3">
           <TabsTrigger value="automations">Automations</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="automations" className="space-y-6">
           <AutomationController
             tasks={automationTasks}
-            onStartTask={handleStartTask}
-            onPauseTask={handlePauseTask}
-            onStopTask={handleStopTask}
-            onConfigureTask={handleConfigureTask}
           />
         </TabsContent>
 
@@ -379,7 +411,7 @@ export default function Dashboard() {
               buttonText="Setup"
               onAction={() => window.location.href = "/dashboard/twitter"}
             />
-            <ActionCard
+                        <ActionCard
               title="LinkedIn Automation"
               description="Automate posts, connections, and outreach"
               icon={Linkedin}
@@ -393,21 +425,6 @@ export default function Dashboard() {
               buttonText="Connect"
               onAction={() => window.location.href = "/dashboard/instagram"}
             />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="settings" className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            {quickActions.map((action) => (
-              <ActionCard
-                key={action.title}
-                title={action.title}
-                description={action.description}
-                icon={action.icon}
-                buttonText={action.buttonText}
-                onAction={action.onAction}
-              />
-            ))}
           </div>
         </TabsContent>
       </Tabs>

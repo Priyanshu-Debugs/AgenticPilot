@@ -35,6 +35,30 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .single()
 
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('full_name, company, company_name')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const { data: gmailTokens } = await supabase
+      .from('gmail_tokens')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const { data: twitterConnection } = await supabase
+      .from('twitter_connections')
+      .select('id, access_token')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const { data: linkedinConnection } = await supabase
+      .from('linkedin_connections')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
       console.error('Supabase settings fetch error:', error)
       return NextResponse.json({
@@ -59,10 +83,10 @@ export async function GET(request: NextRequest) {
     // Map to existing frontend structure for backward compatibility
     const responseSettings = {
       profile: {
-        firstName: user.user_metadata?.full_name?.split(' ')[0] || '',
-        lastName: user.user_metadata?.full_name?.split(' ')[1] || '',
+        firstName: profile?.full_name?.split(' ')[0] || user.user_metadata?.full_name?.split(' ')[0] || '',
+        lastName: profile?.full_name?.split(' ')[1] || user.user_metadata?.full_name?.split(' ')[1] || '',
         email: user.email || '',
-        company: '',
+        company: profile?.company_name || profile?.company || '',
         timezone: userSettings.timezone || 'America/New_York',
         language: userSettings.language || 'en'
       },
@@ -95,10 +119,10 @@ export async function GET(request: NextRequest) {
         loginNotifications: true
       },
       integrations: {
-        gmailConnected: false,
+        gmailConnected: !!gmailTokens,
         instagramConnected: false,
-        twitterConnected: false,
-        linkedinConnected: false,
+        twitterConnected: !!twitterConnection?.access_token,
+        linkedinConnected: !!linkedinConnection,
         webhookUrl: ''
       },
       appearance: {
@@ -171,6 +195,28 @@ export async function PUT(request: NextRequest) {
       gmail_reply_confidence_threshold: settings.automation?.gmailConfidenceThreshold ?? 0.8,
       updated_at: new Date().toISOString()
     }
+
+    const fullName = [settings.profile?.firstName, settings.profile?.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+
+    if (fullName) {
+      await supabase.auth.updateUser({
+        data: { full_name: fullName }
+      })
+    }
+
+    await supabase
+      .from('user_profiles')
+      .upsert({
+        user_id: user.id,
+        full_name: fullName || null,
+        company_name: settings.profile?.company || null,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      })
 
     // Use upsert for RLS-compliant insert/update (will automatically filter by auth.uid())
     const { error: upsertError } = await supabase

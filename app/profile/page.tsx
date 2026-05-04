@@ -8,12 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bot, ArrowLeft, Upload, Save, Loader2, Sparkles } from "lucide-react"
 import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
+import { Navigation } from "@/components/shared/Navigation"
 import { useAuth } from "@/utils/auth/AuthProvider"
 import { useUserProfile } from "@/utils/hooks/useUserProfile"
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const { profile, loading, updateProfile } = useUserProfile()
   const [isUpdating, setIsUpdating] = useState(false)
   const [success, setSuccess] = useState("")
@@ -89,6 +89,14 @@ export default function ProfilePage() {
     })
   }
 
+  const navUser = user
+    ? {
+        name: user.full_name || user.email?.split("@")[0] || "User",
+        email: user.email || "",
+        avatar: user.user_metadata?.avatar_url || "",
+      }
+    : undefined
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -101,28 +109,13 @@ export default function ProfilePage() {
   }
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container-padding">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-              <Link href="/" className="text-lg sm:text-xl font-bold">
-                AgenticPilot
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ModeToggle />
-              <Button variant="outline" asChild>
-                <Link href="/dashboard">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation
+        isAuthenticated={!!user}
+        user={navUser}
+        onSignIn={() => window.location.assign("/auth/signin")}
+        onSignUp={() => window.location.assign("/auth/signup")}
+        onSignOut={() => { void signOut() }}
+      />
 
       {/* Profile Content */}
       <div className="container-padding section-spacing">
@@ -159,7 +152,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-4">
                   <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
-                    <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt="Profile" />
+                    <AvatarImage src={user?.user_metadata?.avatar_url || ''} alt="Profile" referrerPolicy="no-referrer" />
                     <AvatarFallback className="text-xl sm:text-2xl">{getUserInitials()}</AvatarFallback>
                   </Avatar>
                   <Button variant="outline" className="w-full" disabled>

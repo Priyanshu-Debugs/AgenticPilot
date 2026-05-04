@@ -37,7 +37,7 @@ export function useUserProfile(): UserProfileHook {
     id: record?.id || record?.user_id || user?.id || '',
     user_id: record?.user_id || user?.id,
     full_name: record?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
-    avatar_url: record?.avatar_url || user?.user_metadata?.avatar_url || null,
+    avatar_url: user?.user_metadata?.avatar_url || null,
     plan: record?.plan || 'starter',
     company: record?.company || record?.company_name || null,
     company_name: record?.company_name || record?.company || null,
@@ -71,7 +71,6 @@ export function useUserProfile(): UserProfileHook {
           .upsert({
             user_id: user.id,
             full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-            avatar_url: user.user_metadata?.avatar_url || null,
             updated_at: new Date().toISOString()
           }, {
             onConflict: 'user_id'
@@ -101,11 +100,16 @@ export function useUserProfile(): UserProfileHook {
     }
 
     try {
+      const filteredUpdates = { ...updates }
+      if ('avatar_url' in filteredUpdates) {
+        delete filteredUpdates.avatar_url
+      }
+
       const { data, error } = await supabase
         .from('user_profiles')
         .upsert({
           user_id: user.id,
-          ...updates,
+          ...filteredUpdates,
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'user_id'

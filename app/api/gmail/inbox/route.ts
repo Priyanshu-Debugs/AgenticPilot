@@ -42,10 +42,21 @@ export async function GET(req: NextRequest) {
     } catch (error: any) {
         console.error('Inbox error:', error)
 
+        const errorMessage = error?.message || ''
+        const errorPayload = error?.response?.data?.error || ''
+        const combinedError = `${errorMessage} ${errorPayload}`
+
         // Check if it's an auth error
-        if (error.message?.includes('No tokens found')) {
+        if (combinedError.includes('No tokens found')) {
             return NextResponse.json(
                 { error: 'Gmail not connected', code: 'NOT_CONNECTED' },
+                { status: 401 }
+            )
+        }
+
+        if (combinedError.includes('GMAIL_REAUTH_REQUIRED') || combinedError.includes('invalid_grant')) {
+            return NextResponse.json(
+                { error: 'Gmail connection expired. Please reconnect.', code: 'REAUTH_REQUIRED' },
                 { status: 401 }
             )
         }

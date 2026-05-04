@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Navigation } from "@/components/shared/Navigation"
 import { SpotlightCard } from "@/components/ui/card"
 import { AnimatedCounter } from "@/components/ui/animations"
-import { AnimeCommandDeck } from "@/components/ui/anime-command-deck"
 import {
   ArrowRight,
   BarChart3,
@@ -20,14 +19,16 @@ import {
   Gauge,
   LayoutDashboard,
   Layers3,
-  Play,
-  Rocket,
   ShieldCheck,
   Sparkles,
   Star,
   Users,
   Workflow,
   Zap,
+  Mail,
+  Twitter,
+  Linkedin,
+  Instagram,
 } from "lucide-react"
 
 interface FeatureItem {
@@ -114,27 +115,22 @@ const neutralBadgeClass =
 const darkBadgeClass =
   "border-white/[0.14] bg-white/[0.06] text-white/75 hover:bg-white/[0.08] hover:text-white"
 
-function FeatureSignal({ feature }: { feature: FeatureItem }) {
+const featureIcons: Record<string, { icon: typeof Mail; color: string; bg: string }> = {
+  "AP-01": { icon: Mail, color: "text-emerald-400", bg: "bg-emerald-500/15" },
+  "AP-02": { icon: Twitter, color: "text-sky-400", bg: "bg-sky-500/15" },
+  "AP-03": { icon: Linkedin, color: "text-blue-400", bg: "bg-blue-500/15" },
+  "AP-04": { icon: Instagram, color: "text-pink-400", bg: "bg-pink-500/15" },
+}
+
+function FeatureIcon({ feature }: { feature: FeatureItem }) {
+  const config = featureIcons[feature.code] || featureIcons["AP-01"]
+  const IconComponent = config.icon
   return (
-    <div className="relative h-20 w-36 overflow-hidden rounded-lg border border-border bg-muted/35 p-3">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground">
-          {feature.code}
-        </span>
-        <span className="h-2 w-2 rounded-full bg-primary/70" />
-      </div>
-      <div className="mt-3 flex items-end gap-1.5">
-        {feature.bars.map((height, index) => (
-          <span
-            key={`${feature.code}-${index}`}
-            className="w-4 rounded-sm bg-gradient-to-t from-primary/35 to-foreground/70"
-            style={{ height: `${Math.max(12, height * 0.25)}px` }}
-          />
-        ))}
-      </div>
-      <div className="absolute bottom-2 left-3 right-3 truncate text-[10px] text-muted-foreground/70">
-        {feature.signal}
-      </div>
+    <div className={`relative flex h-20 w-20 items-center justify-center rounded-xl border border-border ${config.bg}`}>
+      <IconComponent className={`h-8 w-8 ${config.color}`} />
+      <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+        {feature.code.split("-")[1]}
+      </span>
     </div>
   )
 }
@@ -272,7 +268,7 @@ export default function LandingPage() {
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
-        avatar: user.avatar_url,
+        avatar: user.user_metadata?.avatar_url || "",
       }
     : undefined
 
@@ -287,60 +283,6 @@ export default function LandingPage() {
           void signOut()
         }}
       />
-
-      <section className="relative min-h-[84svh] overflow-hidden bg-zinc-950">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.96),rgba(12,18,22,0.92),rgba(0,0,0,0.96))]" />
-        <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:64px_64px]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
-
-        <div className="container-padding relative z-10 mx-auto grid min-h-[84svh] max-w-6xl items-center gap-8 py-16 lg:grid-cols-[1.05fr_0.95fr]">
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-          >
-            <Badge variant="outline" className={darkBadgeClass}>
-              <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              Premium AI workflow suite
-            </Badge>
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-6xl">
-                Run customer conversations, content, and outreach from one command center.
-              </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-white/[0.68] sm:text-lg">
-                AgenticPilot gives growing teams a focused automation cockpit for Gmail, X/Twitter, LinkedIn, and Instagram workflows.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" variant="glow" asChild className="h-12 px-6">
-                <Link href="/auth/signup">
-                  <Rocket className="h-5 w-5" />
-                  Start free
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="glass" asChild className="h-12 border-white/15 bg-white/[0.08] px-6 text-white hover:bg-white/[0.12]">
-                <Link href="/dashboard">
-                  <Play className="h-5 w-5 fill-current" />
-                  Open dashboard
-                </Link>
-              </Button>
-            </div>
-            <div className="grid gap-3 text-sm text-white/[0.68] sm:grid-cols-3">
-              {["No credit card required", "Enterprise-minded controls", "Setup in minutes"].map((item) => (
-                <span key={item} className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  {item}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          <AnimeCommandDeck />
-        </div>
-      </section>
 
       <section className="border-y border-border/70 bg-muted/20">
         <div className="container-padding mx-auto max-w-6xl py-12 sm:py-16">
@@ -437,7 +379,7 @@ export default function LandingPage() {
                 <SpotlightCard className="rounded-lg">
                   <div className="flex h-full flex-col">
                     <div className="mb-5 flex items-start justify-between gap-4">
-                      <FeatureSignal feature={feature} />
+                      <FeatureIcon feature={feature} />
                       <Badge variant="outline" className={neutralBadgeClass}>{feature.stats}</Badge>
                     </div>
                     <h3 className="text-xl font-semibold tracking-tight">{feature.title}</h3>
