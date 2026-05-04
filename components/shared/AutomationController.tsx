@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { ArrowRight, Zap } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { ArrowRight, Zap } from "lucide-react";
 
 interface AutomationTask {
-  id: string
-  name: string
-  description: string
-  href: string
-  actionLabel?: string
+  id: string;
+  name: string;
+  description: string;
+  href: string;
+  actionLabel?: string;
 }
 
 interface AutomationControllerProps {
-  tasks: AutomationTask[]
+  tasks: AutomationTask[];
 }
 export function AutomationController({ tasks }: AutomationControllerProps) {
   return (
@@ -27,10 +27,15 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
           </div>
           <div>
             <h2 className="text-2xl font-bold">Automation Controller</h2>
-            <p className="text-sm text-muted-foreground">Jump directly into each agent workspace</p>
+            <p className="text-sm text-muted-foreground">
+              Jump directly into each agent workspace
+            </p>
           </div>
         </div>
-        <Badge variant="outline" className="flex items-center space-x-2 bg-muted/50">
+        <Badge
+          variant="outline"
+          className="flex items-center space-x-2 bg-muted/50"
+        >
           <Zap className="h-3 w-3" />
           <span>{tasks.length} Agents</span>
         </Badge>
@@ -43,7 +48,9 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">{task.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {task.description}
+                  </p>
                 </div>
                 <Button asChild size="sm" className="gap-2">
                   <Link href={task.href}>
@@ -75,5 +82,5 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
         </Card>
       )}
     </div>
-  )
+  );
 }

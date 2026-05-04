@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
 // Core UI components
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Bot, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Navigation } from "@/components/shared/Navigation"
-import { SettingsPage } from "@/components/shared/SettingsPage"
-import { useSettings } from "@/utils/hooks/useSettings"
-import { useAuth } from "@/utils/auth/AuthProvider"
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Bot, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Navigation } from "@/components/shared/Navigation";
+import { SettingsPage } from "@/components/shared/SettingsPage";
+import { useSettings } from "@/utils/hooks/useSettings";
+import { useAuth } from "@/utils/auth/AuthProvider";
 
 /**
  * Settings Component
- * 
+ *
  * Standalone page for application settings and preferences.
  * Uses "use client" directive because it passes event handlers to child components.
- * 
+ *
  * Features:
  * - Comprehensive settings interface with tabs
  * - Profile, notifications, automation, security, and integration settings
@@ -24,51 +24,60 @@ import { useAuth } from "@/utils/auth/AuthProvider"
  * - Back to dashboard navigation
  */
 export default function Settings() {
-  const { settings, loading, error, saveSettings, resetSettings } = useSettings()
+  const { settings, loading, error, saveSettings, resetSettings } =
+    useSettings();
 
   const handleSave = async (newSettings: any) => {
     try {
-      await saveSettings(newSettings)
-      toast.success("Settings saved successfully!", { description: "Your preferences have been updated." })
+      await saveSettings(newSettings);
+      toast.success("Settings saved successfully!", {
+        description: "Your preferences have been updated.",
+      });
     } catch (err) {
-      console.error('Failed to save settings:', err)
-      toast.error("Failed to save settings", { description: "Please try again." })
+      console.error("Failed to save settings:", err);
+      toast.error("Failed to save settings", {
+        description: "Please try again.",
+      });
     }
-  }
+  };
 
   const handleReset = async () => {
     try {
-      await resetSettings()
-      toast.success("Settings reset", { description: "All settings have been restored to defaults." })
+      await resetSettings();
+      toast.success("Settings reset", {
+        description: "All settings have been restored to defaults.",
+      });
     } catch (err) {
-      console.error('Failed to reset settings:', err)
-      toast.error("Failed to reset settings", { description: "Please try again." })
+      console.error("Failed to reset settings:", err);
+      toast.error("Failed to reset settings", {
+        description: "Please try again.",
+      });
     }
-  }
+  };
 
   const handleExport = () => {
-    if (!settings) return
-    
-    const dataStr = JSON.stringify(settings, null, 2)
-    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(dataBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'agenticpilot-settings.json'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
+    if (!settings) return;
 
-  const { user, signOut } = useAuth()
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "agenticpilot-settings.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const { user, signOut } = useAuth();
   const navUser = user
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: user.user_metadata?.avatar_url || "",
       }
-    : undefined
+    : undefined;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -77,7 +86,9 @@ export default function Settings() {
         user={navUser}
         onSignIn={() => window.location.assign("/auth/signin")}
         onSignUp={() => window.location.assign("/auth/signup")}
-        onSignOut={() => { void signOut() }}
+        onSignOut={() => {
+          void signOut();
+        }}
       />
 
       {/* Settings Content */}
@@ -92,7 +103,9 @@ export default function Settings() {
         ) : error ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <p className="text-destructive mb-4">Error loading settings: {error}</p>
+              <p className="text-destructive mb-4">
+                Error loading settings: {error}
+              </p>
               <Button onClick={() => window.location.reload()}>Retry</Button>
             </div>
           </div>
@@ -110,5 +123,5 @@ export default function Settings() {
         )}
       </div>
     </div>
-  )
+  );
 }

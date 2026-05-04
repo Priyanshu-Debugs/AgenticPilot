@@ -1,61 +1,61 @@
-"use client"
+"use client";
 
 // Core UI components
-import { Button } from "@/components/ui/button"
-import { Bot } from "lucide-react"
-import Link from "next/link"
-import { Navigation } from "@/components/shared/Navigation"
-import { NotificationSystem } from "@/components/shared/NotificationSystem"
-import { useNotifications } from "@/utils/hooks/useNotifications"
-import { useAuth } from "@/utils/auth/AuthProvider"
+import { Button } from "@/components/ui/button";
+import { Bot } from "lucide-react";
+import Link from "next/link";
+import { Navigation } from "@/components/shared/Navigation";
+import { NotificationSystem } from "@/components/shared/NotificationSystem";
+import { useNotifications } from "@/utils/hooks/useNotifications";
+import { useAuth } from "@/utils/auth/AuthProvider";
 
 /**
  * NotificationsPage Component
- * 
+ *
  * Standalone page for viewing and managing notifications.
  * Uses shared Navigation component for consistent UI.
  */
 export default function NotificationsPage() {
-  const { user, signOut } = useAuth()
-  const { 
-    notifications, 
-    loading, 
-    error, 
-    markAsRead, 
-    markAllAsRead, 
-    dismissNotification 
-  } = useNotifications()
+  const { user, signOut } = useAuth();
+  const {
+    notifications,
+    loading,
+    error,
+    markAsRead,
+    markAllAsRead,
+    dismissNotification,
+  } = useNotifications();
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      await markAsRead(id, true)
+      await markAsRead(id, true);
     } catch (err) {
-      console.error('Failed to mark notification as read:', err)
+      console.error("Failed to mark notification as read:", err);
     }
-  }
+  };
 
   const handleMarkAllAsRead = async () => {
     try {
-      await markAllAsRead()
+      await markAllAsRead();
     } catch (err) {
-      console.error('Failed to mark all notifications as read:', err)
+      console.error("Failed to mark all notifications as read:", err);
     }
-  }
+  };
 
   const handleDismiss = async (id: string) => {
     try {
-      await dismissNotification(id)
+      await dismissNotification(id);
     } catch (err) {
-      console.error('Failed to dismiss notification:', err)
+      console.error("Failed to dismiss notification:", err);
     }
-  }
+  };
 
   const handleAction = (notification: any) => {
     // Handle notification action
     if (notification.action_url) {
-      window.location.href = notification.action_url
+      window.location.href = notification.action_url;
     }
-  }
+  };
 
   const navUser = user
     ? {
@@ -63,7 +63,7 @@ export default function NotificationsPage() {
         email: user.email || "",
         avatar: user.user_metadata?.avatar_url || "",
       }
-    : undefined
+    : undefined;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -72,7 +72,9 @@ export default function NotificationsPage() {
         user={navUser}
         onSignIn={() => window.location.assign("/auth/signin")}
         onSignUp={() => window.location.assign("/auth/signup")}
-        onSignOut={() => { void signOut() }}
+        onSignOut={() => {
+          void signOut();
+        }}
       />
 
       {/* Notifications Content */}
@@ -87,7 +89,9 @@ export default function NotificationsPage() {
         ) : error ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <p className="text-destructive mb-4">Error loading notifications: {error}</p>
+              <p className="text-destructive mb-4">
+                Error loading notifications: {error}
+              </p>
               <Button onClick={() => window.location.reload()}>Retry</Button>
             </div>
           </div>
@@ -103,5 +107,5 @@ export default function NotificationsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

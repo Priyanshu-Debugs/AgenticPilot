@@ -1,16 +1,28 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Settings,
   User,
@@ -28,15 +40,15 @@ import {
   Eye,
   EyeOff,
   CheckCircle,
-  AlertTriangle
-} from "lucide-react"
-import { toast } from "sonner"
+  AlertTriangle,
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface SettingsProps {
-  settings?: any
-  onSave?: (settings: any) => void
-  onReset?: () => void
-  onExport?: () => void
+  settings?: any;
+  onSave?: (settings: any) => void;
+  onReset?: () => void;
+  onExport?: () => void;
 }
 
 const defaultSettings = {
@@ -46,7 +58,7 @@ const defaultSettings = {
     email: "",
     company: "",
     timezone: "UTC",
-    language: "en"
+    language: "en",
   },
   notifications: {
     emailNotifications: true,
@@ -55,7 +67,7 @@ const defaultSettings = {
     taskCompletion: true,
     lowStock: true,
     systemUpdates: true,
-    weeklyReport: true
+    weeklyReport: true,
   },
   automation: {
     gmailEnabled: false,
@@ -66,13 +78,13 @@ const defaultSettings = {
     twitterPostFrequency: "5",
     linkedinEnabled: false,
     linkedinPostSchedule: "Tue,Thu",
-    autoReorder: false
+    autoReorder: false,
   },
   security: {
     twoFactorEnabled: false,
     sessionTimeout: "30",
     passwordExpiry: "90",
-    loginNotifications: true
+    loginNotifications: true,
   },
   integrations: {
     gmailConnected: false,
@@ -80,12 +92,12 @@ const defaultSettings = {
     twitterConnected: false,
     linkedinConnected: false,
     apiKey: "",
-    webhookUrl: ""
+    webhookUrl: "",
   },
   appearance: {
-    theme: "system"
-  }
-}
+    theme: "system",
+  },
+};
 
 const mergeSettings = (incoming?: any) => ({
   ...defaultSettings,
@@ -114,123 +126,137 @@ const mergeSettings = (incoming?: any) => ({
     ...defaultSettings.appearance,
     ...incoming?.appearance,
   },
-})
+});
 
 export function SettingsPage({
   settings: initialSettings,
-  onSave = () => { },
-  onReset = () => { },
-  onExport = () => { },
+  onSave = () => {},
+  onReset = () => {},
+  onExport = () => {},
 }: SettingsProps) {
-  const [showPassword, setShowPassword] = useState(false)
-  const [integrationLoading, setIntegrationLoading] = useState<string | null>(null)
-  const [settings, setSettings] = useState(() => mergeSettings(initialSettings))
+  const [showPassword, setShowPassword] = useState(false);
+  const [integrationLoading, setIntegrationLoading] = useState<string | null>(
+    null,
+  );
+  const [settings, setSettings] = useState(() =>
+    mergeSettings(initialSettings),
+  );
 
   // Update settings when initialSettings prop changes
   React.useEffect(() => {
     if (initialSettings) {
-      setSettings(mergeSettings(initialSettings))
+      setSettings(mergeSettings(initialSettings));
     }
-  }, [initialSettings])
+  }, [initialSettings]);
 
   const handleSettingChange = (category: string, key: string, value: any) => {
     setSettings((prev: any) => ({
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
-        [key]: value
-      }
-    }))
-  }
+        [key]: value,
+      },
+    }));
+  };
 
   const handleSave = () => {
-    onSave(settings)
-  }
+    onSave(settings);
+  };
 
   const handleReset = () => {
-    onReset()
-  }
+    onReset();
+  };
 
   const updateIntegration = (key: string, value: boolean) => {
     setSettings((prev: any) => ({
       ...prev,
       integrations: {
         ...prev.integrations,
-        [key]: value
-      }
-    }))
-  }
+        [key]: value,
+      },
+    }));
+  };
 
-  const handleIntegrationAction = async (provider: 'gmail' | 'twitter' | 'linkedin' | 'instagram') => {
-    if (!settings) return
+  const handleIntegrationAction = async (
+    provider: "gmail" | "twitter" | "linkedin" | "instagram",
+  ) => {
+    if (!settings) return;
 
-    setIntegrationLoading(provider)
+    setIntegrationLoading(provider);
     try {
-      if (provider === 'gmail') {
+      if (provider === "gmail") {
         if (settings.integrations.gmailConnected) {
-          const res = await fetch('/api/gmail/disconnect', { method: 'POST' })
-          const data = await res.json()
-          if (!res.ok) throw new Error(data.error || 'Failed to disconnect Gmail')
-          updateIntegration('gmailConnected', false)
-          toast.success('Gmail disconnected')
-          return
+          const res = await fetch("/api/gmail/disconnect", { method: "POST" });
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error || "Failed to disconnect Gmail");
+          updateIntegration("gmailConnected", false);
+          toast.success("Gmail disconnected");
+          return;
         }
 
-        const res = await fetch('/api/gmail/connect', { method: 'POST' })
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Failed to connect Gmail')
+        const res = await fetch("/api/gmail/connect", { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to connect Gmail");
         if (data.authUrl) {
-          window.location.href = data.authUrl
-          return
+          window.location.href = data.authUrl;
+          return;
         }
-        throw new Error('Missing authorization URL')
+        throw new Error("Missing authorization URL");
       }
 
-      if (provider === 'linkedin') {
+      if (provider === "linkedin") {
         if (settings.integrations.linkedinConnected) {
-          const res = await fetch('/api/linkedin/disconnect', { method: 'DELETE' })
-          const data = await res.json()
-          if (!res.ok) throw new Error(data.error || 'Failed to disconnect LinkedIn')
-          updateIntegration('linkedinConnected', false)
-          toast.success('LinkedIn disconnected')
-          return
+          const res = await fetch("/api/linkedin/disconnect", {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error || "Failed to disconnect LinkedIn");
+          updateIntegration("linkedinConnected", false);
+          toast.success("LinkedIn disconnected");
+          return;
         }
 
-        const res = await fetch('/api/linkedin/connect', { method: 'POST' })
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Failed to connect LinkedIn')
+        const res = await fetch("/api/linkedin/connect", { method: "POST" });
+        const data = await res.json();
+        if (!res.ok)
+          throw new Error(data.error || "Failed to connect LinkedIn");
         if (data.authUrl) {
-          window.location.href = data.authUrl
-          return
+          window.location.href = data.authUrl;
+          return;
         }
-        throw new Error('Missing authorization URL')
+        throw new Error("Missing authorization URL");
       }
 
-      if (provider === 'twitter') {
+      if (provider === "twitter") {
         if (settings.integrations.twitterConnected) {
-          const res = await fetch('/api/twitter/disconnect', { method: 'DELETE' })
-          const data = await res.json()
-          if (!res.ok) throw new Error(data.error || 'Failed to disconnect X/Twitter')
-          updateIntegration('twitterConnected', false)
-          toast.success('X/Twitter disconnected')
-          return
+          const res = await fetch("/api/twitter/disconnect", {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.error || "Failed to disconnect X/Twitter");
+          updateIntegration("twitterConnected", false);
+          toast.success("X/Twitter disconnected");
+          return;
         }
 
-        toast.info('Add your X client credentials to connect.')
-        window.location.href = '/dashboard/twitter'
-        return
+        toast.info("Add your X client credentials to connect.");
+        window.location.href = "/dashboard/twitter";
+        return;
       }
 
-      if (provider === 'instagram') {
-        toast.info('Open Instagram Studio to start creating posts.')
-        window.location.href = '/dashboard/instagram'
+      if (provider === "instagram") {
+        toast.info("Open Instagram Studio to start creating posts.");
+        window.location.href = "/dashboard/instagram";
       }
     } catch (error: any) {
-      toast.error(error?.message || 'Integration action failed')
+      toast.error(error?.message || "Integration action failed");
     } finally {
-      setIntegrationLoading(null)
+      setIntegrationLoading(null);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -264,11 +290,17 @@ export function SettingsPage({
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">Profile</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="notifications"
+            className="flex items-center space-x-2"
+          >
             <Bell className="h-4 w-4" />
             <span className="hidden sm:inline">Notifications</span>
           </TabsTrigger>
-          <TabsTrigger value="automation" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="automation"
+            className="flex items-center space-x-2"
+          >
             <Zap className="h-4 w-4" />
             <span className="hidden sm:inline">Automation</span>
           </TabsTrigger>
@@ -276,7 +308,10 @@ export function SettingsPage({
             <Shield className="h-4 w-4" />
             <span className="hidden sm:inline">Security</span>
           </TabsTrigger>
-          <TabsTrigger value="integrations" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="integrations"
+            className="flex items-center space-x-2"
+          >
             <Database className="h-4 w-4" />
             <span className="hidden sm:inline">Integrations</span>
           </TabsTrigger>
@@ -301,7 +336,13 @@ export function SettingsPage({
                   <Input
                     id="firstName"
                     value={settings.profile.firstName}
-                    onChange={(e) => handleSettingChange("profile", "firstName", e.target.value)}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "profile",
+                        "firstName",
+                        e.target.value,
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -309,7 +350,9 @@ export function SettingsPage({
                   <Input
                     id="lastName"
                     value={settings.profile.lastName}
-                    onChange={(e) => handleSettingChange("profile", "lastName", e.target.value)}
+                    onChange={(e) =>
+                      handleSettingChange("profile", "lastName", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -328,28 +371,48 @@ export function SettingsPage({
                 <Input
                   id="company"
                   value={settings.profile.company}
-                  onChange={(e) => handleSettingChange("profile", "company", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("profile", "company", e.target.value)
+                  }
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
-                  <Select value={settings.profile.timezone} onValueChange={(value) => handleSettingChange("profile", "timezone", value)}>
+                  <Select
+                    value={settings.profile.timezone}
+                    onValueChange={(value) =>
+                      handleSettingChange("profile", "timezone", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select timezone" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                      <SelectItem value="America/Chicago">Central Time</SelectItem>
-                      <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                      <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                      <SelectItem value="America/New_York">
+                        Eastern Time
+                      </SelectItem>
+                      <SelectItem value="America/Chicago">
+                        Central Time
+                      </SelectItem>
+                      <SelectItem value="America/Denver">
+                        Mountain Time
+                      </SelectItem>
+                      <SelectItem value="America/Los_Angeles">
+                        Pacific Time
+                      </SelectItem>
                       <SelectItem value="UTC">UTC</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="language">Language</Label>
-                  <Select value={settings.profile.language} onValueChange={(value) => handleSettingChange("profile", "language", value)}>
+                  <Select
+                    value={settings.profile.language}
+                    onValueChange={(value) =>
+                      handleSettingChange("profile", "language", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select language" />
                     </SelectTrigger>
@@ -385,31 +448,55 @@ export function SettingsPage({
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">Receive notifications via email</p>
+                      <p className="text-sm text-muted-foreground">
+                        Receive notifications via email
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.emailNotifications}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "emailNotifications", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "emailNotifications",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Push Notifications</Label>
-                      <p className="text-sm text-muted-foreground">Receive browser push notifications</p>
+                      <p className="text-sm text-muted-foreground">
+                        Receive browser push notifications
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.pushNotifications}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "pushNotifications", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "pushNotifications",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>SMS Notifications</Label>
-                      <p className="text-sm text-muted-foreground">Receive critical alerts via SMS</p>
+                      <p className="text-sm text-muted-foreground">
+                        Receive critical alerts via SMS
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.smsNotifications}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "smsNotifications", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "smsNotifications",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -421,41 +508,73 @@ export function SettingsPage({
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Task Completion</Label>
-                      <p className="text-sm text-muted-foreground">When automation tasks complete</p>
+                      <p className="text-sm text-muted-foreground">
+                        When automation tasks complete
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.taskCompletion}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "taskCompletion", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "taskCompletion",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Engagement Alerts</Label>
-                      <p className="text-sm text-muted-foreground">When posts get high engagement</p>
+                      <p className="text-sm text-muted-foreground">
+                        When posts get high engagement
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.lowStock}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "lowStock", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "lowStock",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>System Updates</Label>
-                      <p className="text-sm text-muted-foreground">When new features are available</p>
+                      <p className="text-sm text-muted-foreground">
+                        When new features are available
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.systemUpdates}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "systemUpdates", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "systemUpdates",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Weekly Report</Label>
-                      <p className="text-sm text-muted-foreground">Weekly automation summary</p>
+                      <p className="text-sm text-muted-foreground">
+                        Weekly automation summary
+                      </p>
                     </div>
                     <Switch
                       checked={settings.notifications.weeklyReport}
-                      onCheckedChange={(checked) => handleSettingChange("notifications", "weeklyReport", checked)}
+                      onCheckedChange={(checked) =>
+                        handleSettingChange(
+                          "notifications",
+                          "weeklyReport",
+                          checked,
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -473,7 +592,11 @@ export function SettingsPage({
                 <CardTitle className="flex items-center space-x-2">
                   <Mail className="h-5 w-5" />
                   <span>Gmail Automation</span>
-                  <Badge variant={settings.automation.gmailEnabled ? "default" : "secondary"}>
+                  <Badge
+                    variant={
+                      settings.automation.gmailEnabled ? "default" : "secondary"
+                    }
+                  >
                     {settings.automation.gmailEnabled ? "Active" : "Inactive"}
                   </Badge>
                 </CardTitle>
@@ -483,12 +606,23 @@ export function SettingsPage({
                   <Label>Enable Gmail Automation</Label>
                   <Switch
                     checked={settings.automation.gmailEnabled}
-                    onCheckedChange={(checked) => handleSettingChange("automation", "gmailEnabled", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange("automation", "gmailEnabled", checked)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Check Interval (minutes)</Label>
-                  <Select value={settings.automation.gmailCheckInterval} onValueChange={(value) => handleSettingChange("automation", "gmailCheckInterval", value)}>
+                  <Select
+                    value={settings.automation.gmailCheckInterval}
+                    onValueChange={(value) =>
+                      handleSettingChange(
+                        "automation",
+                        "gmailCheckInterval",
+                        value,
+                      )
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -509,8 +643,16 @@ export function SettingsPage({
                 <CardTitle className="flex items-center space-x-2">
                   <Instagram className="h-5 w-5" />
                   <span>Instagram Automation</span>
-                  <Badge variant={settings.automation.instagramEnabled ? "default" : "secondary"}>
-                    {settings.automation.instagramEnabled ? "Active" : "Inactive"}
+                  <Badge
+                    variant={
+                      settings.automation.instagramEnabled
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {settings.automation.instagramEnabled
+                      ? "Active"
+                      : "Inactive"}
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -519,7 +661,13 @@ export function SettingsPage({
                   <Label>Enable Instagram Automation</Label>
                   <Switch
                     checked={settings.automation.instagramEnabled}
-                    onCheckedChange={(checked) => handleSettingChange("automation", "instagramEnabled", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange(
+                        "automation",
+                        "instagramEnabled",
+                        checked,
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -527,7 +675,13 @@ export function SettingsPage({
                   <Input
                     type="time"
                     value={settings.automation.instagramPostTime}
-                    onChange={(e) => handleSettingChange("automation", "instagramPostTime", e.target.value)}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "automation",
+                        "instagramPostTime",
+                        e.target.value,
+                      )
+                    }
                   />
                 </div>
               </CardContent>
@@ -539,7 +693,13 @@ export function SettingsPage({
                 <CardTitle className="flex items-center space-x-2">
                   <Twitter className="h-5 w-5" />
                   <span>X/Twitter Automation</span>
-                  <Badge variant={settings.automation.twitterEnabled ? "default" : "secondary"}>
+                  <Badge
+                    variant={
+                      settings.automation.twitterEnabled
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
                     {settings.automation.twitterEnabled ? "Active" : "Inactive"}
                   </Badge>
                 </CardTitle>
@@ -549,7 +709,13 @@ export function SettingsPage({
                   <Label>Enable Twitter Automation</Label>
                   <Switch
                     checked={settings.automation.twitterEnabled}
-                    onCheckedChange={(checked) => handleSettingChange("automation", "twitterEnabled", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange(
+                        "automation",
+                        "twitterEnabled",
+                        checked,
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -557,7 +723,13 @@ export function SettingsPage({
                   <Input
                     type="number"
                     value={settings.automation.twitterPostFrequency}
-                    onChange={(e) => handleSettingChange("automation", "twitterPostFrequency", e.target.value)}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "automation",
+                        "twitterPostFrequency",
+                        e.target.value,
+                      )
+                    }
                   />
                 </div>
               </CardContent>
@@ -569,8 +741,16 @@ export function SettingsPage({
                 <CardTitle className="flex items-center space-x-2">
                   <Linkedin className="h-5 w-5" />
                   <span>LinkedIn Automation</span>
-                  <Badge variant={settings.automation.linkedinEnabled ? "default" : "secondary"}>
-                    {settings.automation.linkedinEnabled ? "Active" : "Inactive"}
+                  <Badge
+                    variant={
+                      settings.automation.linkedinEnabled
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {settings.automation.linkedinEnabled
+                      ? "Active"
+                      : "Inactive"}
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -579,14 +759,26 @@ export function SettingsPage({
                   <Label>Enable LinkedIn Automation</Label>
                   <Switch
                     checked={settings.automation.linkedinEnabled}
-                    onCheckedChange={(checked) => handleSettingChange("automation", "linkedinEnabled", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange(
+                        "automation",
+                        "linkedinEnabled",
+                        checked,
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Posting Schedule</Label>
                   <Input
                     value={settings.automation.linkedinPostSchedule}
-                    onChange={(e) => handleSettingChange("automation", "linkedinPostSchedule", e.target.value)}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "automation",
+                        "linkedinPostSchedule",
+                        e.target.value,
+                      )
+                    }
                   />
                 </div>
               </CardContent>
@@ -611,21 +803,37 @@ export function SettingsPage({
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Two-Factor Authentication</Label>
-                    <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+                    <p className="text-sm text-muted-foreground">
+                      Add an extra layer of security
+                    </p>
                   </div>
                   <Switch
                     checked={settings.security.twoFactorEnabled}
-                    onCheckedChange={(checked) => handleSettingChange("security", "twoFactorEnabled", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange(
+                        "security",
+                        "twoFactorEnabled",
+                        checked,
+                      )
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Login Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Get notified of new logins</p>
+                    <p className="text-sm text-muted-foreground">
+                      Get notified of new logins
+                    </p>
                   </div>
                   <Switch
                     checked={settings.security.loginNotifications}
-                    onCheckedChange={(checked) => handleSettingChange("security", "loginNotifications", checked)}
+                    onCheckedChange={(checked) =>
+                      handleSettingChange(
+                        "security",
+                        "loginNotifications",
+                        checked,
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -633,7 +841,12 @@ export function SettingsPage({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Session Timeout (minutes)</Label>
-                  <Select value={settings.security.sessionTimeout} onValueChange={(value) => handleSettingChange("security", "sessionTimeout", value)}>
+                  <Select
+                    value={settings.security.sessionTimeout}
+                    onValueChange={(value) =>
+                      handleSettingChange("security", "sessionTimeout", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -647,7 +860,12 @@ export function SettingsPage({
                 </div>
                 <div className="space-y-2">
                   <Label>Password Expiry (days)</Label>
-                  <Select value={settings.security.passwordExpiry} onValueChange={(value) => handleSettingChange("security", "passwordExpiry", value)}>
+                  <Select
+                    value={settings.security.passwordExpiry}
+                    onValueChange={(value) =>
+                      handleSettingChange("security", "passwordExpiry", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -695,24 +913,34 @@ export function SettingsPage({
                         <Label>Gmail</Label>
                         <p className="text-sm text-muted-foreground">
                           {settings.integrations.gmailConnected
-                            ? (settings.profile.email || "Connected")
+                            ? settings.profile.email || "Connected"
                             : "Not connected"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={settings.integrations.gmailConnected ? "default" : "secondary"}>
-                        {settings.integrations.gmailConnected ? "Connected" : "Disconnected"}
+                      <Badge
+                        variant={
+                          settings.integrations.gmailConnected
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {settings.integrations.gmailConnected
+                          ? "Connected"
+                          : "Disconnected"}
                       </Badge>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleIntegrationAction('gmail')}
-                        disabled={integrationLoading === 'gmail'}
+                        onClick={() => handleIntegrationAction("gmail")}
+                        disabled={integrationLoading === "gmail"}
                       >
-                        {integrationLoading === 'gmail'
+                        {integrationLoading === "gmail"
                           ? "Working..."
-                          : (settings.integrations.gmailConnected ? "Disconnect" : "Connect")}
+                          : settings.integrations.gmailConnected
+                            ? "Disconnect"
+                            : "Connect"}
                       </Button>
                     </div>
                   </div>
@@ -722,21 +950,33 @@ export function SettingsPage({
                       <div>
                         <Label>Instagram</Label>
                         <p className="text-sm text-muted-foreground">
-                          {settings.integrations.instagramConnected ? "Connected account" : "Not connected"}
+                          {settings.integrations.instagramConnected
+                            ? "Connected account"
+                            : "Not connected"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={settings.integrations.instagramConnected ? "default" : "secondary"}>
-                        {settings.integrations.instagramConnected ? "Connected" : "Disconnected"}
+                      <Badge
+                        variant={
+                          settings.integrations.instagramConnected
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {settings.integrations.instagramConnected
+                          ? "Connected"
+                          : "Disconnected"}
                       </Badge>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleIntegrationAction('instagram')}
-                        disabled={integrationLoading === 'instagram'}
+                        onClick={() => handleIntegrationAction("instagram")}
+                        disabled={integrationLoading === "instagram"}
                       >
-                        {integrationLoading === 'instagram' ? "Working..." : "Open Studio"}
+                        {integrationLoading === "instagram"
+                          ? "Working..."
+                          : "Open Studio"}
                       </Button>
                     </div>
                   </div>
@@ -746,23 +986,35 @@ export function SettingsPage({
                       <div>
                         <Label>X/Twitter</Label>
                         <p className="text-sm text-muted-foreground">
-                          {settings.integrations.twitterConnected ? "Connected account" : "Not connected"}
+                          {settings.integrations.twitterConnected
+                            ? "Connected account"
+                            : "Not connected"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={settings.integrations.twitterConnected ? "default" : "secondary"}>
-                        {settings.integrations.twitterConnected ? "Connected" : "Disconnected"}
+                      <Badge
+                        variant={
+                          settings.integrations.twitterConnected
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {settings.integrations.twitterConnected
+                          ? "Connected"
+                          : "Disconnected"}
                       </Badge>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleIntegrationAction('twitter')}
-                        disabled={integrationLoading === 'twitter'}
+                        onClick={() => handleIntegrationAction("twitter")}
+                        disabled={integrationLoading === "twitter"}
                       >
-                        {integrationLoading === 'twitter'
+                        {integrationLoading === "twitter"
                           ? "Working..."
-                          : (settings.integrations.twitterConnected ? "Disconnect" : "Connect")}
+                          : settings.integrations.twitterConnected
+                            ? "Disconnect"
+                            : "Connect"}
                       </Button>
                     </div>
                   </div>
@@ -773,24 +1025,35 @@ export function SettingsPage({
                         <Label>LinkedIn</Label>
                         <p className="text-sm text-muted-foreground">
                           {settings.integrations.linkedinConnected
-                            ? (settings.profile.company || "Connected organization")
+                            ? settings.profile.company ||
+                              "Connected organization"
                             : "Not connected"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={settings.integrations.linkedinConnected ? "default" : "secondary"}>
-                        {settings.integrations.linkedinConnected ? "Connected" : "Disconnected"}
+                      <Badge
+                        variant={
+                          settings.integrations.linkedinConnected
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {settings.integrations.linkedinConnected
+                          ? "Connected"
+                          : "Disconnected"}
                       </Badge>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleIntegrationAction('linkedin')}
-                        disabled={integrationLoading === 'linkedin'}
+                        onClick={() => handleIntegrationAction("linkedin")}
+                        disabled={integrationLoading === "linkedin"}
                       >
-                        {integrationLoading === 'linkedin'
+                        {integrationLoading === "linkedin"
                           ? "Working..."
-                          : (settings.integrations.linkedinConnected ? "Disconnect" : "Connect")}
+                          : settings.integrations.linkedinConnected
+                            ? "Disconnect"
+                            : "Connect"}
                       </Button>
                     </div>
                   </div>
@@ -807,14 +1070,24 @@ export function SettingsPage({
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={settings.integrations.apiKey || ""}
-                        onChange={(e) => handleSettingChange("integrations", "apiKey", e.target.value)}
+                        onChange={(e) =>
+                          handleSettingChange(
+                            "integrations",
+                            "apiKey",
+                            e.target.value,
+                          )
+                        }
                         className="flex-1"
                       />
                       <Button
                         variant="outline"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </Button>
                       <Button variant="outline">
                         <RefreshCw className="h-4 w-4" />
@@ -825,7 +1098,13 @@ export function SettingsPage({
                     <Label>Webhook URL</Label>
                     <Input
                       value={settings.integrations.webhookUrl || ""}
-                      onChange={(e) => handleSettingChange("integrations", "webhookUrl", e.target.value)}
+                      onChange={(e) =>
+                        handleSettingChange(
+                          "integrations",
+                          "webhookUrl",
+                          e.target.value,
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -834,7 +1113,8 @@ export function SettingsPage({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Keep your API key secure. Never share it publicly or commit it to version control.
+                  Keep your API key secure. Never share it publicly or commit it
+                  to version control.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -844,9 +1124,9 @@ export function SettingsPage({
 
       {/* Save/Reset Actions */}
       <div className="flex justify-between items-center pt-6">
-          <Button variant="outline" onClick={onExport}>
-            Export Settings
-          </Button>
+        <Button variant="outline" onClick={onExport}>
+          Export Settings
+        </Button>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={onReset}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -859,5 +1139,5 @@ export function SettingsPage({
         </div>
       </div>
     </div>
-  )
+  );
 }
