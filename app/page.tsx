@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Navigation } from "@/components/shared/Navigation";
 import { SpotlightCard } from "@/components/ui/card";
 import { AnimatedCounter } from "@/components/ui/animations";
+import { DottedSurface } from "@/components/ui/dotted-surface";
 import {
   ArrowRight,
   BarChart3,
@@ -323,6 +324,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-4rem)] overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 flex items-center">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <DottedSurface className="z-0 opacity-50" />
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]" />
 
         <div className="container-padding mx-auto max-w-5xl text-center relative z-10">
