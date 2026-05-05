@@ -28,19 +28,29 @@ export default function AboutPage() {
       name: "Priyaanshu Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/Priyanshu-Debugs",
+      avatar: "https://github.com/Priyanshu-Debugs.png",
       bio: "Focuses on intelligent automation architecture and robust full-stack infrastructure.",
     },
     {
       name: "Mihir Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/mihirpatel204",
+      avatar: "https://github.com/mihirpatel204.png",
       bio: "Specializes in scalable backend systems and high-performance data processing.",
     },
     {
       name: "Sujal Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/sujal7122005",
+      avatar: "https://github.com/sujal7122005.png",
       bio: "Passionate about creating seamless user experiences and modern frontend interfaces.",
+    },
+    {
+      name: "Vashishtha Patel",
+      role: "Co-Founder & Developer",
+      github: "https://www.github.com/vashishthapatel",
+      avatar: "https://github.com/vashishthapatel.png",
+      bio: "Studying Computer Engineering at VGEC and focused on building reliable, scalable AI automation systems.",
     },
   ];
 
@@ -88,7 +98,7 @@ export default function AboutPage() {
 
           {/* Founders Grid */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -110,13 +120,13 @@ export default function AboutPage() {
                 className="h-full"
               >
                 <SpotlightCard className="h-full flex flex-col p-6 items-center text-center">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6">
-                    <span className="text-2xl font-bold text-primary">
-                      {founder.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 p-[2px] mb-6">
+                    <img
+                      src={founder.avatar}
+                      alt={`${founder.name} GitHub profile`}
+                      className="w-full h-full rounded-full object-cover bg-muted"
+                      loading="lazy"
+                    />
                   </div>
 
                   <h3 className="text-xl font-bold mb-1">{founder.name}</h3>
