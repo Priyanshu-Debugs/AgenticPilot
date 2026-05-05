@@ -180,9 +180,9 @@ export function DashboardNavbar({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full"
+                  className="relative h-8 w-8 rounded-full"
                 >
-                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage
                       src={avatarUrl}
                       alt="User"
