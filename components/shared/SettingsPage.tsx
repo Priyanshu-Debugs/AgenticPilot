@@ -27,8 +27,6 @@ import {
   Settings,
   User,
   Bell,
-  Shield,
-  Zap,
   Database,
   Mail,
   Instagram,
@@ -36,10 +34,8 @@ import {
   Linkedin,
   Save,
   RefreshCw,
-  Trash2,
   Eye,
   EyeOff,
-  CheckCircle,
   AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -285,7 +281,7 @@ export function SettingsPage({
 
       {/* Settings Tabs */}
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3 gap-2">
           <TabsTrigger value="profile" className="flex items-center space-x-2">
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">Profile</span>
@@ -297,17 +293,7 @@ export function SettingsPage({
             <Bell className="h-4 w-4" />
             <span className="hidden sm:inline">Notifications</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="automation"
-            className="flex items-center space-x-2"
-          >
-            <Zap className="h-4 w-4" />
-            <span className="hidden sm:inline">Automation</span>
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center space-x-2">
-            <Shield className="h-4 w-4" />
-            <span className="hidden sm:inline">Security</span>
-          </TabsTrigger>
+
           <TabsTrigger
             value="integrations"
             className="flex items-center space-x-2"
@@ -583,311 +569,6 @@ export function SettingsPage({
           </Card>
         </TabsContent>
 
-        {/* Automation Settings */}
-        <TabsContent value="automation" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-            {/* Gmail Automation */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5" />
-                  <span>Gmail Automation</span>
-                  <Badge
-                    variant={
-                      settings.automation.gmailEnabled ? "default" : "secondary"
-                    }
-                  >
-                    {settings.automation.gmailEnabled ? "Active" : "Inactive"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Enable Gmail Automation</Label>
-                  <Switch
-                    checked={settings.automation.gmailEnabled}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange("automation", "gmailEnabled", checked)
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Check Interval (minutes)</Label>
-                  <Select
-                    value={settings.automation.gmailCheckInterval}
-                    onValueChange={(value) =>
-                      handleSettingChange(
-                        "automation",
-                        "gmailCheckInterval",
-                        value,
-                      )
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Every minute</SelectItem>
-                      <SelectItem value="5">Every 5 minutes</SelectItem>
-                      <SelectItem value="15">Every 15 minutes</SelectItem>
-                      <SelectItem value="30">Every 30 minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Instagram Automation */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Instagram className="h-5 w-5" />
-                  <span>Instagram Automation</span>
-                  <Badge
-                    variant={
-                      settings.automation.instagramEnabled
-                        ? "default"
-                        : "secondary"
-                    }
-                  >
-                    {settings.automation.instagramEnabled
-                      ? "Active"
-                      : "Inactive"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Enable Instagram Automation</Label>
-                  <Switch
-                    checked={settings.automation.instagramEnabled}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange(
-                        "automation",
-                        "instagramEnabled",
-                        checked,
-                      )
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Default Post Time</Label>
-                  <Input
-                    type="time"
-                    value={settings.automation.instagramPostTime}
-                    onChange={(e) =>
-                      handleSettingChange(
-                        "automation",
-                        "instagramPostTime",
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* X/Twitter Automation */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Twitter className="h-5 w-5" />
-                  <span>X/Twitter Automation</span>
-                  <Badge
-                    variant={
-                      settings.automation.twitterEnabled
-                        ? "default"
-                        : "secondary"
-                    }
-                  >
-                    {settings.automation.twitterEnabled ? "Active" : "Inactive"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Enable Twitter Automation</Label>
-                  <Switch
-                    checked={settings.automation.twitterEnabled}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange(
-                        "automation",
-                        "twitterEnabled",
-                        checked,
-                      )
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Max Posts Per Day</Label>
-                  <Input
-                    type="number"
-                    value={settings.automation.twitterPostFrequency}
-                    onChange={(e) =>
-                      handleSettingChange(
-                        "automation",
-                        "twitterPostFrequency",
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* LinkedIn Automation */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Linkedin className="h-5 w-5" />
-                  <span>LinkedIn Automation</span>
-                  <Badge
-                    variant={
-                      settings.automation.linkedinEnabled
-                        ? "default"
-                        : "secondary"
-                    }
-                  >
-                    {settings.automation.linkedinEnabled
-                      ? "Active"
-                      : "Inactive"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Enable LinkedIn Automation</Label>
-                  <Switch
-                    checked={settings.automation.linkedinEnabled}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange(
-                        "automation",
-                        "linkedinEnabled",
-                        checked,
-                      )
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Posting Schedule</Label>
-                  <Input
-                    value={settings.automation.linkedinPostSchedule}
-                    onChange={(e) =>
-                      handleSettingChange(
-                        "automation",
-                        "linkedinPostSchedule",
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Security Settings */}
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="h-5 w-5" />
-                <span>Security Settings</span>
-              </CardTitle>
-              <CardDescription>
-                Manage your account security and access controls
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Two-Factor Authentication</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Add an extra layer of security
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.security.twoFactorEnabled}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange(
-                        "security",
-                        "twoFactorEnabled",
-                        checked,
-                      )
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Login Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Get notified of new logins
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.security.loginNotifications}
-                    onCheckedChange={(checked) =>
-                      handleSettingChange(
-                        "security",
-                        "loginNotifications",
-                        checked,
-                      )
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Session Timeout (minutes)</Label>
-                  <Select
-                    value={settings.security.sessionTimeout}
-                    onValueChange={(value) =>
-                      handleSettingChange("security", "sessionTimeout", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Password Expiry (days)</Label>
-                  <Select
-                    value={settings.security.passwordExpiry}
-                    onValueChange={(value) =>
-                      handleSettingChange("security", "passwordExpiry", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30 days</SelectItem>
-                      <SelectItem value="60">60 days</SelectItem>
-                      <SelectItem value="90">90 days</SelectItem>
-                      <SelectItem value="never">Never</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Alert>
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Your account is secure. Last security check: Today at 2:30 PM
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {/* Integrations */}
         <TabsContent value="integrations" className="space-y-6">

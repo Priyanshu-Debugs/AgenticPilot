@@ -75,16 +75,18 @@ export default function ProfilePage() {
   };
 
   // Get plan display info
+  const planMap = {
+    starter: { name: "Free Trial", price: "Free" },
+    professional: { name: "Professional Plan", price: "₹4,999/month" },
+    enterprise: { name: "Enterprise Plan", price: "₹12,999/month" },
+  };
+
   const getPlanInfo = () => {
     if (!profile) return { name: "Loading...", price: "..." };
-
-    const planMap = {
-      starter: { name: "Starter Plan", price: "Free" },
-      professional: { name: "Pro Plan", price: "$29.99/month" },
-      enterprise: { name: "Enterprise Plan", price: "$99.99/month" },
-    };
-    return planMap[profile.plan] || planMap.starter;
+    return planMap[profile.plan] || { name: "Free Trial", price: "Free" };
   };
+
+  const currentPlan = profile?.plan === 'starter' ? 'Free Trial' : (profile?.plan ? planMap[profile.plan]?.name || profile.plan : 'Free Trial');
 
   // Format join date
   const getJoinDate = () => {
@@ -99,7 +101,7 @@ export default function ProfilePage() {
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
-        avatar: user.user_metadata?.avatar_url || "",
+        avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
     : undefined;
 
@@ -165,7 +167,7 @@ export default function ProfilePage() {
                 <CardContent className="flex flex-col items-center space-y-4">
                   <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
                     <AvatarImage
-                      src={user?.user_metadata?.avatar_url || ""}
+                      src={profile?.avatar_url || user?.avatar_url || user?.user_metadata?.avatar_url || ""}
                       alt="Profile"
                       referrerPolicy="no-referrer"
                     />
@@ -270,10 +272,12 @@ export default function ProfilePage() {
                     <p className="text-lg font-semibold">{getJoinDate()}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label>Account Status</Label>
-                    <p className="text-lg font-semibold text-emerald-600">
-                      Active
-                    </p>
+                    <Label>{currentPlan === 'Free Trial' ? 'Trial Status' : 'Account Status'}</Label>
+                    <div>
+                      <Badge variant={currentPlan === 'Free Trial' ? 'secondary' : 'default'}>
+                        {currentPlan}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </CardContent>

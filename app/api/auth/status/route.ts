@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         id: user.id,
         email: user.email,
         full_name: profile?.full_name || user.user_metadata?.full_name || '',
-        avatar_url: user.user_metadata?.avatar_url || '',
+        avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || '',
         created_at: user.created_at,
         updated_at: user.updated_at
       }

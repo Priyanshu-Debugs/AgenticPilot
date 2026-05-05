@@ -304,7 +304,7 @@ export default function LandingPage() {
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
-        avatar: user.user_metadata?.avatar_url || "",
+        avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
     : undefined;
 
@@ -319,6 +319,39 @@ export default function LandingPage() {
           void signOut();
         }}
       />
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]" />
+        
+        <div className="container-padding mx-auto max-w-5xl text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl mb-8">
+              Automate your workflow with <br className="hidden sm:block" />
+              <span className="text-gradient">AI-powered precision.</span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
+              Connect your channels, configure your agents, and let AgenticPilot handle the repetitive tasks while you focus on what matters most.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" variant="glow" asChild className="w-full sm:w-auto h-14 px-8 text-base">
+                <Link href="/auth/signup">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto h-14 px-8 text-base border-2 hover:bg-muted/50">
+                <Link href="/pricing">View Pricing</Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       <section className="border-y border-border/70 bg-muted/20">
         <div className="container-padding mx-auto max-w-6xl py-12 sm:py-16">

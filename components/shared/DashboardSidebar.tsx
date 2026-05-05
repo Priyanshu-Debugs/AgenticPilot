@@ -78,7 +78,7 @@ export function DashboardSidebar({
   return (
     // Fixed sidebar with Supabase-inspired design
     <div
-      className={`fixed top-16 left-0 bottom-0 z-40 w-64 sm:w-72 lg:w-80 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+      className={`fixed top-16 left-0 bottom-0 z-40 w-64 sm:w-72 lg:w-80 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
       <div className="flex flex-col h-full">
         {/* Sidebar Header */}

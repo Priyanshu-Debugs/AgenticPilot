@@ -1,7 +1,7 @@
 "use client";
 
 // React hooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // Shared dashboard components
 import { DashboardSidebar } from "@/components/shared/DashboardSidebar";
 import { DashboardNavbar } from "@/components/shared/DashboardNavbar";
@@ -32,8 +32,16 @@ interface DashboardLayoutProps {
  * - Desktop: Sidebar always visible, content has left margin
  */
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  // State for mobile sidebar visibility
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // State for sidebar visibility (default true for desktop)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  useEffect(() => {
+    // On mount, close sidebar if on mobile
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
   // Toggle function for sidebar open/close
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -55,7 +63,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
 
         {/* Main content area with responsive margins */}
-        <div className="flex-1 lg:ml-80 min-w-0">
+        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "lg:ml-80" : "ml-0"} min-w-0`}>
           {/* Content wrapper with responsive padding */}
           <div className="container-padding py-6 sm:py-8">
             {/* Page-specific content rendered here */}

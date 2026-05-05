@@ -60,6 +60,11 @@ export function DashboardNavbar({
   const { user, signOut } = useAuth();
   const { profile, loading } = useUserProfile();
   const { unreadCount } = useNotifications();
+  const avatarUrl =
+    profile?.avatar_url ||
+    user?.avatar_url ||
+    user?.user_metadata?.avatar_url ||
+    "";
 
   // Handle user logout
   const handleLogout = async () => {
@@ -118,12 +123,11 @@ export function DashboardNavbar({
         <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Left Section: Mobile Menu + Logo */}
           <div className="flex items-center space-x-3 sm:space-x-4">
-            {/* Mobile-only hamburger/close button */}
+            {/* Sidebar toggle button */}
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
-              className="lg:hidden"
               aria-label="Toggle sidebar"
             >
               {isSidebarOpen ? (
@@ -180,7 +184,7 @@ export function DashboardNavbar({
                 >
                   <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                     <AvatarImage
-                      src={user?.user_metadata?.avatar_url || ""}
+                      src={avatarUrl}
                       alt="User"
                       referrerPolicy="no-referrer"
                     />

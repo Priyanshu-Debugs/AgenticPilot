@@ -6,6 +6,7 @@ import { Navigation } from "@/components/shared/Navigation"
 import { BookOpen, Calendar, Clock, ArrowRight, BrainCircuit, ExternalLink, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/utils/auth/AuthProvider"
 
 interface Blog {
   title: string
@@ -18,6 +19,15 @@ interface Blog {
 }
 
 export default function BlogPage() {
+  const { user, signOut } = useAuth()
+  const navUser = user
+    ? {
+        name: user.full_name || user.email?.split("@")[0] || "User",
+        email: user.email || "",
+        avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
+      }
+    : undefined
+
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -43,8 +53,13 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation
+        isAuthenticated={!!user}
+        user={navUser}
         onSignIn={() => window.location.href = "/auth/signin"}
         onSignUp={() => window.location.href = "/auth/signup"}
+        onSignOut={() => {
+          void signOut()
+        }}
       />
 
       {/* Ambient background styling */}

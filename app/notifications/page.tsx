@@ -61,7 +61,7 @@ export default function NotificationsPage() {
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
-        avatar: user.user_metadata?.avatar_url || "",
+        avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
     : undefined;
 

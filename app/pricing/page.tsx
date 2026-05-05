@@ -7,8 +7,18 @@ import { Navigation } from "@/components/shared/Navigation"
 import { Check, Bot, Bell } from "lucide-react"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/utils/auth/AuthProvider"
 
 export default function Pricing() {
+  const { user, signOut } = useAuth()
+  const navUser = user
+    ? {
+        name: user.full_name || user.email?.split("@")[0] || "User",
+        email: user.email || "",
+        avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
+      }
+    : undefined
+
   const handleGetStarted = () => {
     window.location.href = "/auth/signup"
   }
@@ -20,7 +30,7 @@ export default function Pricing() {
   const plans = [
     {
       name: "Starter",
-      price: "$29",
+      price: "₹1,999",
       period: "/month",
       description: "Perfect for small businesses getting started with automation",
       features: [
@@ -34,7 +44,7 @@ export default function Pricing() {
     },
     {
       name: "Professional",
-      price: "$79",
+      price: "₹4,999",
       period: "/month",
       description: "Ideal for growing businesses with advanced automation needs",
       features: [
@@ -50,7 +60,7 @@ export default function Pricing() {
     },
     {
       name: "Enterprise",
-      price: "$199",
+      price: "₹12,999",
       period: "/month",
       description: "For large organizations requiring unlimited automation",
       features: [
@@ -71,8 +81,13 @@ export default function Pricing() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
       <Navigation
+        isAuthenticated={!!user}
+        user={navUser}
         onSignIn={handleSignIn}
         onSignUp={handleGetStarted}
+        onSignOut={() => {
+          void signOut()
+        }}
       />
 
       {/* Pricing Content */}
