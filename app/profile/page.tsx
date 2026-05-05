@@ -86,7 +86,12 @@ export default function ProfilePage() {
     return planMap[profile.plan] || { name: "Free Trial", price: "Free" };
   };
 
-  const currentPlan = profile?.plan === 'starter' ? 'Free Trial' : (profile?.plan ? planMap[profile.plan]?.name || profile.plan : 'Free Trial');
+  const currentPlan =
+    profile?.plan === "starter"
+      ? "Free Trial"
+      : profile?.plan
+        ? planMap[profile.plan]?.name || profile.plan
+        : "Free Trial";
 
   // Format join date
   const getJoinDate = () => {
@@ -167,7 +172,12 @@ export default function ProfilePage() {
                 <CardContent className="flex flex-col items-center space-y-4">
                   <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
                     <AvatarImage
-                      src={profile?.avatar_url || user?.avatar_url || user?.user_metadata?.avatar_url || ""}
+                      src={
+                        profile?.avatar_url ||
+                        user?.avatar_url ||
+                        user?.user_metadata?.avatar_url ||
+                        ""
+                      }
                       alt="Profile"
                       referrerPolicy="no-referrer"
                     />
@@ -272,9 +282,17 @@ export default function ProfilePage() {
                     <p className="text-lg font-semibold">{getJoinDate()}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label>{currentPlan === 'Free Trial' ? 'Trial Status' : 'Account Status'}</Label>
+                    <Label>
+                      {currentPlan === "Free Trial"
+                        ? "Trial Status"
+                        : "Account Status"}
+                    </Label>
                     <div>
-                      <Badge variant={currentPlan === 'Free Trial' ? 'secondary' : 'default'}>
+                      <Badge
+                        variant={
+                          currentPlan === "Free Trial" ? "secondary" : "default"
+                        }
+                      >
                         {currentPlan}
                       </Badge>
                     </div>

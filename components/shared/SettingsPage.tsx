@@ -569,7 +569,6 @@ export function SettingsPage({
           </Card>
         </TabsContent>
 
-
         {/* Integrations */}
         <TabsContent value="integrations" className="space-y-6">
           <Card>

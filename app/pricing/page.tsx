@@ -1,38 +1,39 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Navigation } from "@/components/shared/Navigation"
-import { Check, Bot, Bell } from "lucide-react"
-import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useAuth } from "@/utils/auth/AuthProvider"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Navigation } from "@/components/shared/Navigation";
+import { Check, Bot, Bell } from "lucide-react";
+import Link from "next/link";
+import { ModeToggle } from "@/components/mode-toggle";
+import { useAuth } from "@/utils/auth/AuthProvider";
 
 export default function Pricing() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth();
   const navUser = user
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
-    : undefined
+    : undefined;
 
   const handleGetStarted = () => {
-    window.location.href = "/auth/signup"
-  }
+    window.location.href = "/auth/signup";
+  };
 
   const handleSignIn = () => {
-    window.location.href = "/auth/signin"
-  }
+    window.location.href = "/auth/signin";
+  };
 
   const plans = [
     {
       name: "Starter",
       price: "₹1,999",
       period: "/month",
-      description: "Perfect for small businesses getting started with automation",
+      description:
+        "Perfect for small businesses getting started with automation",
       features: [
         "Gmail Auto Reply (up to 500 emails/month)",
         "X/Twitter Automation (basic)",
@@ -46,7 +47,8 @@ export default function Pricing() {
       name: "Professional",
       price: "₹4,999",
       period: "/month",
-      description: "Ideal for growing businesses with advanced automation needs",
+      description:
+        "Ideal for growing businesses with advanced automation needs",
       features: [
         "Gmail Auto Reply (up to 2,000 emails/month)",
         "X/Twitter & LinkedIn Automation",
@@ -75,7 +77,7 @@ export default function Pricing() {
       ],
       popular: false,
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -86,7 +88,7 @@ export default function Pricing() {
         onSignIn={handleSignIn}
         onSignUp={handleGetStarted}
         onSignOut={() => {
-          void signOut()
+          void signOut();
         }}
       />
 
@@ -98,8 +100,8 @@ export default function Pricing() {
             Simple, Transparent Pricing
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Choose the perfect plan for your business automation needs. All plans include our core features with no
-            hidden fees.
+            Choose the perfect plan for your business automation needs. All
+            plans include our core features with no hidden fees.
           </p>
         </div>
 
@@ -108,8 +110,9 @@ export default function Pricing() {
           {plans.map((plan, index) => (
             <Card
               key={index}
-              className={`relative card-elevated h-full ${plan.popular ? "ring-2 ring-primary border-primary/50" : ""
-                }`}
+              className={`relative card-elevated h-full ${
+                plan.popular ? "ring-2 ring-primary border-primary/50" : ""
+              }`}
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
@@ -118,18 +121,27 @@ export default function Pricing() {
               )}
 
               <CardHeader className="text-center pb-6 sm:pb-8">
-                <CardTitle className="text-xl sm:text-2xl font-bold mb-2">{plan.name}</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl font-bold mb-2">
+                  {plan.name}
+                </CardTitle>
                 <div className="mb-4">
-                  <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
+                  <span className="text-3xl sm:text-4xl font-bold">
+                    {plan.price}
+                  </span>
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{plan.description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  {plan.description}
+                </p>
               </CardHeader>
 
               <CardContent className="space-y-6 flex-1 flex flex-col">
                 <ul className="space-y-3 flex-1">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start space-x-3">
+                    <li
+                      key={featureIndex}
+                      className="flex items-start space-x-3"
+                    >
                       <Check className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                       <span className="text-sm sm:text-base">{feature}</span>
                     </li>
@@ -149,30 +161,44 @@ export default function Pricing() {
 
         {/* FAQ Section */}
         <div className="text-center max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 tracking-tight">Frequently Asked Questions</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 tracking-tight">
+            Frequently Asked Questions
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="text-left card-elevated p-6">
-              <h3 className="font-semibold mb-3 text-foreground">Can I change plans anytime?</h3>
+              <h3 className="font-semibold mb-3 text-foreground">
+                Can I change plans anytime?
+              </h3>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.
+                Yes, you can upgrade or downgrade your plan at any time. Changes
+                take effect immediately.
               </p>
             </div>
             <div className="text-left card-elevated p-6">
-              <h3 className="font-semibold mb-3 text-foreground">Is there a free trial?</h3>
+              <h3 className="font-semibold mb-3 text-foreground">
+                Is there a free trial?
+              </h3>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                We offer a 14-day free trial for all plans. No credit card required to get started.
+                We offer a 14-day free trial for all plans. No credit card
+                required to get started.
               </p>
             </div>
             <div className="text-left card-elevated p-6">
-              <h3 className="font-semibold mb-3 text-foreground">What payment methods do you accept?</h3>
+              <h3 className="font-semibold mb-3 text-foreground">
+                What payment methods do you accept?
+              </h3>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.
+                We accept all major credit cards, PayPal, and bank transfers for
+                Enterprise plans.
               </p>
             </div>
             <div className="text-left card-elevated p-6">
-              <h3 className="font-semibold mb-3 text-foreground">Do you offer custom solutions?</h3>
+              <h3 className="font-semibold mb-3 text-foreground">
+                Do you offer custom solutions?
+              </h3>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Yes, our Enterprise plan includes custom integrations and dedicated support for unique requirements.
+                Yes, our Enterprise plan includes custom integrations and
+                dedicated support for unique requirements.
               </p>
             </div>
           </div>
@@ -194,5 +220,5 @@ export default function Pricing() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

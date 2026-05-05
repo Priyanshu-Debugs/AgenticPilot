@@ -324,7 +324,7 @@ export default function LandingPage() {
       <section className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]" />
-        
+
         <div className="container-padding mx-auto max-w-5xl text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -336,16 +336,27 @@ export default function LandingPage() {
               <span className="text-gradient">AI-powered precision.</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
-              Connect your channels, configure your agents, and let AgenticPilot handle the repetitive tasks while you focus on what matters most.
+              Connect your channels, configure your agents, and let AgenticPilot
+              handle the repetitive tasks while you focus on what matters most.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" variant="glow" asChild className="w-full sm:w-auto h-14 px-8 text-base">
+              <Button
+                size="lg"
+                variant="glow"
+                asChild
+                className="w-full sm:w-auto h-14 px-8 text-base"
+              >
                 <Link href="/auth/signup">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto h-14 px-8 text-base border-2 hover:bg-muted/50">
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="w-full sm:w-auto h-14 px-8 text-base border-2 hover:bg-muted/50"
+              >
                 <Link href="/pricing">View Pricing</Link>
               </Button>
             </div>

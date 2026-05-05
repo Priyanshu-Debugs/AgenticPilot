@@ -1,64 +1,72 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { SpotlightCard } from "@/components/ui/card"
-import { Navigation } from "@/components/shared/Navigation"
-import { BookOpen, Calendar, Clock, ArrowRight, BrainCircuit, ExternalLink, Loader2 } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { useAuth } from "@/utils/auth/AuthProvider"
+import { motion } from "framer-motion";
+import { SpotlightCard } from "@/components/ui/card";
+import { Navigation } from "@/components/shared/Navigation";
+import {
+  BookOpen,
+  Calendar,
+  Clock,
+  ArrowRight,
+  BrainCircuit,
+  ExternalLink,
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/utils/auth/AuthProvider";
 
 interface Blog {
-  title: string
-  excerpt: string
-  category: string
-  date: string
-  readTime: string
-  source: string
-  link: string
+  title: string;
+  excerpt: string;
+  category: string;
+  date: string;
+  readTime: string;
+  source: string;
+  link: string;
 }
 
 export default function BlogPage() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth();
   const navUser = user
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
-    : undefined
+    : undefined;
 
-  const [blogs, setBlogs] = useState<Blog[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBlogs() {
       try {
-        const response = await fetch("/api/blog")
-        if (!response.ok) throw new Error("Failed to fetch blogs")
-        const data = await response.json()
-        setBlogs(data)
+        const response = await fetch("/api/blog");
+        if (!response.ok) throw new Error("Failed to fetch blogs");
+        const data = await response.json();
+        setBlogs(data);
       } catch (err) {
-        console.error("Fetch error:", err)
-        setError("Unable to load latest blogs. Please try again later.")
+        console.error("Fetch error:", err);
+        setError("Unable to load latest blogs. Please try again later.");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    fetchBlogs()
-  }, [])
+    fetchBlogs();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation
         isAuthenticated={!!user}
         user={navUser}
-        onSignIn={() => window.location.href = "/auth/signin"}
-        onSignUp={() => window.location.href = "/auth/signup"}
+        onSignIn={() => (window.location.href = "/auth/signin")}
+        onSignUp={() => (window.location.href = "/auth/signup")}
         onSignOut={() => {
-          void signOut()
+          void signOut();
         }}
       />
 
@@ -70,9 +78,8 @@ export default function BlogPage() {
 
       <div className="relative z-10 container-padding py-32 lg:py-40">
         <div className="max-w-5xl mx-auto space-y-16">
-          
           {/* Header Section */}
-          <motion.div 
+          <motion.div
             className="space-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,17 +90,21 @@ export default function BlogPage() {
               Agentic Insights
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-              Thoughts on <span className="text-gradient-static">AI & Automation</span>
+              Thoughts on{" "}
+              <span className="text-gradient-static">AI & Automation</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-              Dive deep into the engineering, design, and architecture behind the next generation of autonomous business software.
+              Dive deep into the engineering, design, and architecture behind
+              the next generation of autonomous business software.
             </p>
           </motion.div>
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
               <Loader2 className="w-10 h-10 text-primary animate-spin" />
-              <p className="text-muted-foreground animate-pulse">Fetching latest AI blogs...</p>
+              <p className="text-muted-foreground animate-pulse">
+                Fetching latest AI blogs...
+              </p>
             </div>
           ) : error ? (
             <div className="text-center py-20">
@@ -115,9 +126,14 @@ export default function BlogPage() {
                       </div>
                       <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                         <div className="flex items-center space-x-4 mb-4 text-xs font-medium text-muted-foreground">
-                          <span className="text-primary uppercase tracking-wider">{blogs[0].category}</span>
+                          <span className="text-primary uppercase tracking-wider">
+                            {blogs[0].category}
+                          </span>
                           <span>•</span>
-                          <span className="flex items-center"><Calendar className="w-3 h-3 mr-1"/> {blogs[0].date}</span>
+                          <span className="flex items-center">
+                            <Calendar className="w-3 h-3 mr-1" />{" "}
+                            {blogs[0].date}
+                          </span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
                           {blogs[0].title}
@@ -126,12 +142,13 @@ export default function BlogPage() {
                           {blogs[0].excerpt}
                         </p>
                         <div className="mt-auto flex items-center justify-end">
-                          <Link 
-                            href={blogs[0].link} 
+                          <Link
+                            href={blogs[0].link}
                             target="_blank"
                             className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group/link"
                           >
-                            Read Original <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                            Read Original{" "}
+                            <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
                           </Link>
                         </div>
                       </div>
@@ -153,18 +170,27 @@ export default function BlogPage() {
                   >
                     <SpotlightCard className="h-full p-6 flex flex-col hover:border-primary/50">
                       <div className="flex items-center justify-between mb-4 text-xs text-muted-foreground">
-                        <span className="text-accent font-semibold">{blog.category}</span>
-                        <span className="flex items-center"><Clock className="w-3 h-3 mr-1"/> {blog.readTime}</span>
+                        <span className="text-accent font-semibold">
+                          {blog.category}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="w-3 h-3 mr-1" /> {blog.readTime}
+                        </span>
                       </div>
-                      <h3 className="text-xl font-bold mb-3 line-clamp-2">{blog.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-6 flex-1 line-clamp-3">{blog.excerpt}</p>
+                      <h3 className="text-xl font-bold mb-3 line-clamp-2">
+                        {blog.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm mb-6 flex-1 line-clamp-3">
+                        {blog.excerpt}
+                      </p>
                       <div className="mt-auto flex items-center justify-end pt-4 border-t border-border/30">
-                        <Link 
-                          href={blog.link} 
+                        <Link
+                          href={blog.link}
                           target="_blank"
                           className="inline-flex items-center text-xs font-semibold text-primary hover:text-primary/80 transition-colors group/link"
                         >
-                          Read <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                          Read{" "}
+                          <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
                         </Link>
                       </div>
                     </SpotlightCard>
@@ -173,9 +199,8 @@ export default function BlogPage() {
               </div>
             </>
           )}
-
         </div>
       </div>
     </div>
-  )
+  );
 }

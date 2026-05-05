@@ -1,51 +1,58 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { SpotlightCard } from "@/components/ui/card"
-import { Navigation } from "@/components/shared/Navigation"
-import { useAuth } from "@/utils/auth/AuthProvider"
-import { Github, Linkedin, Mail, ArrowRight, BookOpen, BrainCircuit } from "lucide-react"
+import { motion } from "framer-motion";
+import { SpotlightCard } from "@/components/ui/card";
+import { Navigation } from "@/components/shared/Navigation";
+import { useAuth } from "@/utils/auth/AuthProvider";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ArrowRight,
+  BookOpen,
+  BrainCircuit,
+} from "lucide-react";
 
 export default function AboutPage() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth();
   const navUser = user
     ? {
         name: user.full_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: user.avatar_url || user.user_metadata?.avatar_url || "",
       }
-    : undefined
+    : undefined;
 
   const founders = [
     {
       name: "Priyaanshu Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/Priyanshu-Debugs",
-      bio: "Focuses on intelligent automation architecture and robust full-stack infrastructure."
+      bio: "Focuses on intelligent automation architecture and robust full-stack infrastructure.",
     },
     {
       name: "Mihir Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/mihirpatel204",
-      bio: "Specializes in scalable backend systems and high-performance data processing."
+      bio: "Specializes in scalable backend systems and high-performance data processing.",
     },
     {
       name: "Sujal Patel",
       role: "Co-Founder & Developer",
       github: "https://www.github.com/sujal7122005",
-      bio: "Passionate about creating seamless user experiences and modern frontend interfaces."
-    }
-  ]
+      bio: "Passionate about creating seamless user experiences and modern frontend interfaces.",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation
         isAuthenticated={!!user}
         user={navUser}
-        onSignIn={() => window.location.href = "/auth/signin"}
-        onSignUp={() => window.location.href = "/auth/signup"}
+        onSignIn={() => (window.location.href = "/auth/signin")}
+        onSignUp={() => (window.location.href = "/auth/signup")}
         onSignOut={() => {
-          void signOut()
+          void signOut();
         }}
       />
 
@@ -58,7 +65,7 @@ export default function AboutPage() {
       <div className="relative z-10 container-padding py-32 lg:py-40">
         <div className="max-w-4xl mx-auto space-y-16">
           {/* Header Section */}
-          <motion.div 
+          <motion.div
             className="text-center space-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -73,12 +80,14 @@ export default function AboutPage() {
               <span className="text-gradient-static">Business Automation</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              We are a team of college friends studying Computer Engineering at VGEC, driven by the vision to make advanced Agentic AI accessible to every business.
+              We are a team of college friends studying Computer Engineering at
+              VGEC, driven by the vision to make advanced Agentic AI accessible
+              to every business.
             </p>
           </motion.div>
 
           {/* Founders Grid */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1 }}
@@ -86,11 +95,13 @@ export default function AboutPage() {
             transition={{ duration: 0.5, staggerChildren: 0.1 }}
           >
             <div className="col-span-full mb-6">
-              <h2 className="text-2xl font-bold border-b border-border/50 pb-4 text-center">Meet the Founders</h2>
+              <h2 className="text-2xl font-bold border-b border-border/50 pb-4 text-center">
+                Meet the Founders
+              </h2>
             </div>
-            
+
             {founders.map((founder, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -101,16 +112,28 @@ export default function AboutPage() {
                 <SpotlightCard className="h-full flex flex-col p-6 items-center text-center">
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6">
                     <span className="text-2xl font-bold text-primary">
-                      {founder.name.split(' ').map(n => n[0]).join('')}
+                      {founder.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </span>
                   </div>
-                  
+
                   <h3 className="text-xl font-bold mb-1">{founder.name}</h3>
-                  <p className="text-sm font-medium text-primary mb-4">{founder.role}</p>
-                  <p className="text-sm text-muted-foreground mb-6 flex-1">{founder.bio}</p>
-                  
+                  <p className="text-sm font-medium text-primary mb-4">
+                    {founder.role}
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-6 flex-1">
+                    {founder.bio}
+                  </p>
+
                   <div className="mt-auto pt-4 w-full flex justify-center space-x-4 border-t border-border/30">
-                    <a href={founder.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-muted/50 rounded-full hover:bg-primary/20 hover:text-primary transition-colors">
+                    <a
+                      href={founder.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-muted/50 rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
+                    >
                       <Github className="w-5 h-5" />
                       <span className="sr-only">GitHub</span>
                     </a>
@@ -135,15 +158,19 @@ export default function AboutPage() {
                 <div>
                   <h3 className="text-2xl font-bold mb-3">Our Roots</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    AgenticPilot started as a shared passion project between three friends pursuing their B.E. in Computer Engineering from Vishwakarma Government Engineering College (VGEC). We combined our different technical specialties to build an AI platform capable of true autonomy—pushing the boundaries of what automated agents can do.
+                    AgenticPilot started as a shared passion project between
+                    three friends pursuing their B.E. in Computer Engineering
+                    from Vishwakarma Government Engineering College (VGEC). We
+                    combined our different technical specialties to build an AI
+                    platform capable of true autonomy—pushing the boundaries of
+                    what automated agents can do.
                   </p>
                 </div>
               </div>
             </SpotlightCard>
           </motion.div>
-
         </div>
       </div>
     </div>
-  )
+  );
 }
