@@ -273,7 +273,6 @@ html {
   @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
   background-size: 180% 180%;
   animation: gradient-shift 6s ease-in-out infinite;
-  text-shadow: 0 0 14px rgba(62, 207, 142, 0.22), 0 0 26px rgba(62, 207, 142, 0.12);
 }
 
 .text-gradient-static {

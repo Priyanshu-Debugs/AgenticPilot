@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Icons
 import {
@@ -36,6 +37,7 @@ import {
   Zap,
   Shield,
 } from "lucide-react";
+import { useAuth } from "@/utils/auth/AuthProvider";
 
 // Gmail Components
 import { GmailConnect } from "@/components/gmail/GmailConnect";
@@ -69,6 +71,7 @@ export default function GmailAutomationPage() {
 }
 
 function GmailAutomationContent() {
+  const { user } = useAuth();
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -114,6 +117,19 @@ function GmailAutomationContent() {
   // Human review toggle state
   const [humanReviewEnabled, setHumanReviewEnabled] = useState(false);
   const [humanReviewToggling, setHumanReviewToggling] = useState(false);
+
+  const accountName = user?.full_name || user?.email?.split("@")[0] || "User";
+  const accountEmail = user?.email || "";
+  const accountAvatar =
+    user?.avatar_url || user?.user_metadata?.avatar_url || "";
+  const accountInitials =
+    accountName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "U";
 
   // Check connection status on mount
   useEffect(() => {
@@ -435,21 +451,46 @@ function GmailAutomationContent() {
           </p>
         </div>
         {isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              loadEmails();
-              loadLogs();
-            }}
-            disabled={emailsLoading}
-            className="w-full sm:w-auto"
-          >
-            <RefreshCw
-              className={`h-4 w-4 mr-2 ${emailsLoading ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-card/70 px-3 py-2">
+              <Mail className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 min-w-0">
+                <Avatar className="h-7 w-7">
+                  <AvatarImage
+                    src={accountAvatar}
+                    alt={accountName}
+                    referrerPolicy="no-referrer"
+                  />
+                  <AvatarFallback className="text-[10px]">
+                    {accountInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium leading-none truncate">
+                    {accountName}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground truncate">
+                    {accountEmail}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                loadEmails();
+                loadLogs();
+              }}
+              disabled={emailsLoading}
+              className="w-full sm:w-auto"
+            >
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${emailsLoading ? "animate-spin" : ""}`}
+              />
+              Refresh
+            </Button>
+          </div>
         )}
       </div>
 

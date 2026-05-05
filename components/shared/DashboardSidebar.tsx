@@ -1,7 +1,5 @@
 "use client";
 
-// Core UI components
-import { Button } from "@/components/ui/button";
 // Icon imports for navigation items
 import {
   Mail,
@@ -39,6 +37,11 @@ export function DashboardSidebar({
   toggleSidebar,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const handleNavClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      toggleSidebar();
+    }
+  };
 
   const overviewItem = {
     id: "dashboard",
@@ -93,30 +96,28 @@ export function DashboardSidebar({
           <div className="space-y-6">
             {/* Overview Section */}
             <div className="space-y-1">
-              <div onClick={toggleSidebar}>
-                <Link href={overviewItem.href}>
-                  <div
-                    className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
-                      pathname === overviewItem.href
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border"
-                        : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
-                    }`}
-                  >
-                    <div
-                      className={`p-2 rounded-md transition-colors ${
-                        pathname === overviewItem.href
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-sidebar-accent text-sidebar-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground"
-                      }`}
-                    >
-                      <overviewItem.icon className="h-4 w-4" />
-                    </div>
-                    <span className="text-sm font-medium">
-                      {overviewItem.title}
-                    </span>
-                  </div>
-                </Link>
-              </div>
+              <Link
+                href={overviewItem.href}
+                onClick={handleNavClick}
+                className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
+                  pathname === overviewItem.href
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border"
+                    : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
+                }`}
+              >
+                <div
+                  className={`p-2 rounded-md transition-colors ${
+                    pathname === overviewItem.href
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-sidebar-accent text-sidebar-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground"
+                  }`}
+                >
+                  <overviewItem.icon className="h-4 w-4" />
+                </div>
+                <span className="text-sm font-medium">
+                  {overviewItem.title}
+                </span>
+              </Link>
             </div>
 
             {/* Agents Section */}
@@ -129,30 +130,27 @@ export function DashboardSidebar({
                 const isCurrentPage = pathname === item.href;
 
                 return (
-                  <div key={item.id} onClick={toggleSidebar}>
-                    <Link href={item.href}>
-                      <div
-                        className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
-                          isCurrentPage
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border"
-                            : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
-                        }`}
-                      >
-                        <div
-                          className={`p-2 rounded-md transition-colors ${
-                            isCurrentPage
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-sidebar-accent text-sidebar-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground"
-                          }`}
-                        >
-                          <IconComponent className="h-4 w-4" />
-                        </div>
-                        <span className="text-sm font-medium">
-                          {item.title}
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onClick={handleNavClick}
+                    className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
+                      isCurrentPage
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border"
+                        : "hover:bg-sidebar-accent/50 text-sidebar-foreground"
+                    }`}
+                  >
+                    <div
+                      className={`p-2 rounded-md transition-colors ${
+                        isCurrentPage
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-sidebar-accent text-sidebar-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground"
+                      }`}
+                    >
+                      <IconComponent className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-medium">{item.title}</span>
+                  </Link>
                 );
               })}
             </div>

@@ -333,7 +333,7 @@ export default function LandingPage() {
           >
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl mb-8">
               Automate your workflow with <br className="hidden sm:block" />
-              <span className="text-gradient">AI-powered precision.</span>
+              <span>AI-powered precision.</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
               Connect your channels, configure your agents, and let AgenticPilot
