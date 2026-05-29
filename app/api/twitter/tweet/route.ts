@@ -94,13 +94,14 @@ export async function POST(req: NextRequest) {
 
         if (aiGenerate) {
             // Generate tweet content using Gemini AI
-            const model = getModel()
+            try {
+                const model = getModel()
 
-            const urlInstruction = productUrl
-                ? `\n- Include this URL in the tweet: ${productUrl}\n- Make sure the total tweet (including URL) stays under 280 characters`
-                : ''
+                const urlInstruction = productUrl
+                    ? `\n- Include this URL in the tweet: ${productUrl}\n- Make sure the total tweet (including URL) stays under 280 characters`
+                    : ''
 
-            const prompt = `Write a tweet about this product:
+                const prompt = `Write a tweet about this product:
 
 Product: "${productName || 'a product'}"
 Description: "${productDescription || 'a great product'}"
@@ -116,10 +117,19 @@ Requirements:
 
 Write ONLY the tweet content, nothing else.`
 
-            const response = await model.invoke([new HumanMessage(prompt)])
-            tweetContent = typeof response.content === 'string'
-                ? response.content.trim()
-                : String(response.content).trim()
+                const response = await model.invoke([new HumanMessage(prompt)])
+                tweetContent = typeof response.content === 'string'
+                    ? response.content.trim()
+                    : String(response.content).trim()
+            } catch (geminiError: any) {
+                console.warn('Gemini API limit or error hit, using intelligent local template fallback:', geminiError)
+                tweetContent = generateFallbackTweet(
+                    productName || 'our product',
+                    productDescription || 'delivering great features',
+                    productUrl || undefined,
+                    tone || 'professional'
+                )
+            }
 
             // Enforce character limit
             if (tweetContent.length > 280) {
@@ -192,4 +202,40 @@ Write ONLY the tweet content, nothing else.`
         const message = err instanceof Error ? err.message : 'Failed to create tweet'
         return NextResponse.json({ error: message }, { status: 500 })
     }
+}
+
+function generateFallbackTweet(productName: string, productDescription: string, productUrl?: string, tone = 'professional'): string {
+    const cleanName = productName.trim().replace(/^["']|["']$/g, '')
+    const cleanDesc = productDescription.trim().replace(/^["']|["']$/g, '')
+    const urlStr = productUrl ? `\n\nCheck it out here: ${productUrl}` : ''
+    
+    let tweet = ''
+    switch (tone) {
+        case 'casual':
+            tweet = `If you're looking to level up your setup, you need to check out ${cleanName}. It's basically ${cleanDesc.toLowerCase()} – super clean and incredibly useful. 🙌🚀${urlStr}\n\n#MustHave #TechSetup #Innovate`
+            break
+            
+        case 'inspirational':
+            tweet = `Innovation is about solving real problems elegantly. That's exactly what ${cleanName} does: ${cleanDesc}. Built for creators, builders, and everyone in between. Let's make an impact! 💫🔥${urlStr}\n\n#Innovation #Startups #KeepBuilding`
+            break
+
+        case 'educational':
+            tweet = `💡 Here is why ${cleanName} is a total game-changer:\n\n- Solve standard bottlenecks easily\n- Built with reliable, scalable systems\n- Designed around modern workflows: ${cleanDesc}${urlStr}\n\n#Learning #TechTip #BestPractices`
+            break
+
+        case 'thought-leadership':
+            tweet = `The future of our workflows isn't just about faster execution; it's about smarter tooling. Platforms like ${cleanName} (${cleanDesc}) are defining this new paradigm. Are you ready? 🌐💎${urlStr}\n\n#FutureOfWork #Productivity #EdTech`
+            break
+
+        case 'professional':
+        default:
+            tweet = `Excited to share ${cleanName}! A powerful solution designed for: ${cleanDesc}. Streamline your workflows and maximize results. 💼📈${urlStr}\n\n#Productivity #BusinessGrowth #TechTools`
+            break
+    }
+    
+    // Trim to 280 characters if needed
+    if (tweet.length > 280) {
+        tweet = tweet.substring(0, 277) + '...'
+    }
+    return tweet
 }

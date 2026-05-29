@@ -135,9 +135,10 @@ function LinkedInAutomationContent() {
     }, [searchParams, router])
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && !connectionLoading && isConnected && !tokenExpired) {
             const savedDraft = localStorage.getItem('linkedin_draft_copy')
             if (savedDraft) {
+                setTopic(savedDraft)
                 setGeneratedContent(savedDraft)
                 setEditContent(savedDraft)
                 setIsEditing(true)
@@ -145,7 +146,7 @@ function LinkedInAutomationContent() {
                 toast.info('Loaded post draft from Social Listening Agent!')
             }
         }
-    }, [])
+    }, [connectionLoading, isConnected, tokenExpired])
 
     // ============================================================
     // API Calls
