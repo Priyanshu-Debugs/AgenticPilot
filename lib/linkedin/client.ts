@@ -217,7 +217,7 @@ export async function uploadLinkedInImage(
         headers: {
             'Content-Type': contentType,
         },
-        body: imageBuffer,
+        body: new Uint8Array(imageBuffer),
     })
 
     if (!response.ok) {

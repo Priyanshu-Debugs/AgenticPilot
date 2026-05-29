@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -32,6 +32,10 @@ import {
     Clock,
     FileEdit,
     Eye,
+    Upload,
+    X,
+    ImageIcon,
+    Check,
 } from 'lucide-react'
 
 // Types
@@ -94,6 +98,13 @@ function LinkedInAutomationContent() {
 
     // Disconnecting state
     const [disconnecting, setDisconnecting] = useState(false)
+
+    // Image upload state
+    const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
+    const [isUploading, setIsUploading] = useState(false)
+    const [dragActive, setDragActive] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     // ============================================================
     // Effects
@@ -201,6 +212,94 @@ function LinkedInAutomationContent() {
         }
     }, [])
 
+    // ============================================================
+    // Image Drag & Drop and Upload handlers
+    // ============================================================
+    const handleDrag = useCallback((e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (e.type === "dragenter" || e.type === "dragover") {
+            setDragActive(true)
+        } else if (e.type === "dragleave") {
+            setDragActive(false)
+        }
+    }, [])
+
+    const handleDrop = useCallback(async (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(false)
+
+        const files = e.dataTransfer.files
+        if (files && files[0]) {
+            await handleFileUpload(files[0])
+        }
+    }, [])
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (files && files[0]) {
+            await handleFileUpload(files[0])
+        }
+    }
+
+    const handleFileUpload = async (file: File) => {
+        // Validate type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+        if (!allowedTypes.includes(file.type)) {
+            toast.error('Invalid file type. Allowed: JPEG, PNG, WebP, GIF')
+            return
+        }
+
+        // Validate size (max 10MB)
+        const maxSize = 10 * 1024 * 1024
+        if (file.size > maxSize) {
+            toast.error('File too large. Maximum size is 10MB')
+            return
+        }
+
+        // Render preview immediately
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            setPreviewImage(e.target?.result as string)
+        }
+        reader.readAsDataURL(file)
+
+        setIsUploading(true)
+        try {
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const res = await fetch('/api/linkedin/upload-image', {
+                method: 'POST',
+                body: formData,
+            })
+
+            const data = await res.json()
+            if (data.error) {
+                throw new Error(data.error)
+            }
+
+            setUploadedImageUrl(data.imageUrl)
+            toast.success('Image ready for post!')
+        } catch (err: any) {
+            console.error('LinkedIn image upload failed:', err)
+            toast.error(err.message || 'Failed to upload image')
+            setPreviewImage(null)
+            setUploadedImageUrl(null)
+        } finally {
+            setIsUploading(false)
+        }
+    }
+
+    const clearPreview = () => {
+        setPreviewImage(null)
+        setUploadedImageUrl(null)
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
     const handleGenerate = async () => {
         if (!topic.trim()) {
             toast.error('Please enter a topic for your post')
@@ -219,6 +318,7 @@ function LinkedInAutomationContent() {
                     topic,
                     tone,
                     aiGenerate: true,
+                    imageUrl: uploadedImageUrl || undefined,
                 }),
             })
 
@@ -231,6 +331,9 @@ function LinkedInAutomationContent() {
             setGeneratedContent(data.content)
             setEditContent(data.content)
             toast.success('Post generated and published!')
+            setUploadedImageUrl(null)
+            setPreviewImage(null)
+            if (fileInputRef.current) fileInputRef.current.value = ''
             loadPosts()
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Failed to generate post'
@@ -258,6 +361,7 @@ function LinkedInAutomationContent() {
                     aiGenerate: false,
                     content,
                     tone,
+                    imageUrl: uploadedImageUrl || undefined,
                 }),
             })
 
@@ -272,6 +376,9 @@ function LinkedInAutomationContent() {
             setEditContent('')
             setTopic('')
             setIsEditing(false)
+            setUploadedImageUrl(null)
+            setPreviewImage(null)
+            if (fileInputRef.current) fileInputRef.current.value = ''
             loadPosts()
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Failed to publish'
@@ -541,6 +648,70 @@ function LinkedInAutomationContent() {
                                 </Select>
                             </div>
 
+                            {/* Image Upload */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Post Image (Optional)</label>
+                                {previewImage ? (
+                                    <div className="relative group rounded-lg overflow-hidden border border-border/50 max-w-md bg-muted/20">
+                                        <img
+                                            src={previewImage}
+                                            alt="Post image preview"
+                                            className="w-full h-48 object-contain bg-black/10"
+                                        />
+                                        {isUploading && (
+                                            <div className="absolute inset-0 bg-background/85 flex items-center justify-center">
+                                                <div className="text-center">
+                                                    <Loader2 className="h-6 w-6 animate-spin text-blue-500 mx-auto mb-2" />
+                                                    <p className="text-xs text-muted-foreground">Uploading image...</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={clearPreview}
+                                            className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 text-slate-200 hover:bg-slate-900 hover:text-white transition-colors"
+                                            aria-label="Remove image"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                        {uploadedImageUrl && !isUploading && (
+                                            <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] text-emerald-400 font-medium">
+                                                <Check className="h-3 w-3" />
+                                                Ready to post
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div
+                                        onDragEnter={handleDrag}
+                                        onDragLeave={handleDrag}
+                                        onDragOver={handleDrag}
+                                        onDrop={handleDrop}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className={`border border-dashed rounded-lg p-6 text-center transition-all cursor-pointer bg-muted/10 ${
+                                            dragActive
+                                                ? 'border-blue-500 bg-blue-500/5'
+                                                : 'border-border/50 hover:border-blue-500/50 hover:bg-muted/20'
+                                        }`}
+                                    >
+                                        <Upload className={`h-8 w-8 mx-auto mb-2 ${dragActive ? 'text-blue-500 animate-bounce' : 'text-muted-foreground'}`} />
+                                        <p className="text-sm font-medium text-muted-foreground mb-0.5">
+                                            Drag and drop an image, or click to browse
+                                        </p>
+                                        <p className="text-xs text-muted-foreground/60">
+                                            Supports PNG, JPEG, WebP, GIF (Max 10MB)
+                                        </p>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp,image/gif"
+                                            className="hidden"
+                                            onChange={handleFileChange}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Generate Button */}
                             <Button
                                 onClick={handleGenerate}
@@ -597,17 +768,37 @@ function LinkedInAutomationContent() {
                                     </div>
 
                                     {isEditing ? (
-                                        <Textarea
-                                            value={editContent}
-                                            onChange={(e) => setEditContent(e.target.value)}
-                                            rows={8}
-                                            className="bg-muted/30 border-border/50 font-mono text-sm"
-                                        />
+                                        <div className="space-y-3">
+                                            <Textarea
+                                                value={editContent}
+                                                onChange={(e) => setEditContent(e.target.value)}
+                                                rows={8}
+                                                className="bg-muted/30 border-border/50 font-mono text-sm"
+                                            />
+                                            {previewImage && (
+                                                <div className="rounded border border-border/40 overflow-hidden bg-black/10 max-h-60 flex items-center justify-center max-w-md">
+                                                    <img
+                                                        src={previewImage}
+                                                        alt="LinkedIn Post attachment preview"
+                                                        className="max-h-60 object-contain w-full"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                     ) : (
-                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4">
+                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4 space-y-3">
                                             <p className="text-sm whitespace-pre-wrap leading-relaxed">
                                                 {generatedContent}
                                             </p>
+                                            {previewImage && (
+                                                <div className="rounded border border-border/40 overflow-hidden bg-black/10 max-h-60 flex items-center justify-center">
+                                                    <img
+                                                        src={previewImage}
+                                                        alt="LinkedIn Post attachment preview"
+                                                        className="max-h-60 object-contain w-full"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 
