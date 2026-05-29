@@ -43,6 +43,16 @@ import Link from "next/link";
 // Auth and profile hooks
 import { useAuth } from "@/utils/auth/AuthProvider";
 import { useUserProfile } from "@/utils/hooks/useUserProfile";
+// Recharts imports
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  CartesianGrid,
+} from "recharts";
 
 interface GmailStats {
   totalProcessed: number;
@@ -87,6 +97,9 @@ export default function Dashboard() {
     "automations" | "analytics" | "integrations"
   >("automations");
 
+  // Real stats logs chart data state
+  const [chartData, setChartData] = useState<any[]>([]);
+
   // Suggest Automation state
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [suggestName, setSuggestName] = useState("");
@@ -108,8 +121,87 @@ export default function Dashboard() {
         setStats(data.stats);
         setRecentActivity(data.recentActivity || []);
       }
+
+      // Fetch logs for visual Recharts area trend graph
+      const logsResponse = await fetch("/api/gmail/logs?limit=50");
+      if (logsResponse.ok) {
+        const logsData = await logsResponse.json();
+        const logs = logsData.logs || [];
+        
+        // Group logs by day to display beautiful daily activity trends
+        const dailyGroups: Record<string, { date: string; success: number; failed: number; total: number; avgTime: number; times: number[] }> = {};
+        
+        // Populate the last 7 days by default to ensure we have a continuous timeline
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          dailyGroups[dateStr] = { date: dateStr, success: 0, failed: 0, total: 0, avgTime: 0, times: [] };
+        }
+        
+        // Fill in real data from logs
+        logs.forEach((log: any) => {
+          const logDate = new Date(log.createdAt);
+          const dateStr = logDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          
+          if (!dailyGroups[dateStr]) {
+            dailyGroups[dateStr] = { date: dateStr, success: 0, failed: 0, total: 0, avgTime: 0, times: [] };
+          }
+          
+          dailyGroups[dateStr].total++;
+          if (log.success) {
+            dailyGroups[dateStr].success++;
+          } else {
+            dailyGroups[dateStr].failed++;
+          }
+          if (log.responseTime > 0) {
+            dailyGroups[dateStr].times.push(log.responseTime);
+          }
+        });
+        
+        // Format daily data points
+        const formattedData = Object.values(dailyGroups).map(group => {
+          const avg = group.times.length
+            ? Math.round(group.times.reduce((a, b) => a + b, 0) / group.times.length) / 1000
+            : 0;
+          return {
+            date: group.date,
+            "Total Processed": group.total,
+            "Successful Replies": group.success,
+            "Failed Runs": group.failed,
+            "Response Time (s)": avg,
+          };
+        });
+
+        // Fallback mock trend for illustrative preview if no logs exist yet
+        const totalLogsCount = logs.length;
+        if (totalLogsCount === 0) {
+          const mockData = [];
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+            
+            const seedVal = [12, 19, 15, 25, 22, 30, 28][6 - i];
+            const successVal = Math.round(seedVal * 0.95);
+            const timeVal = [1.8, 1.6, 2.1, 1.5, 1.9, 1.4, 1.6][6 - i];
+            
+            mockData.push({
+              date: dateStr,
+              "Total Processed": seedVal,
+              "Successful Replies": successVal,
+              "Failed Runs": seedVal - successVal,
+              "Response Time (s)": timeVal,
+              isMock: true,
+            });
+          }
+          setChartData(mockData);
+        } else {
+          setChartData(formattedData);
+        }
+      }
     } catch (error) {
-      console.error("Error fetching stats:", error);
+      console.error("Error fetching stats or logs:", error);
     } finally {
       setIsLoadingStats(false);
     }
@@ -435,19 +527,72 @@ export default function Dashboard() {
             </Card>
 
             <Card className="card-elevated">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle>Usage Trends</CardTitle>
+                {chartData.length > 0 && chartData[0]?.isMock && (
+                  <Badge variant="outline" className="text-xs bg-muted/30 border-muted text-muted-foreground">
+                    Illustrative Preview
+                  </Badge>
+                )}
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                  <p className="font-medium text-muted-foreground">
-                    Detailed Charts Coming Soon
-                  </p>
-                  <p className="text-sm text-muted-foreground/70 mt-1">
-                    Visual analytics and trend graphs will be available in an
-                    upcoming update.
-                  </p>
+                <div className="h-[300px] w-full pt-4">
+                  {chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={chartData}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" vertical={false} />
+                        <XAxis
+                          dataKey="date"
+                          stroke="#71717a"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                        />
+                        <YAxis
+                          stroke="#71717a"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                          allowDecimals={false}
+                        />
+                        <RechartsTooltip
+                          contentStyle={{
+                            background: "#09090b",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "8px",
+                            color: "#fafafa",
+                            fontSize: "12px",
+                          }}
+                          itemStyle={{ color: "#a1a1aa" }}
+                          labelStyle={{ fontWeight: "bold", color: "#fafafa", marginBottom: "4px" }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="Total Processed"
+                          stroke="#818cf8"
+                          fill="rgba(129, 140, 248, 0.08)"
+                          strokeWidth={2}
+                          activeDot={{ r: 6 }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="Successful Replies"
+                          stroke="#10b981"
+                          fill="rgba(16, 185, 129, 0.08)"
+                          strokeWidth={2}
+                          activeDot={{ r: 6 }}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
+                      <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
+                      Loading chart...
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

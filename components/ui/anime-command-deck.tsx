@@ -58,7 +58,8 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
 
   useEffect(() => {
     const root = rootRef.current
-    if (!root) return
+    const meter = root?.querySelector("[data-agent-meter]")
+    if (!root || !meter) return
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     if (reduceMotion) return
@@ -66,7 +67,6 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
     const rows = root.querySelectorAll("[data-agent-row]")
     const rails = root.querySelectorAll("[data-agent-rail]")
     const pips = root.querySelectorAll("[data-agent-pip]")
-    const meter = root.querySelector("[data-agent-meter]")
 
     const intro = createTimeline({
       defaults: {

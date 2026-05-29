@@ -60,10 +60,11 @@ export async function POST(req: NextRequest) {
             postingTip: 'Post during peak engagement hours for maximum reach.',
         };
 
-        // 2. Fetch a high-quality image from picsum (reliable, free, no auth needed)
-        //    Use a deterministic seed per style so the user gets variety across styles
-        const seed = (STYLE_SEEDS[style] || 0) + Date.now() % 1000;
-        const imageUrl = `https://picsum.photos/seed/${seed}/1024/1024`;
+        // 2. Fetch a high-quality generated image from pollinations.ai (free, open-source, no token needed)
+        //    Use the AI-generated photo description as the prompt
+        const prompt = aiContent.photoDescription || `Beautiful product photo of ${productName} in ${style} style — ${productDescription}`;
+        const seed = (STYLE_SEEDS[style] || 0) + Math.floor(Math.random() * 1000);
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
 
         const imageResponse = await fetch(imageUrl, { redirect: 'follow' });
 

@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion, AnimatePresence } from "framer-motion"
 import { useInstagram, type PhotoStyle } from "@/utils/hooks/useInstagram"
+import { toast } from "sonner"
 import {
   Instagram,
   Play,

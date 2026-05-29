@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
                     .eq('user_id', userId)
                     .single()
 
-                const humanReviewEnabled = tokenSettings?.human_review_enabled ?? false
+                const humanReviewEnabled = !!(tokenSettings as any)?.human_review_enabled
 
                 const repliedEmails: Array<{ subject: string; from: string }> = []
                 const escalatedEmails: Array<{ subject: string; from: string; reason: string }> = []

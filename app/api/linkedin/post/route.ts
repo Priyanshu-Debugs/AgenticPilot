@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
-import { createLinkedInPost, isTokenExpired } from '@/lib/linkedin/client'
+import { createLinkedInPost, registerLinkedInImage, uploadLinkedInImage, isTokenExpired } from '@/lib/linkedin/client'
 import { getModel } from '@/lib/ai/llm'
 import { HumanMessage } from '@langchain/core/messages'
 import type { LinkedInConnection } from '@/lib/linkedin/types'
@@ -14,6 +14,7 @@ const createPostSchema = z.object({
     tone: z.string().optional().default('professional'),
     aiGenerate: z.boolean(),
     content: z.string().optional(),
+    imageUrl: z.string().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { topic, tone, aiGenerate, content } = parseResult.data
+        const { topic, tone, aiGenerate, content, imageUrl } = parseResult.data
 
         // Fetch LinkedIn connection
         const { data: connection, error: connError } = await supabase
@@ -103,10 +104,39 @@ Write ONLY the post content, nothing else.`
 
         // Publish to LinkedIn
         try {
+            let mediaUrn: string | undefined = undefined
+
+            if (imageUrl) {
+                try {
+                    const imageResponse = await fetch(imageUrl)
+                    if (imageResponse.ok) {
+                        const imageBuffer = await imageResponse.arrayBuffer()
+                        const contentType = imageResponse.headers.get('content-type') || 'image/jpeg'
+                        
+                        const registration = await registerLinkedInImage(
+                            connection.access_token,
+                            connection.linkedin_person_urn
+                        )
+                        
+                        await uploadLinkedInImage(
+                            registration.uploadUrl,
+                            Buffer.from(imageBuffer),
+                            contentType
+                        )
+                        
+                        mediaUrn = registration.assetUrn
+                    }
+                } catch (mediaErr: any) {
+                    console.error('LinkedIn image registration/upload failed:', mediaErr)
+                    throw new Error(`Failed to upload attached image to LinkedIn: ${mediaErr.message}`)
+                }
+            }
+
             const result = await createLinkedInPost(
                 connection.access_token,
                 connection.linkedin_person_urn,
-                postContent
+                postContent,
+                mediaUrn
             )
 
             // Save to database as published

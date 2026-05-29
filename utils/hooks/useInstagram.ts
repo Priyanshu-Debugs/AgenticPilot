@@ -62,6 +62,56 @@ export interface GeneratedPhoto {
     };
 }
 
+const overlayProductImage = (backgroundBase64: string, productUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+        const bgImg = new Image();
+        bgImg.crossOrigin = "anonymous";
+        bgImg.onload = () => {
+            const prodImg = new Image();
+            prodImg.crossOrigin = "anonymous";
+            prodImg.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1024;
+                canvas.height = 1024;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    resolve(backgroundBase64);
+                    return;
+                }
+                // Draw generated background
+                ctx.drawImage(bgImg, 0, 0, 1024, 1024);
+
+                // Draw product image in the center, resized
+                const maxDim = 450;
+                let w = prodImg.width;
+                let h = prodImg.height;
+                if (w > h) {
+                    h = (h / w) * maxDim;
+                    w = maxDim;
+                } else {
+                    w = (w / h) * maxDim;
+                    h = maxDim;
+                }
+                const x = (1024 - w) / 2;
+                const y = (1024 - h) / 2;
+
+                // Add subtle drop shadow to overlay for integration feel
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+                ctx.shadowBlur = 24;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 12;
+
+                ctx.drawImage(prodImg, x, y, w, h);
+                resolve(canvas.toDataURL('image/jpeg', 0.9));
+            };
+            prodImg.onerror = () => resolve(backgroundBase64);
+            prodImg.src = productUrl;
+        };
+        bgImg.onerror = () => resolve(backgroundBase64);
+        bgImg.src = backgroundBase64;
+    });
+};
+
 export function useInstagram() {
     const [posts, setPosts] = useState<InstagramPost[]>([]);
     const [settings, setSettings] = useState<InstagramSettings | null>(null);
@@ -427,8 +477,18 @@ export function useInstagram() {
             }
 
             const data = await response.json();
+            
+            let finalBase64 = data.imageBase64;
+            if (uploadedImageUrl && finalBase64) {
+                try {
+                    finalBase64 = await overlayProductImage(finalBase64, uploadedImageUrl);
+                } catch (overlayErr) {
+                    console.error('Error combining product image with AI background:', overlayErr);
+                }
+            }
+
             return {
-                imageBase64: data.imageBase64,
+                imageBase64: finalBase64,
                 imageUrl: data.imageUrl,
                 style: data.style,
                 uploaded: data.uploaded,

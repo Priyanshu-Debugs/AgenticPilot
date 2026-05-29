@@ -104,7 +104,7 @@ export async function getLinkedInUserInfo(accessToken: string): Promise<LinkedIn
 // ============================================================
 
 /**
- * Publish a text post to LinkedIn via the UGC Posts API.
+ * Publish a post to LinkedIn via the UGC Posts API (supporting optional images).
  *
  * IMPORTANT: Uses /v2/ugcPosts ONLY (never /v2/shares which is deprecated).
  * Always includes X-Restli-Protocol-Version: 2.0.0
@@ -112,18 +112,33 @@ export async function getLinkedInUserInfo(accessToken: string): Promise<LinkedIn
 export async function createLinkedInPost(
     accessToken: string,
     personUrn: string,
-    text: string
+    text: string,
+    mediaUrn?: string
 ): Promise<{ id: string }> {
+    const shareContent: any = {
+        shareCommentary: {
+            text,
+        },
+        shareMediaCategory: mediaUrn ? 'IMAGE' : 'NONE',
+    }
+
+    if (mediaUrn) {
+        shareContent.media = [
+            {
+                status: 'READY',
+                media: mediaUrn,
+                title: {
+                    text: 'Shared Image'
+                }
+            }
+        ]
+    }
+
     const body = {
         author: `urn:li:person:${personUrn}`,
         lifecycleState: 'PUBLISHED',
         specificContent: {
-            'com.linkedin.ugc.ShareContent': {
-                shareCommentary: {
-                    text,
-                },
-                shareMediaCategory: 'NONE',
-            },
+            'com.linkedin.ugc.ShareContent': shareContent,
         },
         visibility: {
             'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC',
@@ -147,6 +162,68 @@ export async function createLinkedInPost(
 
     const data = await response.json() as { id: string }
     return { id: data.id }
+}
+
+/**
+ * Register an image upload asset on LinkedIn.
+ * Returns the upload URL and digital asset URN.
+ */
+export async function registerLinkedInImage(
+    accessToken: string,
+    personUrn: string
+): Promise<{ uploadUrl: string; assetUrn: string }> {
+    const body = {
+        registerUploadRequest: {
+            recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
+            owner: `urn:li:person:${personUrn}`,
+            supportedUploadMechanisms: ['SYNCHRONOUS_UPLOAD'],
+        },
+    }
+
+    const response = await fetch(`${LINKEDIN_API_BASE}/v2/assets?action=registerUpload`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0',
+        },
+        body: JSON.stringify(body),
+    })
+
+    if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`LinkedIn image registration failed: ${errorText}`)
+    }
+
+    const data = await response.json()
+    const uploadMechanism = data.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']
+    
+    return {
+        uploadUrl: uploadMechanism.uploadUrl,
+        assetUrn: data.value.asset,
+    }
+}
+
+/**
+ * Upload raw image buffer bytes to LinkedIn upload URL.
+ */
+export async function uploadLinkedInImage(
+    uploadUrl: string,
+    imageBuffer: Buffer,
+    contentType = 'image/jpeg'
+): Promise<void> {
+    const response = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': contentType,
+        },
+        body: imageBuffer,
+    })
+
+    if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`LinkedIn image upload failed: ${errorText}`)
+    }
 }
 
 // ============================================================
