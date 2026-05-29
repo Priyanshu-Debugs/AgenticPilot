@@ -134,6 +134,19 @@ function LinkedInAutomationContent() {
         }
     }, [searchParams, router])
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const savedDraft = localStorage.getItem('linkedin_draft_copy')
+            if (savedDraft) {
+                setGeneratedContent(savedDraft)
+                setEditContent(savedDraft)
+                setIsEditing(true)
+                localStorage.removeItem('linkedin_draft_copy')
+                toast.info('Loaded post draft from Social Listening Agent!')
+            }
+        }
+    }, [])
+
     // ============================================================
     // API Calls
     // ============================================================

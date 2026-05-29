@@ -11,6 +11,7 @@ import {
   User,
   Bell,
   Home,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -75,6 +76,12 @@ export function DashboardSidebar({
       title: "Instagram Automation",
       icon: Instagram,
       href: "/dashboard/instagram",
+    },
+    {
+      id: "listening",
+      title: "Social Listening",
+      icon: TrendingUp,
+      href: "/dashboard/listening",
     },
   ];
 
