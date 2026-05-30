@@ -93,7 +93,7 @@ export default function Pricing() {
       />
 
       {/* Pricing Content */}
-      <div className="container-padding section-spacing">
+      <main className="container-padding section-spacing">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 tracking-tight">
@@ -203,7 +203,7 @@ export default function Pricing() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-border py-8 bg-muted/30">

@@ -237,6 +237,13 @@ export default function Dashboard() {
       href: "/dashboard/instagram",
       actionLabel: "Instagram Studio",
     },
+    {
+      id: "listening",
+      name: "Social Listening",
+      description: "Track brand mentions and social trends with AI",
+      href: "/dashboard/listening",
+      actionLabel: "Social Listening",
+    },
   ];
 
   const handleSuggestAutomation = async () => {
@@ -628,6 +635,13 @@ export default function Dashboard() {
               icon={Instagram}
               buttonText="Connect"
               onAction={() => (window.location.href = "/dashboard/instagram")}
+            />
+            <ActionCard
+              title="Social Listening"
+              description="Track mentions and trends across social platforms"
+              icon={TrendingUp}
+              buttonText="Setup"
+              onAction={() => (window.location.href = "/dashboard/listening")}
             />
           </div>
         </TabsContent>

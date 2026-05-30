@@ -30,6 +30,7 @@ import {
   Twitter,
   Linkedin,
   Instagram,
+  TrendingUp,
 } from "lucide-react";
 
 interface FeatureItem {
@@ -83,6 +84,16 @@ const features: FeatureItem[] = [
     signal: "Creative pipeline",
     bars: [88, 52, 74],
   },
+  {
+    title: "Social Listening Agent",
+    description:
+      "Track brand mentions, analyze sentiment, and spot industry trends in real-time across social platforms.",
+    href: "/dashboard/listening",
+    stats: "Real-time trends",
+    code: "AP-05",
+    signal: "Sentiment metrics",
+    bars: [85, 64, 90],
+  },
 ];
 
 const stats = [
@@ -133,6 +144,7 @@ const featureIcons: Record<
   "AP-02": { icon: Twitter, color: "text-sky-400", bg: "bg-sky-500/15" },
   "AP-03": { icon: Linkedin, color: "text-blue-400", bg: "bg-blue-500/15" },
   "AP-04": { icon: Instagram, color: "text-pink-400", bg: "bg-pink-500/15" },
+  "AP-05": { icon: TrendingUp, color: "text-amber-400", bg: "bg-amber-500/15" },
 };
 
 function FeatureIcon({ feature }: { feature: FeatureItem }) {
@@ -311,6 +323,15 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* SEO: noscript fallback for crawlers that don't execute JS */}
+      <noscript>
+        <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+          <h1>AgenticPilot — AI-Powered Business Automation Platform</h1>
+          <p>AgenticPilot automates your business with intelligent AI agents. Automate Gmail replies, X/Twitter posts, LinkedIn outreach, and Instagram content from one unified dashboard. AI automation for modern teams.</p>
+          <p>Features: Gmail AI Assistant with 95% accuracy, X/Twitter Automation for 3x growth, LinkedIn Outreach for 5x engagement, Instagram Product Studio with AI-generated content.</p>
+          <ul><li><a href="/about">About AgenticPilot</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/blog">Blog</a></li><li><a href="/contact">Contact</a></li></ul>
+        </div>
+      </noscript>
       <Navigation
         isAuthenticated={!!user}
         user={navUser}
@@ -321,8 +342,9 @@ export default function LandingPage() {
         }}
       />
 
+      <main>
       {/* Hero Section */}
-      <section className="relative min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-4rem)] overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 flex items-center">
+      <section aria-label="Hero — AI-Powered Business Automation" className="relative min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-4rem)] overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 flex items-center">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
         <DottedSurface className="z-0 opacity-50" />
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]" />
@@ -366,7 +388,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="border-y border-border/70 bg-muted/20">
+      <section aria-label="Platform statistics" className="border-y border-border/70 bg-muted/20">
         <div className="container-padding mx-auto max-w-6xl py-12 sm:py-16">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {stats.map((stat) => (
@@ -393,7 +415,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section-spacing overflow-hidden">
+      <section aria-label="Dashboard overview" className="section-spacing overflow-hidden">
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <motion.div
@@ -445,7 +467,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="section-spacing bg-muted/20">
+      <section id="features" aria-label="Core AI automation features" className="section-spacing bg-muted/20">
         <div className="container-padding mx-auto max-w-6xl">
           <motion.div
             className="mx-auto mb-12 max-w-3xl text-center"
@@ -458,7 +480,7 @@ export default function LandingPage() {
               Core automations
             </Badge>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-              Four agent surfaces, one connected experience.
+              Five agent surfaces, one connected experience.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
               Each automation page is reachable from the dashboard and designed
@@ -466,7 +488,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <motion.div
                 key={feature.title}
@@ -504,7 +526,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section-spacing">
+      <section aria-label="Operating workflow" className="section-spacing">
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-4">
@@ -545,7 +567,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section-spacing border-y border-border/70 bg-muted/20">
+      <section aria-label="Customer testimonials" className="section-spacing border-y border-border/70 bg-muted/20">
         <div className="container-padding mx-auto max-w-6xl">
           <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -591,7 +613,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section-spacing">
+      <section aria-label="Call to action" className="section-spacing">
         <div className="container-padding mx-auto max-w-5xl text-center">
           <Badge variant="outline" className={`${neutralBadgeClass} mb-5`}>
             Ready when you are
@@ -616,6 +638,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </main>
 
       <footer className="border-t border-border bg-muted/30">
         <div className="container-padding mx-auto max-w-6xl py-10">

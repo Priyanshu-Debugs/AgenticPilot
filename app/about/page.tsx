@@ -72,7 +72,7 @@ export default function AboutPage() {
         <div className="absolute left-[-10%] bottom-[10%] w-[35%] h-[35%] rounded-full bg-accent/10 blur-[100px]" />
       </div>
 
-      <div className="relative z-10 container-padding py-32 lg:py-40">
+      <main className="relative z-10 container-padding py-32 lg:py-40">
         <div className="max-w-4xl mx-auto space-y-16">
           {/* Header Section */}
           <motion.div
@@ -180,7 +180,7 @@ export default function AboutPage() {
             </SpotlightCard>
           </motion.div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
