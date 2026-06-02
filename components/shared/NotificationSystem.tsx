@@ -40,14 +40,14 @@ export function NotificationSystem({
   const getIcon = (type: Notification["type"]) => {
     switch (type) {
       case "success":
-        return <CheckCircle className="h-5 w-5 text-emerald-500" />
+        return <CheckCircle className="size-5 text-emerald-500" />
       case "warning":
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />
+        return <AlertTriangle className="size-5 text-amber-500" />
       case "error":
-        return <AlertTriangle className="h-5 w-5 text-destructive" />
+        return <AlertTriangle className="size-5 text-destructive" />
       case "info":
       default:
-        return <Info className="h-5 w-5 text-primary" />
+        return <Info className="size-5 text-primary" />
     }
   }
 
@@ -117,14 +117,14 @@ export function NotificationSystem({
   const unreadCount = localNotifications.filter(n => !n.read).length
 
   return (
-    <div className="space-y-6">
+    <div className="gap-y-6">
       {/* Header */}
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div className="flex items-center space-x-3">
+      <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between md:gap-y-0">
+        <div className="flex items-center gap-x-3">
           <div className="relative">
-            <Bell className="h-6 w-6" />
+            <Bell className="size-6" />
             {unreadCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs h-5 w-5 rounded-full flex items-center justify-center p-0">
+              <Badge className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs size-5 rounded-full flex items-center justify-center p-0">
                 {unreadCount > 9 ? "9+" : unreadCount}
               </Badge>
             )}
@@ -136,13 +136,13 @@ export function NotificationSystem({
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-x-2">
           <Button variant="outline" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
-            <CheckCircle className="h-4 w-4 mr-2" />
+            <CheckCircle className="size-4 mr-2" />
             Mark All Read
           </Button>
           <Button variant="outline">
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="size-4 mr-2" />
             Settings
           </Button>
         </div>
@@ -175,11 +175,11 @@ export function NotificationSystem({
       </div>
 
       {/* Notifications List */}
-      <div className="space-y-4">
+      <div className="gap-y-4">
         {filteredNotifications.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">
-              <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <Bell className="size-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No notifications</h3>
               <p className="text-muted-foreground">
                 {filter === "unread" ? "All caught up! No unread notifications." : "You have no notifications to display."}
@@ -195,25 +195,25 @@ export function NotificationSystem({
               } transition-all hover:shadow-md`}
             >
               <CardContent className="p-4">
-                <div className="flex items-start space-x-4">
+                <div className="flex items-start gap-x-4">
                   <div className="flex-shrink-0 mt-1">
                     {getIcon(notification.type)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
+                        <div className="flex items-center gap-x-2 mb-1">
                           <h3 className={`text-sm font-medium ${!notification.read ? "font-semibold" : ""}`}>
                             {notification.title}
                           </h3>
                           {!notification.read && (
-                            <div className="w-2 h-2 bg-primary rounded-full"></div>
+                            <div className="size-2 bg-primary rounded-full"></div>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">
                           {notification.message}
                         </p>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center gap-x-3">
                           <span className="text-xs text-muted-foreground">
                             {notification.timestamp}
                           </span>
@@ -225,7 +225,7 @@ export function NotificationSystem({
                           </Badge>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-1 ml-4">
+                      <div className="flex items-center gap-x-1 ml-4">
                         {!notification.read && (
                           <Button
                             variant="ghost"
@@ -252,7 +252,7 @@ export function NotificationSystem({
                           onClick={() => handleDismiss(notification.id)}
                           className="text-xs p-1"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="size-4" />
                         </Button>
                       </div>
                     </div>
@@ -268,7 +268,7 @@ export function NotificationSystem({
       {filteredNotifications.length > 0 && (
         <div className="text-center">
           <Button variant="outline">
-            <Archive className="h-4 w-4 mr-2" />
+            <Archive className="size-4 mr-2" />
             Load Older Notifications
           </Button>
         </div>

@@ -117,7 +117,7 @@ export function InfiniteGrid({
             {/* Optional Grid Density Control Panel */}
             {showControls && (
                 <div className="absolute bottom-10 right-10 z-30 pointer-events-auto">
-                    <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl space-y-3 min-w-[200px]">
+                    <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl gap-y-3 min-w-[200px]">
                         <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                             Grid Density
                         </div>

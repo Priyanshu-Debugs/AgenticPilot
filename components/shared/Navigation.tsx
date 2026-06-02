@@ -101,7 +101,7 @@ export function Navigation({
       <div className="container-padding">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Hamburger + Logo */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-x-3">
             <Button
               variant="ghost"
               size="sm"
@@ -109,17 +109,17 @@ export function Navigation({
               className="md:hidden transition-all duration-200 hover:scale-105 hover:bg-muted relative z-50 p-2"
               aria-label="Toggle navigation menu"
             >
-              <div className="relative w-5 h-5">
+              <div className="relative size-5">
                 <Menu
-                  className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${menuIsOpen ? "rotate-180 opacity-0" : "rotate-0 opacity-100"}`}
+                  className={`absolute inset-0 size-5 transition-all duration-300 ${menuIsOpen ? "rotate-180 opacity-0" : "rotate-0 opacity-100"}`}
                 />
                 <X
-                  className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${menuIsOpen ? "rotate-0 opacity-100" : "rotate-180 opacity-0"}`}
+                  className={`absolute inset-0 size-5 transition-all duration-300 ${menuIsOpen ? "rotate-0 opacity-100" : "rotate-180 opacity-0"}`}
                 />
               </div>
             </Button>
-            <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <Link href="/" className="flex items-center gap-x-2">
+              <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
               <span className="text-lg sm:text-xl font-bold tracking-tight">
                 AgenticPilot
               </span>
@@ -127,7 +127,7 @@ export function Navigation({
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center gap-x-1">
             {items.map((item) => (
               <Link
                 key={item.href}
@@ -140,10 +140,10 @@ export function Navigation({
           </div>
 
           {/* Right side - Desktop buttons */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center gap-x-2">
             <Link href="/notifications" className="relative">
               <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4" />
+                <Bell className="size-4" />
                 <span className="sr-only">Notifications</span>
               </Button>
             </Link>
@@ -154,9 +154,9 @@ export function Navigation({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
+                    className="relative size-8 rounded-full"
                   >
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="size-8">
                       <AvatarImage
                         src={user.avatar || ""}
                         alt={user.name}
@@ -170,7 +170,7 @@ export function Navigation({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col gap-y-1">
                       <p className="text-sm font-medium leading-none">
                         {user.name}
                       </p>
@@ -182,19 +182,19 @@ export function Navigation({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
-                      <User className="mr-2 h-4 w-4" />
+                      <User className="mr-2 size-4" />
                       <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/settings" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
+                      <Settings className="mr-2 size-4" />
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 size-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -217,16 +217,16 @@ export function Navigation({
           </div>
 
           {/* Mobile menu button, theme toggle, and sign in */}
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="md:hidden flex items-center gap-x-2">
             <ModeToggle />
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative h-8 w-8 rounded-full"
+                    className="relative size-8 rounded-full"
                   >
-                    <Avatar className="h-6 w-6">
+                    <Avatar className="size-6">
                       <AvatarImage
                         src={user.avatar || ""}
                         alt={user.name}
@@ -240,7 +240,7 @@ export function Navigation({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col gap-y-1">
                       <p className="text-sm font-medium leading-none">
                         {user.name}
                       </p>
@@ -252,19 +252,19 @@ export function Navigation({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
-                      <User className="mr-2 h-4 w-4" />
+                      <User className="mr-2 size-4" />
                       <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/settings" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
+                      <Settings className="mr-2 size-4" />
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 size-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -303,10 +303,10 @@ export function Navigation({
             <div className="flex items-center justify-between p-6 border-b border-border">
               <Link
                 href="/"
-                className="flex items-center space-x-2"
+                className="flex items-center gap-x-2"
                 onClick={toggleMobileMenu}
               >
-                <Bot className="h-8 w-8 text-primary" />
+                <Bot className="size-8 text-primary" />
                 <span className="text-xl font-bold tracking-tight">
                   AgenticPilot
                 </span>
@@ -318,15 +318,15 @@ export function Navigation({
                 className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors p-2"
                 aria-label="Close menu"
               >
-                <X className="h-5 w-5 text-black dark:text-white" />
+                <X className="size-5 text-black dark:text-white" />
               </Button>
             </div>
 
             {/* User Info Section (if authenticated) */}
             {isAuthenticated && user && (
               <div className="p-6 border-b border-border">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-10 w-10">
+                <div className="flex items-center gap-x-3">
+                  <Avatar className="size-10">
                     <AvatarImage
                       src={user.avatar || ""}
                       alt={user.name}
@@ -349,7 +349,7 @@ export function Navigation({
             {/* Drawer Content */}
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex-1 overflow-y-auto px-4 py-4">
-                <div className="space-y-1">
+                <div className="gap-y-1">
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
                     Navigation
                   </h3>
@@ -362,7 +362,7 @@ export function Navigation({
                       onClick={toggleMobileMenu}
                     >
                       {item.icon && (
-                        <item.icon className="h-4 w-4 mr-3 text-muted-foreground" />
+                        <item.icon className="size-4 mr-3 text-muted-foreground" />
                       )}
                       {item.label}
                     </Link>
@@ -373,13 +373,13 @@ export function Navigation({
                     className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
                     onClick={toggleMobileMenu}
                   >
-                    <Bell className="h-4 w-4 mr-3 text-muted-foreground" />
+                    <Bell className="size-4 mr-3 text-muted-foreground" />
                     Notifications
                   </Link>
                 </div>
 
                 {isAuthenticated && (
-                  <div className="mt-6 space-y-1">
+                  <div className="mt-6 gap-y-1">
                     <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
                       Account
                     </h3>
@@ -388,7 +388,7 @@ export function Navigation({
                       className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
                       onClick={toggleMobileMenu}
                     >
-                      <User className="h-4 w-4 mr-3 text-muted-foreground" />
+                      <User className="size-4 mr-3 text-muted-foreground" />
                       Profile
                     </Link>
                     <Link
@@ -396,7 +396,7 @@ export function Navigation({
                       className="flex items-center px-3 py-2.5 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
                       onClick={toggleMobileMenu}
                     >
-                      <Settings className="h-4 w-4 mr-3 text-muted-foreground" />
+                      <Settings className="size-4 mr-3 text-muted-foreground" />
                       Settings
                     </Link>
                     <Button
@@ -407,7 +407,7 @@ export function Navigation({
                       }}
                       className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
                     >
-                      <LogOut className="h-4 w-4 mr-3" />
+                      <LogOut className="size-4 mr-3" />
                       Sign Out
                     </Button>
                   </div>

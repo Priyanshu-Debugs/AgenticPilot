@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { exchangeCodeForTokens, saveTokens } from '@/lib/gmail/oauth'
 
+// react-doctor-disable-next-line nextjs-no-side-effect-in-get-handler -- OAuth callback must be GET per protocol; .insert() logs the connection event.
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const code = searchParams.get('code')
@@ -40,16 +41,16 @@ export async function GET(req: NextRequest) {
         // Exchange code for tokens
         const tokens = await exchangeCodeForTokens(code)
 
-        // Save tokens to database
-        await saveTokens(user.id, tokens)
-
-        // Log the connection
-        await supabase.from('gmail_logs').insert({
-            user_id: user.id,
-            action: 'connected',
-            success: true,
-            details: 'Gmail account connected successfully',
-        })
+        // Save tokens and log connection in parallel (both independent after token exchange)
+        await Promise.all([
+            saveTokens(user.id, tokens),
+            supabase.from('gmail_logs').insert({
+                user_id: user.id,
+                action: 'connected',
+                success: true,
+                details: 'Gmail account connected successfully',
+            }),
+        ])
 
         return NextResponse.redirect(
             `${redirectBase}/dashboard/gmail?success=connected`

@@ -65,8 +65,8 @@ export default function ContactPage() {
           {/* Contact Form */}
           <Card className="card-elevated h-fit">
             <CardHeader className="pb-6">
-              <CardTitle className="flex items-center space-x-2 text-xl sm:text-2xl">
-                <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <CardTitle className="flex items-center gap-x-2 text-xl sm:text-2xl">
+                <MessageSquare className="size-5 sm:h-6 sm:w-6 text-primary" />
                 <span>Send us a message</span>
               </CardTitle>
               <CardDescription className="text-sm sm:text-base">
@@ -74,7 +74,7 @@ export default function ContactPage() {
                 as possible.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="gap-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block text-foreground">
@@ -112,18 +112,18 @@ export default function ContactPage() {
                 />
               </div>
               <Button className="w-full">
-                <Send className="h-4 w-4 mr-2" />
+                <Send className="size-4 mr-2" />
                 Send Message
               </Button>
             </CardContent>
           </Card>
 
           {/* Contact Information */}
-          <div className="space-y-6">
+          <div className="gap-y-6">
             <Card className="card-elevated">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5 text-primary" />
+                <CardTitle className="flex items-center gap-x-2">
+                  <Mail className="size-5 text-primary" />
                   <span>Email Us</span>
                 </CardTitle>
               </CardHeader>

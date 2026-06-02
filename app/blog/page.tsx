@@ -111,11 +111,11 @@ export default async function BlogPage() {
         </div>
 
         <main className="relative z-10 container-padding py-32 lg:py-40">
-          <div className="max-w-5xl mx-auto space-y-16">
+          <div className="max-w-5xl mx-auto gap-y-16">
             {/* Header Section */}
-            <div className="space-y-6">
+            <div className="gap-y-6">
               <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                <BookOpen className="w-4 h-4 mr-2" />
+                <BookOpen className="size-4 mr-2" />
                 Agentic Insights
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
@@ -141,16 +141,16 @@ export default async function BlogPage() {
                 <Card variant="glow" padding="none" className="overflow-hidden border-primary/30">
                   <div className="flex flex-col md:flex-row h-full">
                     <div className="md:w-1/2 bg-gradient-to-br from-primary/20 via-accent/10 to-background p-10 flex items-center justify-center border-b md:border-b-0 md:border-r border-border/50">
-                      <BrainCircuit className="w-32 h-32 text-primary opacity-80" />
+                      <BrainCircuit className="size-32 text-primary opacity-80" />
                     </div>
                     <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                      <div className="flex items-center space-x-4 mb-4 text-xs font-medium text-muted-foreground">
+                      <div className="flex items-center gap-x-4 mb-4 text-xs font-medium text-muted-foreground">
                         <span className="text-primary uppercase tracking-wider">
                           {blogs[0].category}
                         </span>
                         <span>•</span>
                         <span className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />{" "}
+                          <Calendar className="size-3 mr-1" />{" "}
                           {blogs[0].date}
                         </span>
                       </div>
@@ -168,7 +168,7 @@ export default async function BlogPage() {
                           className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors group/link"
                         >
                           Read Original{" "}
-                          <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                          <ExternalLink className="ml-1 size-4 transition-transform group-hover/link:translate-x-1" />
                         </Link>
                       </div>
                     </div>
@@ -185,7 +185,7 @@ export default async function BlogPage() {
                             {blog.category}
                           </span>
                           <span className="flex items-center">
-                            <Clock className="w-3 h-3 mr-1" /> {blog.readTime}
+                            <Clock className="size-3 mr-1" /> {blog.readTime}
                           </span>
                         </div>
                         <h3 className="text-xl font-bold mb-3 line-clamp-2">
@@ -202,7 +202,7 @@ export default async function BlogPage() {
                             className="inline-flex items-center text-xs font-semibold text-primary hover:text-primary/80 transition-colors group/link"
                           >
                             Read{" "}
-                            <ExternalLink className="ml-1 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                            <ExternalLink className="ml-1 size-4 transition-transform group-hover/link:translate-x-1" />
                           </Link>
                         </div>
                       </Card>

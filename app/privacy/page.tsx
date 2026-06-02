@@ -25,8 +25,8 @@ export default function PrivacyPage() {
         <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
           <div className="container-padding">
             <div className="flex justify-between items-center h-16">
-              <Link href="/" className="flex items-center space-x-2">
-                <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <Link href="/" className="flex items-center gap-x-2">
+                <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
                 <span className="text-lg sm:text-xl font-bold tracking-tight">
                   AgenticPilot
                 </span>
@@ -38,8 +38,8 @@ export default function PrivacyPage() {
         <main className="container-padding py-16 lg:py-24">
           <article className="mx-auto max-w-3xl prose prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary">
             <div className="flex items-center gap-3 mb-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <ShieldCheck className="h-6 w-6 text-primary" />
+              <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10">
+                <ShieldCheck className="size-6 text-primary" />
               </div>
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-0">
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
               </div>
             </div>
 
-            <section className="space-y-6">
+            <section className="gap-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-3">1. Information We Collect</h2>
                 <p className="text-muted-foreground leading-relaxed">

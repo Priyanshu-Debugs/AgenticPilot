@@ -96,8 +96,8 @@ export default function ForgotPassword() {
       <nav className="border-b border-border bg-background/80 backdrop-blur-md">
         <div className="container-padding">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <Link href="/" className="flex items-center gap-x-2">
+              <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
               <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
@@ -121,13 +121,13 @@ export default function ForgotPassword() {
           </CardHeader>
           <CardContent>
             {success ? (
-              <div className="text-center space-y-6">
-                <CheckCircle className="h-12 w-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
+              <div className="text-center gap-y-6">
+                <CheckCircle className="size-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Please check your email and click the reset link to continue.
                   If you don&apos;t see the email, check your spam folder.
                 </p>
-                <div className="space-y-3">
+                <div className="gap-y-3">
                   <Button
                     onClick={() => {
                       setSuccess(false)
@@ -142,7 +142,7 @@ export default function ForgotPassword() {
                   </Button>
                   <Link href="/auth/signin">
                     <Button variant="ghost" className="w-full">
-                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      <ArrowLeft className="size-4 mr-2" />
                       Back to Sign In
                     </Button>
                   </Link>
@@ -160,8 +160,8 @@ export default function ForgotPassword() {
                     {error}
                   </div>
                 )}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
+                <form onSubmit={handleSubmit} className="gap-y-6">
+                  <div className="gap-y-2">
                     <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                     <Input
                       id="email"
@@ -184,7 +184,7 @@ export default function ForgotPassword() {
 
                 <div className="mt-6 text-center">
                   <Link href="/auth/signin" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
-                    <ArrowLeft className="h-4 w-4 mr-1" />
+                    <ArrowLeft className="size-4 mr-1" />
                     Back to Sign In
                   </Link>
                 </div>

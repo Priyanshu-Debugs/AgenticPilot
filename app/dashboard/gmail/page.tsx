@@ -60,8 +60,8 @@ export default function GmailAutomationPage() {
     <Suspense
       fallback={
         <div className="p-6 flex items-center justify-center min-h-[400px]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-3">Loading Gmail Automation...</span>
+          <Loader2 className="size-8 animate-spin text-primary" />
+          <span className="ml-3">Loading Gmail Automation…</span>
         </div>
       }
     >
@@ -438,12 +438,12 @@ function GmailAutomationContent() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
       {/* Header - stacks vertically on mobile */}
-      <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+      <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2 sm:gap-3">
-            <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary shrink-0" />
+            <Mail className="size-6 sm:h-8 sm:w-8 text-primary shrink-0" />
             <span>Gmail Automation</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -453,9 +453,9 @@ function GmailAutomationContent() {
         {isConnected && (
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
             <div className="flex items-center gap-2 rounded-lg border border-border bg-card/70 px-3 py-2">
-              <Mail className="h-4 w-4 text-primary" />
+              <Mail className="size-4 text-primary" />
               <div className="flex items-center gap-2 min-w-0">
-                <Avatar className="h-7 w-7">
+                <Avatar className="size-7">
                   <AvatarImage
                     src={accountAvatar}
                     alt={accountName}
@@ -486,7 +486,7 @@ function GmailAutomationContent() {
               className="w-full sm:w-auto"
             >
               <RefreshCw
-                className={`h-4 w-4 mr-2 ${emailsLoading ? "animate-spin" : ""}`}
+                className={`size-4 mr-2 ${emailsLoading ? "animate-spin" : ""}`}
               />
               Refresh
             </Button>
@@ -498,7 +498,7 @@ function GmailAutomationContent() {
       <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
         <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" />
+            <Zap className="size-4 text-primary" />
             How to Connect & Use Gmail Automation
           </div>
           <span className="transition group-open:rotate-180">
@@ -517,7 +517,7 @@ function GmailAutomationContent() {
             </svg>
           </span>
         </summary>
-        <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-primary/20 ml-2">
+        <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-primary/20 ml-2">
           <p>
             1. Click{" "}
             <strong className="text-foreground">Connect Your Gmail</strong> and
@@ -545,9 +545,9 @@ function GmailAutomationContent() {
           <Card className="card-elevated border-primary/20">
             <CardContent className="flex items-center justify-between gap-3 py-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Zap
-                    className={`h-5 w-5 ${autoReplyEnabled ? "text-primary" : "text-muted-foreground"}`}
+                    className={`size-5 ${autoReplyEnabled ? "text-primary" : "text-muted-foreground"}`}
                   />
                 </div>
                 <div>
@@ -584,9 +584,9 @@ function GmailAutomationContent() {
           <Card className="card-elevated border-amber-500/20">
             <CardContent className="flex items-center justify-between gap-3 py-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="size-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
                   <Shield
-                    className={`h-5 w-5 ${humanReviewEnabled ? "text-amber-500" : "text-muted-foreground"}`}
+                    className={`size-5 ${humanReviewEnabled ? "text-amber-500" : "text-muted-foreground"}`}
                   />
                 </div>
                 <div>
@@ -634,31 +634,31 @@ function GmailAutomationContent() {
 
       {/* Main Content */}
       {isConnected && (
-        <Tabs defaultValue="inbox" className="space-y-4">
+        <Tabs defaultValue="inbox" className="gap-y-4">
           <TabsList className="w-full sm:w-auto">
             <TabsTrigger
               value="inbox"
               className="gap-1.5 sm:gap-2 flex-1 sm:flex-none"
             >
-              <Inbox className="h-4 w-4" />
+              <Inbox className="size-4" />
               <span>Inbox</span>
             </TabsTrigger>
             <TabsTrigger
               value="activity"
               className="gap-1.5 sm:gap-2 flex-1 sm:flex-none"
             >
-              <Activity className="h-4 w-4" />
+              <Activity className="size-4" />
               <span>Activity</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inbox" className="space-y-3">
+          <TabsContent value="inbox" className="gap-y-3">
             {/* Search and Filters - Clean mobile layout */}
             <Card className="border-border/50">
               <CardContent className="p-3">
                 {/* Search input - full width */}
                 <div className="relative mb-2">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
                   <Input
                     placeholder="Search emails..."
                     value={searchQuery}
@@ -678,7 +678,7 @@ function GmailAutomationContent() {
                     }}
                     className="flex-1 gap-1.5 h-9"
                   >
-                    <Filter className="h-3.5 w-3.5" />
+                    <Filter className="size-3.5" />
                     Unread
                   </Button>
                   <Button
@@ -688,10 +688,10 @@ function GmailAutomationContent() {
                     className="flex-1 h-9"
                   >
                     {emailsLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                     ) : (
                       <>
-                        <Search className="h-3.5 w-3.5 mr-1.5" />
+                        <Search className="size-3.5 mr-1.5" />
                         Search
                       </>
                     )}
@@ -758,7 +758,7 @@ function GmailAutomationContent() {
       {!connectionLoading && !isConnected && (
         <Card className="border-dashed">
           <CardContent className="py-8 sm:py-12 px-4 sm:px-6 text-center">
-            <Mail className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground/30" />
+            <Mail className="size-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground/30" />
             <h3 className="text-lg sm:text-xl font-semibold mb-2">
               Connect Your Gmail
             </h3>

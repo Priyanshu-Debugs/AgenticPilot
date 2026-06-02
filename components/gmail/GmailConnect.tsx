@@ -100,23 +100,23 @@ export function GmailConnect({
         <Card className="border-2 border-dashed overflow-hidden">
             <CardContent className="p-4 sm:p-6">
                 {/* Stack everything vertically on mobile, horizontal on desktop */}
-                <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+                <div className="gap-y-4 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                     {/* Left side: Icon + Status */}
                     <div className="flex items-center gap-3">
                         <div className={`p-2.5 sm:p-3 rounded-full shrink-0 ${isConnected ? 'bg-green-100 dark:bg-green-900/30' : 'bg-muted'}`}>
-                            <Mail className={`h-5 w-5 sm:h-6 sm:w-6 ${isConnected ? 'text-green-600' : 'text-muted-foreground'}`} />
+                            <Mail className={`size-5 sm:h-6 sm:w-6 ${isConnected ? 'text-green-600' : 'text-muted-foreground'}`} />
                         </div>
                         <div className="min-w-0">
                             <h3 className="font-semibold text-sm sm:text-base">Gmail Connection</h3>
                             <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
                                 {isConnected ? (
                                     <>
-                                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                                        <CheckCircle2 className="size-3.5 text-green-500 shrink-0" />
                                         <span className="text-green-600">Connected</span>
                                     </>
                                 ) : (
                                     <>
-                                        <XCircle className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                                        <XCircle className="size-3.5 text-red-500 shrink-0" />
                                         <span>Not connected</span>
                                     </>
                                 )}
@@ -135,12 +135,12 @@ export function GmailConnect({
                             >
                                 {isAutomating ? (
                                     <>
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                        Processing...
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Processing…
                                     </>
                                 ) : (
                                     <>
-                                        <Zap className="h-4 w-4" />
+                                        <Zap className="size-4" />
                                         Start Automation
                                     </>
                                 )}
@@ -155,7 +155,7 @@ export function GmailConnect({
                                 disabled={isProcessing || isAutomating}
                                 className="w-full sm:w-auto"
                             >
-                                {isProcessing && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                                {isProcessing && <Loader2 className="size-4 animate-spin mr-2" />}
                                 Disconnect
                             </Button>
                         ) : (
@@ -166,9 +166,9 @@ export function GmailConnect({
                                 className="w-full sm:w-auto gap-2"
                             >
                                 {isProcessing ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <Loader2 className="size-4 animate-spin" />
                                 ) : (
-                                    <Link2 className="h-4 w-4" />
+                                    <Link2 className="size-4" />
                                 )}
                                 Connect Gmail
                             </Button>
@@ -178,10 +178,10 @@ export function GmailConnect({
 
                 {/* Automation Progress */}
                 {isAutomating && (
-                    <div className="space-y-2 pt-2 border-t">
+                    <div className="gap-y-2 pt-2 border-t">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                            <span>Analyzing emails and generating AI replies...</span>
+                            <Loader2 className="size-4 animate-spin text-primary" />
+                            <span>Analyzing emails and generating AI replies…</span>
                         </div>
                         <Progress value={undefined} className="h-2" />
                     </div>
@@ -189,7 +189,7 @@ export function GmailConnect({
 
                 {/* Automation Result */}
                 {automationResult && !isAutomating && (
-                    <div className="space-y-3 pt-2 border-t">
+                    <div className="gap-y-3 pt-2 border-t">
                         <div className="flex items-center justify-between">
                             <p className="text-sm font-medium">{automationResult.message}</p>
                             <div className="flex gap-2">
@@ -208,7 +208,7 @@ export function GmailConnect({
 
                         {/* Show individual results */}
                         {automationResult.results && automationResult.results.length > 0 && (
-                            <div className="max-h-40 overflow-y-auto space-y-2">
+                            <div className="max-h-40 overflow-y-auto gap-y-2">
                                 {automationResult.results.map((result, idx) => (
                                     <div
                                         key={idx}
@@ -222,9 +222,9 @@ export function GmailConnect({
                                             <p className="text-xs text-muted-foreground truncate">{result.from}</p>
                                         </div>
                                         {result.status === 'success' ? (
-                                            <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 ml-2" />
+                                            <CheckCircle2 className="size-4 text-green-500 flex-shrink-0 ml-2" />
                                         ) : (
-                                            <XCircle className="h-4 w-4 text-red-500 flex-shrink-0 ml-2" />
+                                            <XCircle className="size-4 text-red-500 flex-shrink-0 ml-2" />
                                         )}
                                     </div>
                                 ))}

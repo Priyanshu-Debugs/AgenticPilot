@@ -64,11 +64,11 @@ export function ComposeReply({
     if (!email) return null
 
     return (
-        <div className="space-y-4">
+        <div className="gap-y-4">
             {/* Dialog header with email info */}
-            <div className="space-y-1">
+            <div className="gap-y-1">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <Send className="h-5 w-5 text-primary" />
+                    <Send className="size-5 text-primary" />
                     Compose Reply
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export function ComposeReply({
             {/* AI Generation */}
             <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="h-4 w-4 text-primary" />
+                    <Sparkles className="size-4 text-primary" />
                     <span className="font-medium text-sm">AI Generate Reply</span>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -122,9 +122,9 @@ export function ComposeReply({
                     className="gap-2"
                 >
                     {generating ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                     ) : (
-                        <Wand2 className="h-4 w-4" />
+                        <Wand2 className="size-4" />
                     )}
                     Generate {selectedTone} reply
                 </Button>
@@ -153,9 +153,9 @@ export function ComposeReply({
                     className="gap-2"
                 >
                     {sending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                     ) : (
-                        <Send className="h-4 w-4" />
+                        <Send className="size-4" />
                     )}
                     Send Reply
                 </Button>

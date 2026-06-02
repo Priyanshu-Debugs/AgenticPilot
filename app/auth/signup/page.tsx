@@ -15,7 +15,7 @@ import { validatePassword } from "@/lib/password-validation"
 
 // Google Icon component
 const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24">
+  <svg className="size-5" viewBox="0 0 24 24">
     <path
       fill="#4285F4"
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -123,8 +123,8 @@ export default function SignUp() {
       <nav className="border-b border-border bg-background/80 backdrop-blur-md">
         <div className="container-padding">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <Link href="/" className="flex items-center gap-x-2 hover:opacity-80 transition-opacity">
+              <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
               <span className="text-lg sm:text-xl font-bold">AgenticPilot</span>
             </Link>
             <ModeToggle />
@@ -134,16 +134,16 @@ export default function SignUp() {
 
       {/* Sign Up Form */}
       <div className="flex-1 flex items-center justify-center container-padding py-8 sm:py-12">
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md gap-y-6">
           {/* Header */}
-          <div className="text-center space-y-2">
+          <div className="text-center gap-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Create account</h1>
             <p className="text-muted-foreground">Start automating your business today</p>
           </div>
 
           {/* Form Card */}
           <Card className="card-elevated p-6 sm:p-8">
-            <div className="space-y-6">
+            <div className="gap-y-6">
               {error && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                   {error}
@@ -178,8 +178,8 @@ export default function SignUp() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
+              <form onSubmit={handleSubmit} className="gap-y-4">
+                <div className="gap-y-2">
                   <Label htmlFor="name" className="text-sm font-medium">Full name</Label>
                   <Input
                     id="name"
@@ -193,7 +193,7 @@ export default function SignUp() {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
                   <Input
                     id="email"
@@ -207,7 +207,7 @@ export default function SignUp() {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                   <div className="relative">
                     <Input
@@ -229,15 +229,15 @@ export default function SignUp() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        <EyeOff className="size-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <Eye className="size-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm password</Label>
                   <div className="relative">
                     <Input
@@ -259,17 +259,17 @@ export default function SignUp() {
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        <EyeOff className="size-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <Eye className="size-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
                 </div>
 
-                <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg space-y-2">
+                <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg gap-y-2">
                   <div className="font-medium">Password requirements:</div>
-                  <ul className="space-y-1">
+                  <ul className="gap-y-1">
                     <li>• At least 8 characters long</li>
                     <li>• Contains uppercase and lowercase letters</li>
                     <li>• Contains at least one number</li>

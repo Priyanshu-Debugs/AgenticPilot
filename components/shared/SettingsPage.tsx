@@ -255,11 +255,11 @@ export function SettingsPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="gap-y-6">
       {/* Header */}
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div className="flex items-center space-x-3">
-          <Settings className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+      <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between md:gap-y-0">
+        <div className="flex items-center gap-x-3">
+          <Settings className="size-8 text-gray-600 dark:text-gray-400" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
             <p className="text-muted-foreground">
@@ -267,57 +267,57 @@ export function SettingsPage({
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-x-2">
           <Button variant="outline" onClick={handleReset}>
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="size-4 mr-2" />
             Reset
           </Button>
           <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="size-4 mr-2" />
             Save Changes
           </Button>
         </div>
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="profile" className="space-y-6">
+      <Tabs defaultValue="profile" className="gap-y-6">
         <TabsList className="grid w-full grid-cols-3 gap-2">
-          <TabsTrigger value="profile" className="flex items-center space-x-2">
-            <User className="h-4 w-4" />
+          <TabsTrigger value="profile" className="flex items-center gap-x-2">
+            <User className="size-4" />
             <span className="hidden sm:inline">Profile</span>
           </TabsTrigger>
           <TabsTrigger
             value="notifications"
-            className="flex items-center space-x-2"
+            className="flex items-center gap-x-2"
           >
-            <Bell className="h-4 w-4" />
+            <Bell className="size-4" />
             <span className="hidden sm:inline">Notifications</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="integrations"
-            className="flex items-center space-x-2"
+            className="flex items-center gap-x-2"
           >
-            <Database className="h-4 w-4" />
+            <Database className="size-4" />
             <span className="hidden sm:inline">Integrations</span>
           </TabsTrigger>
         </TabsList>
 
         {/* Profile Settings */}
-        <TabsContent value="profile" className="space-y-6">
+        <TabsContent value="profile" className="gap-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <User className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-x-2">
+                <User className="size-5" />
                 <span>Profile Information</span>
               </CardTitle>
               <CardDescription>
                 Update your personal information and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="gap-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
@@ -331,7 +331,7 @@ export function SettingsPage({
                     }
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
@@ -342,7 +342,7 @@ export function SettingsPage({
                   />
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="gap-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
@@ -352,7 +352,7 @@ export function SettingsPage({
                   className="bg-muted/50"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="gap-y-2">
                 <Label htmlFor="company">Company</Label>
                 <Input
                   id="company"
@@ -363,7 +363,7 @@ export function SettingsPage({
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
                   <Select
                     value={settings.profile.timezone}
@@ -391,7 +391,7 @@ export function SettingsPage({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   <Label htmlFor="language">Language</Label>
                   <Select
                     value={settings.profile.language}
@@ -416,21 +416,21 @@ export function SettingsPage({
         </TabsContent>
 
         {/* Notification Settings */}
-        <TabsContent value="notifications" className="space-y-6">
+        <TabsContent value="notifications" className="gap-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Bell className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-x-2">
+                <Bell className="size-5" />
                 <span>Notification Preferences</span>
               </CardTitle>
               <CardDescription>
                 Choose how you want to be notified about important events
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
+            <CardContent className="gap-y-6">
+              <div className="gap-y-4">
                 <h4 className="font-medium">Delivery Methods</h4>
-                <div className="space-y-3">
+                <div className="gap-y-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Email Notifications</Label>
@@ -488,9 +488,9 @@ export function SettingsPage({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="gap-y-4">
                 <h4 className="font-medium">Event Types</h4>
-                <div className="space-y-3">
+                <div className="gap-y-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Task Completion</Label>
@@ -570,25 +570,25 @@ export function SettingsPage({
         </TabsContent>
 
         {/* Integrations */}
-        <TabsContent value="integrations" className="space-y-6">
+        <TabsContent value="integrations" className="gap-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Database className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-x-2">
+                <Database className="size-5" />
                 <span>API & Integrations</span>
               </CardTitle>
               <CardDescription>
                 Manage your connected services and API access
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="gap-y-6">
               {/* Connected Services */}
-              <div className="space-y-4">
+              <div className="gap-y-4">
                 <h4 className="font-medium">Connected Services</h4>
-                <div className="space-y-3">
+                <div className="gap-y-3">
                   <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Mail className="h-5 w-5" />
+                    <div className="flex items-center gap-x-3">
+                      <Mail className="size-5" />
                       <div>
                         <Label>Gmail</Label>
                         <p className="text-sm text-muted-foreground">
@@ -598,7 +598,7 @@ export function SettingsPage({
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Badge
                         variant={
                           settings.integrations.gmailConnected
@@ -625,8 +625,8 @@ export function SettingsPage({
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Instagram className="h-5 w-5" />
+                    <div className="flex items-center gap-x-3">
+                      <Instagram className="size-5" />
                       <div>
                         <Label>Instagram</Label>
                         <p className="text-sm text-muted-foreground">
@@ -636,7 +636,7 @@ export function SettingsPage({
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Badge
                         variant={
                           settings.integrations.instagramConnected
@@ -661,8 +661,8 @@ export function SettingsPage({
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Twitter className="h-5 w-5" />
+                    <div className="flex items-center gap-x-3">
+                      <Twitter className="size-5" />
                       <div>
                         <Label>X/Twitter</Label>
                         <p className="text-sm text-muted-foreground">
@@ -672,7 +672,7 @@ export function SettingsPage({
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Badge
                         variant={
                           settings.integrations.twitterConnected
@@ -699,8 +699,8 @@ export function SettingsPage({
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Linkedin className="h-5 w-5" />
+                    <div className="flex items-center gap-x-3">
+                      <Linkedin className="size-5" />
                       <div>
                         <Label>LinkedIn</Label>
                         <p className="text-sm text-muted-foreground">
@@ -711,7 +711,7 @@ export function SettingsPage({
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Badge
                         variant={
                           settings.integrations.linkedinConnected
@@ -741,12 +741,12 @@ export function SettingsPage({
               </div>
 
               {/* API Configuration */}
-              <div className="space-y-4">
+              <div className="gap-y-4">
                 <h4 className="font-medium">API Configuration</h4>
-                <div className="space-y-4">
-                  <div className="space-y-2">
+                <div className="gap-y-4">
+                  <div className="gap-y-2">
                     <Label>API Key</Label>
-                    <div className="flex space-x-2">
+                    <div className="flex gap-x-2">
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={settings.integrations.apiKey || ""}
@@ -764,17 +764,17 @@ export function SettingsPage({
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
+                          <EyeOff className="size-4" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="size-4" />
                         )}
                       </Button>
                       <Button variant="outline">
-                        <RefreshCw className="h-4 w-4" />
+                        <RefreshCw className="size-4" />
                       </Button>
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label>Webhook URL</Label>
                     <Input
                       value={settings.integrations.webhookUrl || ""}
@@ -791,7 +791,7 @@ export function SettingsPage({
               </div>
 
               <Alert>
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="size-4" />
                 <AlertDescription>
                   Keep your API key secure. Never share it publicly or commit it
                   to version control.
@@ -807,13 +807,13 @@ export function SettingsPage({
         <Button variant="outline" onClick={onExport}>
           Export Settings
         </Button>
-        <div className="flex space-x-2">
+        <div className="flex gap-x-2">
           <Button variant="outline" onClick={onReset}>
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="size-4 mr-2" />
             Reset to Defaults
           </Button>
           <Button onClick={() => onSave(settings)}>
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="size-4 mr-2" />
             Save Settings
           </Button>
         </div>

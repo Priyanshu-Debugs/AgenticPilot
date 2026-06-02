@@ -36,8 +36,8 @@ export function EmailList({
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                <span className="ml-3 text-muted-foreground">Loading emails...</span>
+                <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                <span className="ml-3 text-muted-foreground">Loading emails…</span>
             </div>
         )
     }
@@ -45,7 +45,7 @@ export function EmailList({
     if (emails.length === 0) {
         return (
             <div className="text-center py-12 text-muted-foreground">
-                <Mail className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <Mail className="size-12 mx-auto mb-3 opacity-30" />
                 <p className="font-medium">No emails found</p>
                 <p className="text-sm">Your inbox is empty or try a different filter</p>
             </div>
@@ -53,7 +53,7 @@ export function EmailList({
     }
 
     return (
-        <div className="space-y-2 max-h-[calc(100vh-350px)] overflow-y-auto">
+        <div className="gap-y-2 max-h-[calc(100vh-350px)] overflow-y-auto">
             {emails.map((email) => (
                 <Card
                     key={email.id}
@@ -64,7 +64,7 @@ export function EmailList({
                         {/* Email header: sender and date */}
                         <div className="flex items-center justify-between gap-2 mb-1.5">
                             <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                                <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                <User className="size-3.5 text-muted-foreground shrink-0" />
                                 <span className="text-xs sm:text-sm font-medium truncate">
                                     {extractName(email.from)}
                                 </span>
@@ -73,7 +73,7 @@ export function EmailList({
                                 )}
                             </div>
                             <div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
-                                <Clock className="h-3 w-3" />
+                                <Clock className="size-3" />
                                 {formatDate(email.date)}
                             </div>
                         </div>
@@ -107,7 +107,7 @@ export function EmailList({
                                 }}
                                 className="h-7 px-2 gap-1 text-xs hover:bg-primary/10 hover:text-primary"
                             >
-                                <Sparkles className="h-3.5 w-3.5" />
+                                <Sparkles className="size-3.5" />
                                 Analyze
                             </Button>
                             <Button
@@ -119,7 +119,7 @@ export function EmailList({
                                 }}
                                 className="h-7 px-2 gap-1 text-xs hover:bg-primary/10 hover:text-primary"
                             >
-                                <Send className="h-3.5 w-3.5" />
+                                <Send className="size-3.5" />
                                 Reply
                             </Button>
                             <Button
@@ -129,12 +129,12 @@ export function EmailList({
                                     e.stopPropagation()
                                     setExpandedId(expandedId === email.id ? null : email.id)
                                 }}
-                                className="h-7 w-7 ml-auto text-muted-foreground"
+                                className="size-7 ml-auto text-muted-foreground"
                             >
                                 {expandedId === email.id ? (
-                                    <ChevronUp className="h-4 w-4" />
+                                    <ChevronUp className="size-4" />
                                 ) : (
-                                    <ChevronDown className="h-4 w-4" />
+                                    <ChevronDown className="size-4" />
                                 )}
                             </Button>
                         </div>

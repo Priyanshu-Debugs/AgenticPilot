@@ -350,14 +350,14 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-full overflow-x-hidden">
+    <div className="gap-y-6 sm:gap-y-8 max-w-full overflow-x-hidden">
       {/* Dashboard Header */}
       <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-              <Bot className="h-6 w-6 text-primary" />
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Bot className="size-6 text-primary" />
             </div>
             <div>
               <p className="text-sm font-medium text-primary">Command center</p>
@@ -374,7 +374,7 @@ export default function Dashboard() {
               </p>
               {profile && (
                 <div className="mt-3 flex items-center">
-                  <div className="mr-2 h-2 w-2 rounded-full bg-emerald-500" />
+                  <div className="mr-2 size-2 rounded-full bg-emerald-500" />
                   <span className="text-xs text-muted-foreground">
                     {profile.plan.charAt(0).toUpperCase() +
                       profile.plan.slice(1)}{" "}
@@ -386,20 +386,20 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button variant="outline" onClick={handleOpenIntegrations}>
-              <Settings className="h-4 w-4" />
+              <Settings className="size-4" />
               View Integrations
             </Button>
             <Dialog open={suggestOpen} onOpenChange={setSuggestOpen}>
               <DialogTrigger asChild>
                 <Button>
-                  <Lightbulb className="h-4 w-4" />
+                  <Lightbulb className="size-4" />
                   Suggest Automation
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-primary" />
+                    <Lightbulb className="size-5 text-primary" />
                     Suggest an Automation
                   </DialogTitle>
                   <DialogDescription>
@@ -407,9 +407,9 @@ export default function Dashboard() {
                     like to automate and we&apos;ll consider adding it.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 pt-2">
+                <div className="gap-y-4 pt-2">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
+                    <div className="gap-y-2">
                       <Label htmlFor="suggest-name">Your Name</Label>
                       <Input
                         id="suggest-name"
@@ -418,7 +418,7 @@ export default function Dashboard() {
                         onChange={(e) => setSuggestName(e.target.value)}
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="gap-y-2">
                       <Label htmlFor="suggest-email">Email</Label>
                       <Input
                         id="suggest-email"
@@ -429,7 +429,7 @@ export default function Dashboard() {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label htmlFor="suggest-text">Your Suggestion *</Label>
                     <Textarea
                       id="suggest-text"
@@ -446,12 +446,12 @@ export default function Dashboard() {
                   >
                     {suggestLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />{" "}
+                        <Loader2 className="size-4 mr-2 animate-spin" />{" "}
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <Send className="h-4 w-4 mr-2" /> Submit Suggestion
+                        <Send className="size-4 mr-2" /> Submit Suggestion
                       </>
                     )}
                   </Button>
@@ -482,7 +482,7 @@ export default function Dashboard() {
         id="dashboard-tabs"
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as typeof activeTab)}
-        className="space-y-6"
+        className="gap-y-6"
       >
         <TabsList className="grid h-auto w-full grid-cols-3">
           <TabsTrigger value="automations">Automations</TabsTrigger>
@@ -490,16 +490,16 @@ export default function Dashboard() {
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="automations" className="space-y-6">
+        <TabsContent value="automations" className="gap-y-6">
           <AutomationController tasks={automationTasks} />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="analytics" className="gap-y-6">
           <div className="grid gap-6">
             <Card className="card-elevated">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <BarChart3 className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-x-2">
+                  <BarChart3 className="size-5" />
                   <span>Performance Analytics</span>
                 </CardTitle>
               </CardHeader>
@@ -596,8 +596,8 @@ export default function Dashboard() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
-                      <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
-                      Loading chart...
+                      <Loader2 className="size-6 animate-spin mr-2 text-primary" />
+                      Loading chart…
                     </div>
                   )}
                 </div>
@@ -606,7 +606,7 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="integrations" className="space-y-6">
+        <TabsContent value="integrations" className="gap-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <ActionCard
               title="Gmail Integration"
@@ -651,8 +651,8 @@ export default function Dashboard() {
       <Card className="card-elevated">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5" />
+            <div className="flex items-center gap-x-2">
+              <Clock className="size-5" />
               <span>Recent Activity</span>
             </div>
             <Button
@@ -662,7 +662,7 @@ export default function Dashboard() {
               disabled={isLoadingStats}
             >
               {isLoadingStats ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
                 "Refresh"
               )}
@@ -670,22 +670,22 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="gap-y-4">
             {isLoadingStats ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                <Loader2 className="size-6 animate-spin mr-2" />
                 <span className="text-muted-foreground">
-                  Loading activity...
+                  Loading activity…
                 </span>
               </div>
             ) : recentActivity.length > 0 ? (
               recentActivity.map((activity, index) => (
                 <div
                   key={activity.id || index}
-                  className="flex items-center space-x-3"
+                  className="flex items-center gap-x-3"
                 >
                   <div
-                    className={`w-2 h-2 rounded-full ${
+                    className={`size-2 rounded-full ${
                       activity.status === "success"
                         ? "bg-emerald-500"
                         : activity.status === "failed"
@@ -708,7 +708,7 @@ export default function Dashboard() {
               ))
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                <Clock className="h-12 w-12 mx-auto mb-2 opacity-30" />
+                <Clock className="size-12 mx-auto mb-2 opacity-30" />
                 <p className="font-medium">No recent activity</p>
                 <p className="text-sm">
                   Run Gmail automation to see activity here

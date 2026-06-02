@@ -6,6 +6,7 @@ import { cookies } from 'next/headers'
 import { exchangeCodeForTokens, getXUserInfo } from '@/lib/twitter/client'
 import type { TwitterConnection } from '@/lib/twitter/types'
 
+// react-doctor-disable-next-line nextjs-no-side-effect-in-get-handler -- OAuth callback must be GET per protocol; cookies().set() clears the CSRF state token.
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const code = searchParams.get('code')

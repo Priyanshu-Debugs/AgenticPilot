@@ -44,10 +44,18 @@ interface ProgressProps
     VariantProps<typeof progressVariants> {
   value?: number
   max?: number
+  ref?: React.Ref<HTMLDivElement>
 }
 
-const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
-  ({ className, value = 0, max = 100, variant, ...props }, ref) => (
+function Progress({
+  className,
+  value = 0,
+  max = 100,
+  variant,
+  ref,
+  ...props
+}: ProgressProps) {
+  return (
     <div
       ref={ref}
       className={cn(progressVariants({ variant }), className)}
@@ -59,7 +67,6 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
       />
     </div>
   )
-)
-Progress.displayName = "Progress"
+}
 
 export { Progress }

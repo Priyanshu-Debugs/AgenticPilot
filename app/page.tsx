@@ -152,10 +152,10 @@ function FeatureIcon({ feature }: { feature: FeatureItem }) {
   const IconComponent = config.icon;
   return (
     <div
-      className={`relative flex h-20 w-20 items-center justify-center rounded-xl border border-border ${config.bg}`}
+      className={`relative flex size-20 items-center justify-center rounded-xl border border-border ${config.bg}`}
     >
-      <IconComponent className={`h-8 w-8 ${config.color}`} />
-      <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+      <IconComponent className={`size-8 ${config.color}`} />
+      <span className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
         {feature.code.split("-")[1]}
       </span>
     </div>
@@ -181,9 +181,9 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
     >
       <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
         <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+          <span className="size-2.5 rounded-full bg-red-400" />
+          <span className="size-2.5 rounded-full bg-amber-400" />
+          <span className="size-2.5 rounded-full bg-emerald-400" />
           <span className="ml-3 text-xs text-muted-foreground">
             agenticpilot.app/dashboard
           </span>
@@ -205,8 +205,8 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
           <div className="h-full bg-background p-4 text-foreground">
             <div className="mb-4 flex items-center justify-between rounded-lg border border-border bg-card p-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                  <LayoutDashboard className="h-4 w-4 text-primary" />
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                  <LayoutDashboard className="size-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold">Command center</p>
@@ -230,7 +230,7 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
                   key={item.label}
                   className="rounded-lg border border-border bg-card p-3"
                 >
-                  <item.icon className="mb-3 h-4 w-4 text-primary" />
+                  <item.icon className="mb-3 size-4 text-primary" />
                   <p className="text-lg font-bold">{item.value}</p>
                   <p className="text-[10px] text-muted-foreground">
                     {item.label}
@@ -244,7 +244,7 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
                   <span className="font-medium">Automation health</span>
                   <span className="text-muted-foreground">83%</span>
                 </div>
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   {[74, 92, 58].map((width, index) => (
                     <div
                       key={index}
@@ -260,14 +260,14 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
               </div>
               <div className="rounded-lg border border-border bg-card p-3">
                 <p className="mb-3 text-xs font-medium">Recent activity</p>
-                <div className="space-y-2">
+                <div className="gap-y-2">
                   {["Gmail analyzed", "Caption drafted", "Thread queued"].map(
                     (item) => (
                       <div
                         key={item}
                         className="flex items-center gap-2 text-[10px] text-muted-foreground"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span className="size-1.5 rounded-full bg-primary" />
                         {item}
                       </div>
                     ),
@@ -372,7 +372,7 @@ export default function LandingPage() {
               >
                 <Link href="/auth/signup">
                   Start Free Trial
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 size-5" />
                 </Link>
               </Button>
               <Button
@@ -396,8 +396,8 @@ export default function LandingPage() {
                 key={stat.label}
                 className="rounded-lg border border-border/70 bg-card/70 p-5 shadow-sm"
               >
-                <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <stat.icon className="h-5 w-5 text-primary" />
+                <div className="mb-5 flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                  <stat.icon className="size-5 text-primary" />
                 </div>
                 <div className="text-2xl font-bold tracking-tight sm:text-3xl">
                   <AnimatedCounter
@@ -419,14 +419,14 @@ export default function LandingPage() {
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <motion.div
-              className="space-y-5"
+              className="gap-y-5"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
               <Badge variant="outline" className={neutralBadgeClass}>
-                <Bot className="mr-1.5 h-3.5 w-3.5" />
+                <Bot className="mr-1.5 size-3.5" />
                 Unified cockpit
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
@@ -448,7 +448,7 @@ export default function LandingPage() {
                     key={item}
                     className="flex items-center gap-2 rounded-lg border border-border bg-card p-3 text-sm"
                   >
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <CheckCircle className="size-4 text-primary" />
                     {item}
                   </div>
                 ))}
@@ -516,7 +516,7 @@ export default function LandingPage() {
                       className="mt-6 inline-flex w-fit items-center text-sm font-semibold text-primary"
                     >
                       Configure agent
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <ChevronRight className="ml-1 size-4" />
                     </Link>
                   </div>
                 </SpotlightCard>
@@ -529,9 +529,9 @@ export default function LandingPage() {
       <section aria-label="Operating workflow" className="section-spacing">
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="space-y-4">
+            <div className="gap-y-4">
               <Badge variant="outline" className={`${neutralBadgeClass} mb-4`}>
-                <BarChart3 className="mr-1.5 h-3.5 w-3.5" />
+                <BarChart3 className="mr-1.5 size-3.5" />
                 Operating rhythm
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -572,7 +572,7 @@ export default function LandingPage() {
           <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
               <Badge variant="outline" className={`${neutralBadgeClass} mb-4`}>
-                <Star className="mr-1.5 h-3.5 w-3.5 fill-current" />
+                <Star className="mr-1.5 size-3.5 fill-current" />
                 Customer signal
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -594,7 +594,7 @@ export default function LandingPage() {
                   {[...Array(5)].map((_, index) => (
                     <Star
                       key={index}
-                      className="h-4 w-4 fill-amber-400 text-amber-400"
+                      className="size-4 fill-amber-400 text-amber-400"
                     />
                   ))}
                 </div>
@@ -629,7 +629,7 @@ export default function LandingPage() {
             <Button size="lg" variant="glow" asChild className="h-12 px-7">
               <Link href="/auth/signup">
                 Start free
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="size-5" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="h-12 px-7">
@@ -643,9 +643,9 @@ export default function LandingPage() {
       <footer className="border-t border-border bg-muted/30">
         <div className="container-padding mx-auto max-w-6xl py-10">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-3">
+            <div className="gap-y-3">
               <Link href="/" className="flex items-center gap-2">
-                <Bot className="h-6 w-6 text-primary" />
+                <Bot className="size-6 text-primary" />
                 <span className="text-lg font-bold">AgenticPilot</span>
               </Link>
               <p className="text-sm leading-relaxed text-muted-foreground">
@@ -655,7 +655,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 className="mb-3 text-sm font-semibold">Product</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="gap-y-2 text-sm text-muted-foreground">
                 <Link
                   href="/dashboard/gmail"
                   className="block hover:text-primary"
@@ -684,7 +684,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 className="mb-3 text-sm font-semibold">Company</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="gap-y-2 text-sm text-muted-foreground">
                 <Link href="/about" className="block hover:text-primary">
                   About
                 </Link>

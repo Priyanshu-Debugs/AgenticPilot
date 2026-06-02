@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
+// react-doctor-disable-next-line nextjs-no-side-effect-in-get-handler -- Supabase SSR token-refresh requires cookies().set() in GET; this is auth session management, not a user-facing mutation.
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies()

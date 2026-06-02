@@ -114,9 +114,9 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading profile...</span>
+        <div className="flex items-center gap-x-2">
+          <Loader2 className="size-6 animate-spin" />
+          <span>Loading profile…</span>
         </div>
       </div>
     );
@@ -148,20 +148,20 @@ export default function ProfilePage() {
           {/* Success/Error Messages */}
           {success && (
             <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-emerald-500" />
+              <Sparkles className="size-5 text-emerald-500" />
               <p className="text-emerald-600 font-medium">{success}</p>
             </div>
           )}
           {error && (
             <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
-              <div className="h-5 w-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+              <div className="size-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
                 <span className="text-xs font-bold text-destructive">!</span>
               </div>
               <p className="text-destructive font-medium">{error}</p>
             </div>
           )}
 
-          <div className="space-y-6 sm:space-y-8">
+          <div className="gap-y-6 sm:gap-y-8">
             {/* Top Section - Profile Picture and Information */}
             <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
               {/* Profile Picture */}
@@ -170,8 +170,8 @@ export default function ProfilePage() {
                   <CardTitle>Profile Picture</CardTitle>
                   <CardDescription>Update your profile image</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center space-y-4">
-                  <Avatar className="w-24 h-24 sm:w-32 sm:h-32">
+                <CardContent className="flex flex-col items-center gap-y-4">
+                  <Avatar className="size-24 sm:w-32 sm:h-32">
                     <AvatarImage
                       src={
                         profile?.avatar_url ||
@@ -187,7 +187,7 @@ export default function ProfilePage() {
                     </AvatarFallback>
                   </Avatar>
                   <Button variant="outline" className="w-full" disabled>
-                    <Upload className="h-4 w-4 mr-2" />
+                    <Upload className="size-4 mr-2" />
                     Upload New Picture
                     <span className="text-xs text-muted-foreground ml-2">
                       (Coming Soon)
@@ -204,8 +204,8 @@ export default function ProfilePage() {
                     Update your personal details
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
+                <CardContent className="gap-y-6">
+                  <div className="gap-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
                     <Input
                       id="fullName"
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
                       id="email"
@@ -229,7 +229,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+                  <div className="flex flex-col sm:flex-row justify-end gap-y-2 sm:gap-y-0 sm:gap-x-2">
                     <Button
                       variant="outline"
                       asChild
@@ -244,12 +244,12 @@ export default function ProfilePage() {
                     >
                       {isUpdating ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Saving...
+                          <Loader2 className="size-4 mr-2 animate-spin" />
+                          Saving…
                         </>
                       ) : (
                         <>
-                          <Save className="h-4 w-4 mr-2" />
+                          <Save className="size-4 mr-2" />
                           Save Changes
                         </>
                       )}
@@ -269,7 +269,7 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label>Plan</Label>
                     <p className="text-lg font-semibold">
                       {getPlanInfo().name}
@@ -278,11 +278,11 @@ export default function ProfilePage() {
                       {getPlanInfo().price}
                     </p>
                   </div>
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label>Member Since</Label>
                     <p className="text-lg font-semibold">{getJoinDate()}</p>
                   </div>
-                  <div className="space-y-2">
+                  <div className="gap-y-2">
                     <Label>
                       {currentPlan === "Free Trial"
                         ? "Trial Status"

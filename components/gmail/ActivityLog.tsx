@@ -22,15 +22,15 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
         return (
             <Card>
                 <CardContent className="p-6 flex items-center justify-center">
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    <span className="text-muted-foreground">Loading activity...</span>
+                    <Loader2 className="size-5 animate-spin mr-2" />
+                    <span className="text-muted-foreground">Loading activity…</span>
                 </CardContent>
             </Card>
         )
     }
 
     return (
-        <div className="space-y-4">
+        <div className="gap-y-4">
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <StatCard
@@ -55,7 +55,7 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
             <Card>
                 <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
-                        <Activity className="h-4 w-4" />
+                        <Activity className="size-4" />
                         Recent Activity
                     </CardTitle>
                 </CardHeader>
@@ -65,7 +65,7 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
                             No activity yet. Analyze or reply to emails to see logs.
                         </p>
                     ) : (
-                        <div className="space-y-3 max-h-[calc(100vh-500px)] overflow-y-auto pr-2">
+                        <div className="gap-y-3 max-h-[calc(100vh-500px)] overflow-y-auto pr-2">
                             {logs.slice(0, 20).map((log) => (
                                 <div
                                     key={log.id}
@@ -73,9 +73,9 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
                                 >
                                     <div className={`mt-0.5 ${log.success ? 'text-green-500' : 'text-red-500'}`}>
                                         {log.success ? (
-                                            <CheckCircle className="h-4 w-4" />
+                                            <CheckCircle className="size-4" />
                                         ) : (
-                                            <XCircle className="h-4 w-4" />
+                                            <XCircle className="size-4" />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -93,7 +93,7 @@ export function ActivityLog({ logs, stats, loading }: ActivityLogProps) {
                                             {log.emailSubject || 'No subject'}
                                         </p>
                                         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                                            <Clock className="h-3 w-3" />
+                                            <Clock className="size-3" />
                                             {formatTime(log.createdAt)}
                                         </div>
                                     </div>

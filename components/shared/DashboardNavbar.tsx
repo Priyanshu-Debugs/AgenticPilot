@@ -122,7 +122,7 @@ export function DashboardNavbar({
       <div className="container-padding">
         <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Left Section: Mobile Menu + Logo */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center gap-x-3 sm:gap-x-4">
             {/* Sidebar toggle button */}
             <Button
               variant="ghost"
@@ -131,18 +131,18 @@ export function DashboardNavbar({
               aria-label="Toggle sidebar"
             >
               {isSidebarOpen ? (
-                <X className="h-4 w-4" />
+                <X className="size-4" />
               ) : (
-                <Menu className="h-4 w-4" />
+                <Menu className="size-4" />
               )}
             </Button>
 
             {/* Brand logo */}
             <Link
               href="/"
-              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-x-2 hover:opacity-80 transition-opacity"
             >
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
               <span className="text-lg sm:text-xl font-bold text-foreground">
                 AgenticPilot
               </span>
@@ -150,13 +150,13 @@ export function DashboardNavbar({
           </div>
 
           {/* Right Section: Actions & User Menu */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-x-2">
             {/* Notification bell */}
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
+                <Bell className="size-4" />
                 {unreadCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs h-4 w-4 rounded-full flex items-center justify-center p-0">
+                  <Badge className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs size-4 rounded-full flex items-center justify-center p-0">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </Badge>
                 )}
@@ -166,7 +166,7 @@ export function DashboardNavbar({
             {/* Settings button */}
             <Link href="/settings">
               <Button variant="ghost" size="icon" title="Settings">
-                <Settings className="h-4 w-4" />
+                <Settings className="size-4" />
               </Button>
             </Link>
 
@@ -180,9 +180,9 @@ export function DashboardNavbar({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
+                  className="relative size-8 rounded-full"
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="size-8">
                     <AvatarImage
                       src={avatarUrl}
                       alt="User"
@@ -198,7 +198,7 @@ export function DashboardNavbar({
               <DropdownMenuContent className="w-64" align="end" forceMount>
                 {/* User profile information */}
                 <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1 p-2">
+                  <div className="flex flex-col gap-y-1 p-2">
                     <p className="text-sm font-medium">
                       {loading ? "Loading..." : getDisplayName()}
                     </p>
@@ -206,7 +206,7 @@ export function DashboardNavbar({
                       {user?.email || "No email"}
                     </p>
                     <div className="flex items-center mt-2">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                      <div className="size-2 bg-primary rounded-full mr-2"></div>
                       <span className="text-xs text-primary font-medium">
                         {getPlanDisplay()}
                       </span>
@@ -218,13 +218,13 @@ export function DashboardNavbar({
 
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
+                    <User className="mr-2 size-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/billing" className="cursor-pointer">
-                    <CreditCard className="mr-2 h-4 w-4" />
+                    <CreditCard className="mr-2 size-4" />
                     <span>Billing</span>
                   </Link>
                 </DropdownMenuItem>
@@ -235,7 +235,7 @@ export function DashboardNavbar({
                   onClick={handleLogout}
                   className="cursor-pointer text-destructive focus:bg-destructive/10"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="mr-2 size-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

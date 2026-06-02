@@ -116,8 +116,8 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
-            <Bot className="h-5 w-5 text-primary" />
+          <div className="flex size-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
+            <Bot className="size-5 text-primary" />
           </div>
           <div>
             <p className="text-sm font-semibold">AgenticPilot Command</p>
@@ -125,7 +125,7 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
           </div>
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
-          <CheckCircle2 className="h-3.5 w-3.5" />
+          <CheckCircle2 className="size-3.5" />
           Active
         </div>
       </div>
@@ -144,7 +144,7 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="gap-y-3">
         {agents.map((agent) => {
           const Icon = agent.icon
 
@@ -154,8 +154,8 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
               data-agent-row
               className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white/[0.08]">
-                <Icon className={cn("h-4 w-4", agent.color)} />
+              <div className="flex size-9 items-center justify-center rounded-md bg-white/[0.08]">
+                <Icon className={cn("size-4", agent.color)} />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center justify-between gap-3">
@@ -168,7 +168,7 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
                   <span data-agent-pip className="absolute left-0 top-0 h-full w-8 rounded-full bg-white/80" />
                 </div>
               </div>
-              <Sparkles className="h-4 w-4 text-primary/80" />
+              <Sparkles className="size-4 text-primary/80" />
             </div>
           )
         })}

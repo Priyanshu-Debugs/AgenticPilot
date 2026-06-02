@@ -112,9 +112,9 @@ const InfiniteGrid = () => {
 
             {/* Grid Density Control Panel */}
             <div className="absolute bottom-10 right-10 z-30 pointer-events-auto">
-                <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl space-y-3 min-w-[200px]">
+                <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl gap-y-3 min-w-[200px]">
                     <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <Settings2 className="w-4 h-4" />
+                        <Settings2 className="size-4" />
                         Grid Density
                     </div>
                     <input
@@ -133,8 +133,8 @@ const InfiniteGrid = () => {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
-                <div className="space-y-2">
+            <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto gap-y-6 pointer-events-none">
+                <div className="gap-y-2">
                     <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground drop-shadow-sm">
                         The Infinite Grid
                     </h1>
@@ -159,7 +159,7 @@ const InfiniteGrid = () => {
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-md shadow-md border-2 border-transparent transition-colors"
                     >
-                        <MousePointerClick className="w-4 h-4" />
+                        <MousePointerClick className="size-4" />
                         Interact ({count})
                     </motion.button>
 
@@ -176,7 +176,7 @@ const InfiniteGrid = () => {
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         className="flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-md border-2 border-transparent transition-colors"
                     >
-                        <Info className="w-4 h-4" />
+                        <Info className="size-4" />
                         Learn More
                     </motion.button>
                 </div>
@@ -206,9 +206,9 @@ const App: React.FC = () => {
                 aria-label="Toggle Theme"
             >
                 {isDark ? (
-                    <Sun className="w-5 h-5 text-yellow-500 group-hover:rotate-45 transition-transform" />
+                    <Sun className="size-5 text-yellow-500 group-hover:rotate-45 transition-transform" />
                 ) : (
-                    <Moon className="w-5 h-5 text-indigo-500 group-hover:-rotate-12 transition-transform" />
+                    <Moon className="size-5 text-indigo-500 group-hover:-rotate-12 transition-transform" />
                 )}
             </button>
 

@@ -61,8 +61,8 @@ export default function LinkedInAutomationPage() {
     return (
         <Suspense fallback={
             <div className="p-6 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-3">Loading LinkedIn Automation...</span>
+                <Loader2 className="size-8 animate-spin text-primary" />
+                <span className="ml-3">Loading LinkedIn Automation…</span>
             </div>
         }>
             <LinkedInAutomationContent />
@@ -411,28 +411,28 @@ function LinkedInAutomationContent() {
             case 'published':
                 return (
                     <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        <CheckCircle2 className="size-3 mr-1" />
                         Published
                     </Badge>
                 )
             case 'failed':
                 return (
                     <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
-                        <XCircle className="h-3 w-3 mr-1" />
+                        <XCircle className="size-3 mr-1" />
                         Failed
                     </Badge>
                 )
             case 'draft':
                 return (
                     <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
-                        <Clock className="h-3 w-3 mr-1" />
+                        <Clock className="size-3 mr-1" />
                         Draft
                     </Badge>
                 )
             case 'scheduled':
                 return (
                     <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                        <Clock className="h-3 w-3 mr-1" />
+                        <Clock className="size-3 mr-1" />
                         Scheduled
                     </Badge>
                 )
@@ -464,12 +464,12 @@ function LinkedInAutomationContent() {
     // ============================================================
 
     return (
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
-                <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600/20 rounded-lg flex items-center justify-center shrink-0">
-                        <Linkedin className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+            <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+                <div className="flex items-center gap-x-3 sm:gap-x-4">
+                    <div className="size-10 sm:w-12 sm:h-12 bg-blue-600/20 rounded-lg flex items-center justify-center shrink-0">
+                        <Linkedin className="size-5 sm:h-6 sm:w-6 text-blue-500" />
                     </div>
                     <div>
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
@@ -488,7 +488,7 @@ function LinkedInAutomationContent() {
                         disabled={postsLoading}
                         className="w-full sm:w-auto"
                     >
-                        <RefreshCw className={`h-4 w-4 mr-2 ${postsLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`size-4 mr-2 ${postsLoading ? 'animate-spin' : ''}`} />
                         Refresh
                     </Button>
                 )}
@@ -498,14 +498,14 @@ function LinkedInAutomationContent() {
             <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
                 <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
                     <div className="flex items-center gap-2">
-                        <Linkedin className="h-4 w-4 text-blue-500" />
+                        <Linkedin className="size-4 text-blue-500" />
                         How to Connect & Use LinkedIn Automation
                     </div>
                     <span className="transition group-open:rotate-180">
                         <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
                     </span>
                 </summary>
-                <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-blue-500/20 ml-2">
+                <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-blue-500/20 ml-2">
                     <p>1. Go to <a href="https://www.linkedin.com/developers/apps" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">LinkedIn Developers</a> and create an App.</p>
                     <p>2. Go to the Products tab and add <strong className="text-foreground">Sign In with LinkedIn</strong> and <strong className="text-foreground">Share on LinkedIn</strong>.</p>
                     <p>3. Under Auth, set your OAuth 2.0 redirect URL to: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/linkedin/callback</code></p>
@@ -517,8 +517,8 @@ function LinkedInAutomationContent() {
             {/* Loading State */}
             {connectionLoading && (
                 <div className="flex items-center justify-center py-16">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <span className="ml-3 text-muted-foreground">Checking connection...</span>
+                    <Loader2 className="size-8 animate-spin text-primary" />
+                    <span className="ml-3 text-muted-foreground">Checking connection…</span>
                 </div>
             )}
 
@@ -527,8 +527,8 @@ function LinkedInAutomationContent() {
                 <Card className="border-amber-500/30 bg-amber-500/5">
                     <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
                         <div className="flex items-center gap-3 flex-1">
-                            <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                            <div className="size-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                                <AlertTriangle className="size-5 text-amber-500" />
                             </div>
                             <div>
                                 <h3 className="font-semibold text-sm">Token Expired</h3>
@@ -548,8 +548,8 @@ function LinkedInAutomationContent() {
             {!connectionLoading && !isConnected && (
                 <Card className="border-dashed">
                     <CardContent className="py-12 sm:py-16 px-4 sm:px-6 text-center">
-                        <div className="w-20 h-20 mx-auto mb-6 bg-blue-600/10 rounded-2xl flex items-center justify-center">
-                            <Linkedin className="h-10 w-10 text-blue-500" />
+                        <div className="size-20 mx-auto mb-6 bg-blue-600/10 rounded-2xl flex items-center justify-center">
+                            <Linkedin className="size-10 text-blue-500" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">
                             Connect Your LinkedIn Account
@@ -559,7 +559,7 @@ function LinkedInAutomationContent() {
                             publish directly, and track your content performance.
                         </p>
                         <Button onClick={handleConnect} size="lg" className="gap-2">
-                            <Linkedin className="h-5 w-5" />
+                            <Linkedin className="size-5" />
                             Connect LinkedIn Account
                         </Button>
                     </CardContent>
@@ -568,7 +568,7 @@ function LinkedInAutomationContent() {
 
             {/* Connected State */}
             {!connectionLoading && isConnected && !tokenExpired && (
-                <div className="space-y-4 sm:space-y-6">
+                <div className="gap-y-4 sm:gap-y-6">
                     {/* Profile Row */}
                     <Card className="card-elevated">
                         <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
@@ -577,11 +577,11 @@ function LinkedInAutomationContent() {
                                     <img
                                         src={connectionInfo.linkedin_picture}
                                         alt={connectionInfo.linkedin_name || 'LinkedIn profile'}
-                                        className="w-12 h-12 rounded-full border-2 border-blue-500/30 shrink-0"
+                                        className="size-12 rounded-full border-2 border-blue-500/30 shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0">
-                                        <Linkedin className="h-6 w-6 text-blue-500" />
+                                    <div className="size-12 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0">
+                                        <Linkedin className="size-6 text-blue-500" />
                                     </div>
                                 )}
                                 <div className="min-w-0">
@@ -606,9 +606,9 @@ function LinkedInAutomationContent() {
                                 className="w-full sm:w-auto text-destructive hover:text-destructive"
                             >
                                 {disconnecting ? (
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    <Loader2 className="size-4 mr-2 animate-spin" />
                                 ) : (
-                                    <Unplug className="h-4 w-4 mr-2" />
+                                    <Unplug className="size-4 mr-2" />
                                 )}
                                 Disconnect
                             </Button>
@@ -619,16 +619,16 @@ function LinkedInAutomationContent() {
                     <Card className="card-elevated border-blue-500/20">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Sparkles className="h-5 w-5 text-blue-500" />
+                                <Sparkles className="size-5 text-blue-500" />
                                 AI Post Generator
                             </CardTitle>
                             <CardDescription>
                                 Generate professional LinkedIn posts powered by Gemini AI
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="gap-y-4">
                             {/* Topic Input */}
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 <label className="text-sm font-medium" htmlFor="linkedin-topic">
                                     Topic
                                 </label>
@@ -643,7 +643,7 @@ function LinkedInAutomationContent() {
                             </div>
 
                             {/* Tone Selector */}
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 <label className="text-sm font-medium">Tone</label>
                                 <Select
                                     value={tone}
@@ -663,7 +663,7 @@ function LinkedInAutomationContent() {
                             </div>
 
                             {/* Image Upload */}
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 <label className="text-sm font-medium">Post Image (Optional)</label>
                                 {previewImage ? (
                                     <div className="relative group rounded-lg overflow-hidden border border-border/50 max-w-md bg-muted/20">
@@ -675,8 +675,8 @@ function LinkedInAutomationContent() {
                                         {isUploading && (
                                             <div className="absolute inset-0 bg-background/85 flex items-center justify-center">
                                                 <div className="text-center">
-                                                    <Loader2 className="h-6 w-6 animate-spin text-blue-500 mx-auto mb-2" />
-                                                    <p className="text-xs text-muted-foreground">Uploading image...</p>
+                                                    <Loader2 className="size-6 animate-spin text-blue-500 mx-auto mb-2" />
+                                                    <p className="text-xs text-muted-foreground">Uploading image…</p>
                                                 </div>
                                             </div>
                                         )}
@@ -686,11 +686,11 @@ function LinkedInAutomationContent() {
                                             className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 text-slate-200 hover:bg-slate-900 hover:text-white transition-colors"
                                             aria-label="Remove image"
                                         >
-                                            <X className="h-4 w-4" />
+                                            <X className="size-4" />
                                         </button>
                                         {uploadedImageUrl && !isUploading && (
                                             <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] text-emerald-400 font-medium">
-                                                <Check className="h-3 w-3" />
+                                                <Check className="size-3" />
                                                 Ready to post
                                             </div>
                                         )}
@@ -708,7 +708,7 @@ function LinkedInAutomationContent() {
                                                 : 'border-border/50 hover:border-blue-500/50 hover:bg-muted/20'
                                         }`}
                                     >
-                                        <Upload className={`h-8 w-8 mx-auto mb-2 ${dragActive ? 'text-blue-500 animate-bounce' : 'text-muted-foreground'}`} />
+                                        <Upload className={`size-8 mx-auto mb-2 ${dragActive ? 'text-blue-500 animate-bounce' : 'text-muted-foreground'}`} />
                                         <p className="text-sm font-medium text-muted-foreground mb-0.5">
                                             Drag and drop an image, or click to browse
                                         </p>
@@ -734,12 +734,12 @@ function LinkedInAutomationContent() {
                             >
                                 {isGenerating ? (
                                     <>
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                        Generating & Publishing...
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Generating & Publishing…
                                     </>
                                 ) : (
                                     <>
-                                        <Sparkles className="h-4 w-4" />
+                                        <Sparkles className="size-4" />
                                         Generate with AI
                                     </>
                                 )}
@@ -747,17 +747,17 @@ function LinkedInAutomationContent() {
 
                             {/* Post Preview / Editor */}
                             {generatedContent && (
-                                <div className="space-y-3 pt-2">
+                                <div className="gap-y-3 pt-2">
                                     <div className="flex items-center justify-between">
                                         <h4 className="text-sm font-medium flex items-center gap-2">
                                             {isEditing ? (
                                                 <>
-                                                    <FileEdit className="h-4 w-4" />
+                                                    <FileEdit className="size-4" />
                                                     Edit Post
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Eye className="h-4 w-4" />
+                                                    <Eye className="size-4" />
                                                     Post Preview
                                                 </>
                                             )}
@@ -782,7 +782,7 @@ function LinkedInAutomationContent() {
                                     </div>
 
                                     {isEditing ? (
-                                        <div className="space-y-3">
+                                        <div className="gap-y-3">
                                             <Textarea
                                                 value={editContent}
                                                 onChange={(e) => setEditContent(e.target.value)}
@@ -800,7 +800,7 @@ function LinkedInAutomationContent() {
                                             )}
                                         </div>
                                     ) : (
-                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4 space-y-3">
+                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4 gap-y-3">
                                             <p className="text-sm whitespace-pre-wrap leading-relaxed">
                                                 {generatedContent}
                                             </p>
@@ -825,12 +825,12 @@ function LinkedInAutomationContent() {
                                         >
                                             {isPosting ? (
                                                 <>
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                    Publishing...
+                                                    <Loader2 className="size-4 animate-spin" />
+                                                    Publishing…
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Send className="h-4 w-4" />
+                                                    <Send className="size-4" />
                                                     Post to LinkedIn
                                                 </>
                                             )}
@@ -841,7 +841,7 @@ function LinkedInAutomationContent() {
                                             disabled={isGenerating || !topic.trim()}
                                             className="gap-2"
                                         >
-                                            <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                                            <RefreshCw className={`size-4 ${isGenerating ? 'animate-spin' : ''}`} />
                                             Regenerate
                                         </Button>
                                     </div>
@@ -854,7 +854,7 @@ function LinkedInAutomationContent() {
                     <Card className="card-elevated">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Clock className="h-5 w-5" />
+                                <Clock className="size-5" />
                                 Recent Posts
                             </CardTitle>
                             <CardDescription>
@@ -864,8 +864,8 @@ function LinkedInAutomationContent() {
                         <CardContent>
                             {postsLoading ? (
                                 <div className="flex items-center justify-center py-8">
-                                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                                    <span className="ml-2 text-sm text-muted-foreground">Loading posts...</span>
+                                    <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                                    <span className="ml-2 text-sm text-muted-foreground">Loading posts…</span>
                                 </div>
                             ) : posts.length === 0 ? (
                                 <div className="text-center py-8">
@@ -874,11 +874,11 @@ function LinkedInAutomationContent() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="space-y-3">
+                                <div className="gap-y-3">
                                     {posts.map((post) => (
                                         <div
                                             key={post.id}
-                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-2 transition-colors hover:bg-muted/30"
+                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-2 transition-colors hover:bg-muted/30"
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <p className="text-sm leading-relaxed line-clamp-3 flex-1">
@@ -890,7 +890,7 @@ function LinkedInAutomationContent() {
                                                 <span>{formatRelativeTime(post.created_at)}</span>
                                                 {post.ai_generated && (
                                                     <Badge variant="outline" className="text-xs py-0">
-                                                        <Sparkles className="h-3 w-3 mr-1" />
+                                                        <Sparkles className="size-3 mr-1" />
                                                         AI Generated
                                                     </Badge>
                                                 )}

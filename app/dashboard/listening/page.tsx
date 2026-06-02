@@ -207,21 +207,21 @@ export default function SocialListeningPage() {
             case 'positive':
                 return (
                     <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 font-medium">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        <CheckCircle2 className="size-3 mr-1" />
                         Positive
                     </Badge>
                 )
             case 'critical':
                 return (
                     <Badge className="bg-red-500/20 text-red-400 border-red-500/30 font-medium">
-                        <XCircle className="h-3 w-3 mr-1" />
+                        <XCircle className="size-3 mr-1" />
                         Critical
                     </Badge>
                 )
             default:
                 return (
                     <Badge className="bg-slate-500/20 text-slate-400 border-slate-500/30 font-medium">
-                        <Activity className="h-3 w-3 mr-1" />
+                        <Activity className="size-3 mr-1" />
                         Neutral
                     </Badge>
                 )
@@ -240,12 +240,12 @@ export default function SocialListeningPage() {
     ]
 
     return (
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
-                <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0">
-                        <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+            <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+                <div className="flex items-center gap-x-3 sm:gap-x-4">
+                    <div className="size-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0">
+                        <TrendingUp className="size-5 sm:h-6 sm:w-6 text-blue-500" />
                     </div>
                     <div>
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
@@ -262,7 +262,7 @@ export default function SocialListeningPage() {
                         disabled={loading}
                         className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium gap-2 shrink-0"
                     >
-                        <RefreshCw className="h-4 w-4" />
+                        <RefreshCw className="size-4" />
                         Trigger Live Scan
                     </Button>
                 )}
@@ -272,7 +272,7 @@ export default function SocialListeningPage() {
             {dbWarning && (
                 <Card className="border-amber-500/30 bg-amber-500/5">
                     <CardContent className="flex items-start gap-4 py-4">
-                        <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                        <AlertTriangle className="size-5 text-amber-500 shrink-0 mt-0.5" />
                         <div>
                             <h3 className="font-semibold text-sm text-amber-400">Database Table Migration Required</h3>
                             <p className="text-xs text-muted-foreground mt-1">
@@ -287,14 +287,14 @@ export default function SocialListeningPage() {
             <Card className="bg-muted/10 border-border/50">
                 <CardHeader className="py-4">
                     <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                        <Bot className="h-4 w-4 text-blue-500" />
+                        <Bot className="size-4 text-blue-500" />
                         Niche Topic Settings
                     </CardTitle>
                     <CardDescription className="text-xs">
                         Configure keywords parsed by the LangGraph fetch node to gather targeted feed posts
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4 pb-4">
+                <CardContent className="gap-y-4 pb-4">
                     <div className="flex flex-col sm:flex-row gap-2">
                         <div className="flex-1">
                             <Input
@@ -334,12 +334,12 @@ export default function SocialListeningPage() {
             {/* Multi-step loading bar based on LangGraph nodes execution */}
             {scanning && (
                 <Card className="border-blue-500/20 bg-blue-500/5">
-                    <CardContent className="py-8 text-center space-y-6">
-                        <div className="relative w-16 h-16 mx-auto">
-                            <div className="w-16 h-16 rounded-full border-4 border-blue-500/10 border-t-blue-500 animate-spin" />
-                            <Bot className="h-6 w-6 text-blue-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    <CardContent className="py-8 text-center gap-y-6">
+                        <div className="relative size-16 mx-auto">
+                            <div className="size-16 rounded-full border-4 border-blue-500/10 border-t-blue-500 animate-spin" />
+                            <Bot className="size-6 text-blue-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                         </div>
-                        <div className="space-y-2">
+                        <div className="gap-y-2">
                             <h3 className="text-base font-semibold">LangGraph Execution In Progress</h3>
                             <p className="text-xs text-muted-foreground max-w-md mx-auto">
                                 The agent is currently transitioning through execution graph nodes. Please wait.
@@ -394,14 +394,14 @@ export default function SocialListeningPage() {
             {/* Core Data Dash (Loading & No Data States) */}
             {!scanning && (loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-                    <span className="ml-3 text-muted-foreground text-sm font-medium">Running trend parser...</span>
+                    <Loader2 className="size-8 animate-spin text-blue-500" />
+                    <span className="ml-3 text-muted-foreground text-sm font-medium">Running trend parser…</span>
                 </div>
             ) : !data ? (
                 <Card className="border-dashed py-12 text-center">
-                    <CardContent className="space-y-4">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-blue-500/10 flex items-center justify-center">
-                            <Bot className="h-8 w-8 text-blue-500" />
+                    <CardContent className="gap-y-4">
+                        <div className="size-16 mx-auto rounded-full bg-blue-500/10 flex items-center justify-center">
+                            <Bot className="size-8 text-blue-500" />
                         </div>
                         <div>
                             <h3 className="text-base font-semibold">No Trend Analysis Available</h3>
@@ -410,18 +410,18 @@ export default function SocialListeningPage() {
                             </p>
                         </div>
                         <Button onClick={handleTriggerScan} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5">
-                            <RefreshCw className="h-3.5 w-3.5" />
+                            <RefreshCw className="size-3.5" />
                             Trigger Agent Scan
                         </Button>
                     </CardContent>
                 </Card>
             ) : (
-                <div className="space-y-4 sm:space-y-6">
+                <div className="gap-y-4 sm:gap-y-6">
                     {/* Executive Summary Card */}
                     <Card className="bg-muted/10 border-border/50">
                         <CardHeader className="py-4">
                             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                <Sparkles className="h-4 w-4 text-yellow-500" />
+                                <Sparkles className="size-4 text-yellow-500" />
                                 AI Trend Intelligence Summary
                             </CardTitle>
                         </CardHeader>
@@ -447,7 +447,7 @@ export default function SocialListeningPage() {
                         <Card className="lg:col-span-2 bg-muted/10 border-border/50">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                    <Activity className="h-4 w-4 text-blue-500" />
+                                    <Activity className="size-4 text-blue-500" />
                                     Trend Score metrics
                                 </CardTitle>
                                 <CardDescription className="text-xs">
@@ -481,14 +481,14 @@ export default function SocialListeningPage() {
                         <Card className="bg-muted/10 border-border/50 flex flex-col">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                    <Flame className="h-4 w-4 text-red-500" />
+                                    <Flame className="size-4 text-red-500" />
                                     Niche Hot Topics
                                 </CardTitle>
                                 <CardDescription className="text-xs">
                                     Ecosystem interest rating from scrape parser
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="flex-1 flex flex-col justify-center space-y-3 pt-2">
+                            <CardContent className="flex-1 flex flex-col justify-center gap-y-3 pt-2">
                                 {data.trend_metrics.slice(0, 3).map((item, index) => (
                                     <div 
                                         key={item.keyword}
@@ -519,11 +519,11 @@ export default function SocialListeningPage() {
                     {/* Lower Detail panels & AI Post suggestions */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
                         {/* Topic list */}
-                        <div className="lg:col-span-5 space-y-3">
+                        <div className="lg:col-span-5 gap-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground px-1">
                                 Identified Trends
                             </h3>
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 {data.trend_metrics.map((item) => (
                                     <div
                                         key={item.keyword}
@@ -554,12 +554,12 @@ export default function SocialListeningPage() {
                         </div>
 
                         {/* Suggested copy drafts for selected trend */}
-                        <div className="lg:col-span-7 space-y-3">
+                        <div className="lg:col-span-7 gap-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground px-1">
                                 Suggested Post Drafts
                             </h3>
                             {selectedTrend ? (
-                                <div className="space-y-3">
+                                <div className="gap-y-3">
                                     {data.suggested_posts.filter(p => p.trendKeyword === selectedTrend.keyword).length === 0 ? (
                                         <Card className="bg-muted/10 border-border/50 py-10 text-center">
                                             <CardContent className="text-xs text-muted-foreground">
@@ -572,7 +572,7 @@ export default function SocialListeningPage() {
                                             .map((post, idx) => (
                                                 <Card key={idx} className="bg-muted/10 border-border/50 overflow-hidden">
                                                     <CardHeader className="py-3 px-4 bg-muted/20 border-b border-border/50 flex flex-row items-center justify-between gap-2">
-                                                        <div className="space-y-0.5">
+                                                        <div className="gap-y-0.5">
                                                             <CardTitle className="text-xs font-bold text-slate-200">
                                                                 {post.title}
                                                             </CardTitle>
@@ -581,7 +581,7 @@ export default function SocialListeningPage() {
                                                             {post.platform}
                                                         </Badge>
                                                     </CardHeader>
-                                                    <CardContent className="p-4 space-y-4">
+                                                    <CardContent className="p-4 gap-y-4">
                                                         <div className="rounded bg-black/20 border border-border/40 p-3">
                                                             <p className="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">
                                                                 {post.contentDraft}
@@ -596,7 +596,7 @@ export default function SocialListeningPage() {
                                                                     size="sm"
                                                                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs gap-1.5"
                                                                 >
-                                                                    <Send className="h-3 w-3" />
+                                                                    <Send className="size-3" />
                                                                     Send to LinkedIn Generator
                                                                 </Button>
                                                             ) : (
@@ -608,12 +608,12 @@ export default function SocialListeningPage() {
                                                                 >
                                                                     {copiedIndex === idx ? (
                                                                         <>
-                                                                            <Check className="h-3 w-3 text-emerald-500" />
+                                                                            <Check className="size-3 text-emerald-500" />
                                                                             Copied!
                                                                         </>
                                                                     ) : (
                                                                         <>
-                                                                            <Copy className="h-3 w-3" />
+                                                                            <Copy className="size-3" />
                                                                             Copy Tweet Thread
                                                                         </>
                                                                     )}
@@ -627,9 +627,9 @@ export default function SocialListeningPage() {
                                                                     className="font-semibold text-xs gap-1.5"
                                                                 >
                                                                     {copiedIndex === idx ? (
-                                                                        <Check className="h-3 w-3 text-emerald-500" />
+                                                                        <Check className="size-3 text-emerald-500" />
                                                                     ) : (
-                                                                        <Copy className="h-3 w-3" />
+                                                                        <Copy className="size-3" />
                                                                     )}
                                                                     Copy Text
                                                                 </Button>

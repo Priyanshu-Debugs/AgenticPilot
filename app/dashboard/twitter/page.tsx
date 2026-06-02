@@ -43,8 +43,8 @@ export default function TwitterAutomationPage() {
     return (
         <Suspense fallback={
             <div className="p-6 flex items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-3">Loading X/Twitter Automation...</span>
+                <Loader2 className="size-8 animate-spin text-primary" />
+                <span className="ml-3">Loading X/Twitter Automation…</span>
             </div>
         }>
             <TwitterAutomationContent />
@@ -240,11 +240,11 @@ function TwitterAutomationContent() {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'published':
-                return (<Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"><CheckCircle2 className="h-3 w-3 mr-1" />Published</Badge>)
+                return (<Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"><CheckCircle2 className="size-3 mr-1" />Published</Badge>)
             case 'failed':
-                return (<Badge className="bg-red-500/20 text-red-400 border-red-500/30"><XCircle className="h-3 w-3 mr-1" />Failed</Badge>)
+                return (<Badge className="bg-red-500/20 text-red-400 border-red-500/30"><XCircle className="size-3 mr-1" />Failed</Badge>)
             case 'draft':
-                return (<Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30"><Clock className="h-3 w-3 mr-1" />Draft</Badge>)
+                return (<Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30"><Clock className="size-3 mr-1" />Draft</Badge>)
             default:
                 return <Badge variant="secondary">{status}</Badge>
         }
@@ -266,12 +266,12 @@ function TwitterAutomationContent() {
     const charCount = currentContent.length
 
     return (
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
-                <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500/20 rounded-lg flex items-center justify-center shrink-0">
-                        <Twitter className="h-5 w-5 sm:h-6 sm:w-6 text-sky-500" />
+            <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+                <div className="flex items-center gap-x-3 sm:gap-x-4">
+                    <div className="size-10 sm:w-12 sm:h-12 bg-sky-500/20 rounded-lg flex items-center justify-center shrink-0">
+                        <Twitter className="size-5 sm:h-6 sm:w-6 text-sky-500" />
                     </div>
                     <div>
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
@@ -284,7 +284,7 @@ function TwitterAutomationContent() {
                 </div>
                 {isConnected && (
                     <Button variant="outline" size="sm" onClick={loadTweets} disabled={tweetsLoading} className="w-full sm:w-auto">
-                        <RefreshCw className={`h-4 w-4 mr-2 ${tweetsLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`size-4 mr-2 ${tweetsLoading ? 'animate-spin' : ''}`} />
                         Refresh
                     </Button>
                 )}
@@ -294,14 +294,14 @@ function TwitterAutomationContent() {
             <details className="group border border-border bg-card rounded-lg p-4 [&_summary::-webkit-details-marker]:hidden">
                 <summary className="flex cursor-pointer items-center justify-between font-medium text-sm sm:text-base">
                     <div className="flex items-center gap-2">
-                        <Twitter className="h-4 w-4 text-sky-500" />
+                        <Twitter className="size-4 text-sky-500" />
                         How to Connect & Use X/Twitter Automation
                     </div>
                     <span className="transition group-open:rotate-180">
                         <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
                     </span>
                 </summary>
-                <div className="mt-4 text-sm text-muted-foreground space-y-2 pl-6 border-l-2 border-sky-500/20 ml-2">
+                <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-sky-500/20 ml-2">
                     <p>1. Go to the <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-sky-500 hover:underline">X Developer Portal</a> and create a Project and App.</p>
                     <p>2. Set up User authentication settings with OAuth 2.0. Type: Web App, App permissions: Read and write.</p>
                     <p>3. Set the Callback URI to <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/twitter/callback</code></p>
@@ -313,8 +313,8 @@ function TwitterAutomationContent() {
             {/* Loading */}
             {connectionLoading && (
                 <div className="flex items-center justify-center py-16">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <span className="ml-3 text-muted-foreground">Checking connection...</span>
+                    <Loader2 className="size-8 animate-spin text-primary" />
+                    <span className="ml-3 text-muted-foreground">Checking connection…</span>
                 </div>
             )}
 
@@ -323,8 +323,8 @@ function TwitterAutomationContent() {
                 <Card className="border-dashed">
                     <CardContent className="py-10 sm:py-14 px-4 sm:px-6">
                         <div className="text-center mb-8">
-                            <div className="w-20 h-20 mx-auto mb-6 bg-sky-500/10 rounded-2xl flex items-center justify-center">
-                                <Twitter className="h-10 w-10 text-sky-500" />
+                            <div className="size-20 mx-auto mb-6 bg-sky-500/10 rounded-2xl flex items-center justify-center">
+                                <Twitter className="size-10 text-sky-500" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">Connect Your X Account</h3>
                             <p className="text-sm sm:text-base text-muted-foreground max-w-lg mx-auto">
@@ -334,22 +334,22 @@ function TwitterAutomationContent() {
                         </div>
 
                         {/* Setup Instructions */}
-                        <div className="max-w-lg mx-auto space-y-6">
+                        <div className="max-w-lg mx-auto gap-y-6">
                             <button
                                 onClick={() => setShowSetup(!showSetup)}
                                 className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors text-sm font-medium"
                             >
                                 <span className="flex items-center gap-2">
-                                    <KeyRound className="h-4 w-4 text-sky-500" />
+                                    <KeyRound className="size-4 text-sky-500" />
                                     How to get your X API credentials
                                 </span>
-                                {showSetup ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                {showSetup ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                             </button>
 
                             {showSetup && (
-                                <div className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-3 text-sm">
-                                    <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-                                        <li>Go to <a href="https://developer.x.com" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline inline-flex items-center gap-1">developer.x.com <ExternalLink className="h-3 w-3" /></a> and create a Project + App</li>
+                                <div className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-3 text-sm">
+                                    <ol className="list-decimal list-inside gap-y-2 text-muted-foreground">
+                                        <li>Go to <a href="https://developer.x.com" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline inline-flex items-center gap-1">developer.x.com <ExternalLink className="size-3" /></a> and create a Project + App</li>
                                         <li>In your App settings, go to <strong className="text-foreground">User Authentication Settings</strong> → Set up</li>
                                         <li>Set App permissions to <strong className="text-foreground">Read and Write</strong></li>
                                         <li>Set Type of App to <strong className="text-foreground">Web App</strong></li>
@@ -364,8 +364,8 @@ function TwitterAutomationContent() {
                             )}
 
                             {/* Credential Inputs */}
-                            <div className="space-y-4">
-                                <div className="space-y-2">
+                            <div className="gap-y-4">
+                                <div className="gap-y-2">
                                     <Label htmlFor="x-client-id">Client ID</Label>
                                     <Input
                                         id="x-client-id"
@@ -375,7 +375,7 @@ function TwitterAutomationContent() {
                                         className="bg-muted/30 border-border/50"
                                     />
                                 </div>
-                                <div className="space-y-2">
+                                <div className="gap-y-2">
                                     <Label htmlFor="x-client-secret">Client Secret</Label>
                                     <Input
                                         id="x-client-secret"
@@ -395,9 +395,9 @@ function TwitterAutomationContent() {
                                 className="w-full gap-2"
                             >
                                 {connecting ? (
-                                    <><Loader2 className="h-4 w-4 animate-spin" /> Connecting...</>
+                                    <><Loader2 className="size-4 animate-spin" /> Connecting…</>
                                 ) : (
-                                    <><Twitter className="h-5 w-5" /> Connect X Account</>
+                                    <><Twitter className="size-5" /> Connect X Account</>
                                 )}
                             </Button>
                         </div>
@@ -407,7 +407,7 @@ function TwitterAutomationContent() {
 
             {/* Connected State */}
             {!connectionLoading && isConnected && (
-                <div className="space-y-4 sm:space-y-6">
+                <div className="gap-y-4 sm:gap-y-6">
                     {/* Profile Row */}
                     <Card className="card-elevated">
                         <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
@@ -416,11 +416,11 @@ function TwitterAutomationContent() {
                                     <img
                                         src={connectionInfo.x_profile_image}
                                         alt={connectionInfo.x_name || 'X profile'}
-                                        className="w-12 h-12 rounded-full border-2 border-sky-500/30 shrink-0"
+                                        className="size-12 rounded-full border-2 border-sky-500/30 shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center shrink-0">
-                                        <Twitter className="h-6 w-6 text-sky-500" />
+                                    <div className="size-12 rounded-full bg-sky-500/20 flex items-center justify-center shrink-0">
+                                        <Twitter className="size-6 text-sky-500" />
                                     </div>
                                 )}
                                 <div className="min-w-0">
@@ -444,7 +444,7 @@ function TwitterAutomationContent() {
                                 disabled={disconnecting}
                                 className="w-full sm:w-auto text-destructive hover:text-destructive"
                             >
-                                {disconnecting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Unplug className="h-4 w-4 mr-2" />}
+                                {disconnecting ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Unplug className="size-4 mr-2" />}
                                 Disconnect
                             </Button>
                         </CardContent>
@@ -454,16 +454,16 @@ function TwitterAutomationContent() {
                     <Card className="card-elevated border-sky-500/20">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Sparkles className="h-5 w-5 text-sky-500" />
+                                <Sparkles className="size-5 text-sky-500" />
                                 AI Tweet Generator
                             </CardTitle>
                             <CardDescription>
                                 Generate product tweets powered by Gemini AI
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="gap-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-2">
+                                <div className="gap-y-2">
                                     <Label htmlFor="tweet-product-name">Product Name</Label>
                                     <Input
                                         id="tweet-product-name"
@@ -473,7 +473,7 @@ function TwitterAutomationContent() {
                                         className="bg-muted/30 border-border/50"
                                     />
                                 </div>
-                                <div className="space-y-2">
+                                <div className="gap-y-2">
                                     <Label htmlFor="tweet-product-url">Product URL (optional)</Label>
                                     <Input
                                         id="tweet-product-url"
@@ -485,7 +485,7 @@ function TwitterAutomationContent() {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 <Label htmlFor="tweet-product-desc">Product Description</Label>
                                 <Textarea
                                     id="tweet-product-desc"
@@ -497,7 +497,7 @@ function TwitterAutomationContent() {
                                 />
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="gap-y-2">
                                 <Label>Tone</Label>
                                 <Select value={tone} onValueChange={(v) => setTone(v as TweetTone)}>
                                     <SelectTrigger className="w-full sm:w-64 bg-muted/30 border-border/50">
@@ -515,18 +515,18 @@ function TwitterAutomationContent() {
 
                             <Button onClick={handleGenerate} disabled={isGenerating || !productName.trim()} className="gap-2">
                                 {isGenerating ? (
-                                    <><Loader2 className="h-4 w-4 animate-spin" /> Generating &amp; Publishing...</>
+                                    <><Loader2 className="size-4 animate-spin" /> Generating &amp; Publishing…</>
                                 ) : (
-                                    <><Sparkles className="h-4 w-4" /> Generate with AI</>
+                                    <><Sparkles className="size-4" /> Generate with AI</>
                                 )}
                             </Button>
 
                             {/* Preview / Editor */}
                             {generatedContent && (
-                                <div className="space-y-3 pt-2">
+                                <div className="gap-y-3 pt-2">
                                     <div className="flex items-center justify-between">
                                         <h4 className="text-sm font-medium flex items-center gap-2">
-                                            {isEditing ? <><FileEdit className="h-4 w-4" /> Edit Tweet</> : <><Eye className="h-4 w-4" /> Tweet Preview</>}
+                                            {isEditing ? <><FileEdit className="size-4" /> Edit Tweet</> : <><Eye className="size-4" /> Tweet Preview</>}
                                         </h4>
                                         <div className="flex items-center gap-3">
                                             <span className={`text-xs ${charCount > 280 ? 'text-red-400' : 'text-muted-foreground'}`}>
@@ -560,10 +560,10 @@ function TwitterAutomationContent() {
 
                                     <div className="flex flex-wrap gap-2">
                                         <Button onClick={handlePublish} disabled={isPosting || charCount === 0} className="gap-2">
-                                            {isPosting ? <><Loader2 className="h-4 w-4 animate-spin" /> Publishing...</> : <><Send className="h-4 w-4" /> Post to X</>}
+                                            {isPosting ? <><Loader2 className="size-4 animate-spin" /> Publishing…</> : <><Send className="size-4" /> Post to X</>}
                                         </Button>
                                         <Button variant="outline" onClick={handleGenerate} disabled={isGenerating || !productName.trim()} className="gap-2">
-                                            <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                                            <RefreshCw className={`size-4 ${isGenerating ? 'animate-spin' : ''}`} />
                                             Regenerate
                                         </Button>
                                     </div>
@@ -576,7 +576,7 @@ function TwitterAutomationContent() {
                     <Card className="card-elevated">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Clock className="h-5 w-5" />
+                                <Clock className="size-5" />
                                 Recent Tweets
                             </CardTitle>
                             <CardDescription>Your latest X posts</CardDescription>
@@ -584,8 +584,8 @@ function TwitterAutomationContent() {
                         <CardContent>
                             {tweetsLoading ? (
                                 <div className="flex items-center justify-center py-8">
-                                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                                    <span className="ml-2 text-sm text-muted-foreground">Loading tweets...</span>
+                                    <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                                    <span className="ml-2 text-sm text-muted-foreground">Loading tweets…</span>
                                 </div>
                             ) : tweets.length === 0 ? (
                                 <div className="text-center py-8">
@@ -594,11 +594,11 @@ function TwitterAutomationContent() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="space-y-3">
+                                <div className="gap-y-3">
                                     {tweets.map((tweet) => (
                                         <div
                                             key={tweet.id}
-                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-2 transition-colors hover:bg-muted/30"
+                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-2 transition-colors hover:bg-muted/30"
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <p className="text-sm leading-relaxed line-clamp-3 flex-1">{tweet.content}</p>
@@ -608,7 +608,7 @@ function TwitterAutomationContent() {
                                                 <span>{formatRelativeTime(tweet.created_at)}</span>
                                                 {tweet.ai_generated && (
                                                     <Badge variant="outline" className="text-xs py-0">
-                                                        <Sparkles className="h-3 w-3 mr-1" />
+                                                        <Sparkles className="size-3 mr-1" />
                                                         AI Generated
                                                     </Badge>
                                                 )}

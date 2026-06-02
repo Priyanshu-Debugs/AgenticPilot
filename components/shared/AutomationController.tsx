@@ -19,11 +19,11 @@ interface AutomationControllerProps {
 }
 export function AutomationController({ tasks }: AutomationControllerProps) {
   return (
-    <div className="space-y-6">
+    <div className="gap-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Zap className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-x-3">
+          <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Zap className="size-5 text-primary" />
           </div>
           <div>
             <h2 className="text-2xl font-bold">Automation Controller</h2>
@@ -34,9 +34,9 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
         </div>
         <Badge
           variant="outline"
-          className="flex items-center space-x-2 bg-muted/50"
+          className="flex items-center gap-x-2 bg-muted/50"
         >
-          <Zap className="h-3 w-3" />
+          <Zap className="size-3" />
           <span>{tasks.length} Agents</span>
         </Badge>
       </div>
@@ -55,7 +55,7 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
                 <Button asChild size="sm" className="gap-2">
                   <Link href={task.href}>
                     {task.actionLabel || task.name}
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="size-4" />
                   </Link>
                 </Button>
               </div>
@@ -72,7 +72,7 @@ export function AutomationController({ tasks }: AutomationControllerProps) {
       {tasks.length === 0 && (
         <Card className="card-elevated">
           <CardContent className="text-center py-8">
-            <Zap className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <Zap className="size-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No Automations Found</h3>
             <p className="text-muted-foreground mb-4">
               Get started by creating your first automation task.

@@ -39,17 +39,17 @@ export default function BillingPage() {
       <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container-padding">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <div className="flex items-center gap-x-4">
+              <Bot className="size-6 sm:h-8 sm:w-8 text-primary" />
               <Link href="/" className="text-lg sm:text-xl font-bold">
                 AgenticPilot
               </Link>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-x-4">
               <ModeToggle />
               <Button variant="outline" asChild>
                 <Link href="/dashboard">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  <ArrowLeft className="size-4 mr-2" />
                   Back to Dashboard
                 </Link>
               </Button>
@@ -75,14 +75,14 @@ export default function BillingPage() {
               <CardTitle>Current Plan</CardTitle>
               <CardDescription>Your active subscription details</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="gap-y-6">
               <div className="flex items-center justify-between p-4 sm:p-6 bg-muted/50 rounded-lg">
                 <div>
                   <h3 className="text-lg sm:text-xl font-semibold">Pro Plan</h3>
                   <p className="text-muted-foreground text-sm sm:text-base">Perfect for growing businesses</p>
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex items-center gap-x-2 mt-2">
                     <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                      <CheckCircle className="h-3 w-3 mr-1" />
+                      <CheckCircle className="size-3 mr-1" />
                       Active
                     </Badge>
                   </div>
@@ -93,27 +93,27 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="gap-y-4">
                 <h4 className="font-medium">Plan Features</h4>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                <ul className="gap-y-2 text-sm">
+                  <li className="flex items-center gap-x-2">
+                    <CheckCircle className="size-4 text-emerald-500" />
                     <span>Unlimited Gmail automation</span>
                   </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <li className="flex items-center gap-x-2">
+                    <CheckCircle className="size-4 text-emerald-500" />
                     <span>X/Twitter & LinkedIn automation</span>
                   </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <li className="flex items-center gap-x-2">
+                    <CheckCircle className="size-4 text-emerald-500" />
                     <span>Instagram automation</span>
                   </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <li className="flex items-center gap-x-2">
+                    <CheckCircle className="size-4 text-emerald-500" />
                     <span>Priority support</span>
                   </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-500" />
+                  <li className="flex items-center gap-x-2">
+                    <CheckCircle className="size-4 text-emerald-500" />
                     <span>Advanced analytics</span>
                   </li>
                 </ul>
@@ -132,9 +132,9 @@ export default function BillingPage() {
               <CardTitle>Payment Method</CardTitle>
               <CardDescription>Your default payment method</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-3 p-3 border border-border rounded-lg">
-                <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
+            <CardContent className="gap-y-4">
+              <div className="flex items-center gap-x-3 p-3 border border-border rounded-lg">
+                <CreditCard className="size-6 sm:h-8 sm:w-8 text-muted-foreground" />
                 <div className="flex-1">
                   <p className="font-medium">•••• •••• •••• 1234</p>
                   <p className="text-sm text-muted-foreground">Expires 12/26</p>
@@ -152,9 +152,9 @@ export default function BillingPage() {
               <CardTitle>Next Billing</CardTitle>
               <CardDescription>Your upcoming payment</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="gap-y-4">
               <div className="text-center p-4 bg-muted/50 rounded-lg">
-                <Calendar className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-primary" />
+                <Calendar className="size-6 sm:h-8 sm:w-8 mx-auto mb-2 text-primary" />
                 <p className="font-medium">January 1, 2025</p>
                 <p className="text-xl sm:text-2xl font-bold mt-2">$29.99</p>
               </div>
@@ -168,22 +168,22 @@ export default function BillingPage() {
               <CardDescription>Your past invoices and payments</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="gap-y-4">
                 {invoices.map((invoice) => (
                   <div key={invoice.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-border rounded-lg gap-4">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center gap-x-4">
                       <div>
                         <p className="font-medium">{invoice.id}</p>
                         <p className="text-sm text-muted-foreground">{invoice.date}</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-end space-x-4">
+                    <div className="flex items-center justify-between sm:justify-end gap-x-4">
                       <p className="font-medium">{invoice.amount}</p>
                       <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
                         {invoice.status}
                       </Badge>
                       <Button variant="outline" size="sm" onClick={() => toast.info("Invoice download coming soon.", { description: `Invoice ${invoice.id} will be available for download shortly.` })}>
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="size-4 mr-2" />
                         Download
                       </Button>
                     </div>

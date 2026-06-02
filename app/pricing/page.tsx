@@ -135,14 +135,14 @@ export default function Pricing() {
                 </p>
               </CardHeader>
 
-              <CardContent className="space-y-6 flex-1 flex flex-col">
-                <ul className="space-y-3 flex-1">
+              <CardContent className="gap-y-6 flex-1 flex flex-col">
+                <ul className="gap-y-3 flex-1">
                   {plan.features.map((feature, featureIndex) => (
                     <li
                       key={featureIndex}
-                      className="flex items-start space-x-3"
+                      className="flex items-start gap-x-3"
                     >
-                      <Check className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <Check className="size-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                       <span className="text-sm sm:text-base">{feature}</span>
                     </li>
                   ))}

@@ -48,7 +48,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "flex flex-col space-y-1.5 pb-4 sm:pb-6",
+        "flex flex-col gap-y-1.5 pb-4 sm:pb-6",
         className
       )}
       {...props}
@@ -81,7 +81,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-action"
       className={cn(
-        "flex items-center justify-end space-x-2",
+        "flex items-center justify-end gap-x-2",
         className
       )}
       {...props}

@@ -26,8 +26,8 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
         return (
             <div className="animate-pulse p-6 border rounded-lg">
                 <div className="flex items-center gap-3">
-                    <Brain className="h-5 w-5 text-primary animate-bounce" />
-                    <span>Analyzing email with AI...</span>
+                    <Brain className="size-5 text-primary animate-bounce" />
+                    <span>Analyzing email with AI…</span>
                 </div>
             </div>
         )
@@ -36,16 +36,16 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
     if (!analysis) {
         return (
             <div className="border-dashed border-2 rounded-lg p-6 text-center text-muted-foreground">
-                <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                <Sparkles className="size-8 mx-auto mb-2 opacity-30" />
                 <p>Select an email and click &quot;Analyze&quot; to see AI insights</p>
             </div>
         )
     }
 
     const sentimentIcon = {
-        positive: <ThumbsUp className="h-4 w-4 text-green-500" />,
-        neutral: <Minus className="h-4 w-4 text-gray-500" />,
-        negative: <ThumbsDown className="h-4 w-4 text-red-500" />,
+        positive: <ThumbsUp className="size-4 text-green-500" />,
+        neutral: <Minus className="size-4 text-gray-500" />,
+        negative: <ThumbsDown className="size-4 text-red-500" />,
     }
 
     const urgencyColor = {
@@ -64,11 +64,11 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
     }
 
     return (
-        <div className="space-y-4">
+        <div className="gap-y-4">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b">
                 <div className="flex items-center gap-2">
-                    <Brain className="h-5 w-5 text-primary" />
+                    <Brain className="size-5 text-primary" />
                     <h3 className="text-lg font-semibold">AI Analysis</h3>
                 </div>
                 <Badge variant="outline" className="font-mono">
@@ -79,7 +79,7 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
             {/* Escalation Banner */}
             {analysis.escalated && (
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                    <ShieldAlert className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+                    <ShieldAlert className="size-5 text-amber-500 mt-0.5 shrink-0" />
                     <div>
                         <p className="font-medium text-sm text-amber-400">Flagged for Human Review</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
@@ -99,7 +99,7 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
                     {analysis.sentiment}
                 </Badge>
                 <Badge className={urgencyColor[analysis.urgency]}>
-                    {analysis.urgency === 'high' && <AlertTriangle className="h-3 w-3 mr-1" />}
+                    {analysis.urgency === 'high' && <AlertTriangle className="size-3 mr-1" />}
                     {analysis.urgency} urgency
                 </Badge>
             </div>
@@ -135,7 +135,7 @@ export function AnalysisResult({ analysis, loading, onUseReply }: AnalysisResult
                             onClick={() => onUseReply(analysis.suggestedReply)}
                             className="gap-1"
                         >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="size-3" />
                             Use This
                         </Button>
                     </div>

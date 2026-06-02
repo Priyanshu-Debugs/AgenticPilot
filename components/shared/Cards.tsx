@@ -24,9 +24,9 @@ export function StatsCard({ title, value, change, changeType = "neutral", icon: 
 
   return (
     <Card className="card-elevated hover:shadow-lg transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between gap-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <Icon className="size-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
@@ -36,7 +36,7 @@ export function StatsCard({ title, value, change, changeType = "neutral", icon: 
           </p>
         )}
         {trend !== undefined && (
-          <div className="mt-2 flex items-center space-x-2">
+          <div className="mt-2 flex items-center gap-x-2">
             <div className="flex-1 bg-muted rounded-full h-1">
               <div 
                 className="bg-primary h-1 rounded-full transition-all duration-300" 
@@ -69,11 +69,11 @@ export function FeatureCard({ title, description, icon: Icon, href, badge, isAct
       <Card className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/20 ${
         isActive ? "ring-2 ring-primary border-primary/30" : ""
       } h-full`} onClick={onClick}>
-        <CardHeader className="space-y-4 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+        <CardHeader className="gap-y-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-y-4 sm:gap-y-0 sm:gap-x-4">
             <div className="relative flex-shrink-0">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-primary group-hover:text-primary-foreground transition-colors" />
+              <div className="size-12 sm:w-14 sm:h-14 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                <Icon className="size-6 sm:h-7 sm:w-7 text-primary group-hover:text-primary-foreground transition-colors" />
               </div>
               {badge && (
                 <Badge className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs px-1.5 py-0.5">
@@ -81,7 +81,7 @@ export function FeatureCard({ title, description, icon: Icon, href, badge, isAct
                 </Badge>
               )}
             </div>
-            <div className="flex-1 space-y-2 min-w-0">
+            <div className="flex-1 gap-y-2 min-w-0">
               <CardTitle className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                 {title}
               </CardTitle>
@@ -118,9 +118,9 @@ export function ActionCard({
   return (
     <Card className="card-elevated hover:shadow-md transition-shadow">
       <CardHeader>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-x-3">
           <div className="p-2 bg-muted rounded-lg">
-            <Icon className="h-5 w-5" />
+            <Icon className="size-5" />
           </div>
           <div className="flex-1">
             <CardTitle className="text-lg">{title}</CardTitle>
