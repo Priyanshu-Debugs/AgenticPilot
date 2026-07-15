@@ -247,7 +247,7 @@ function ResetPasswordForm() {
           </CardHeader>
           <CardContent>
             {success ? (
-              <div className="text-center gap-y-6">
+              <div className="text-center flex flex-col gap-y-6">
                 <CheckCircle className="size-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
                 <p className="text-sm text-muted-foreground">
                   You will be redirected to your dashboard shortly.
@@ -264,7 +264,7 @@ function ResetPasswordForm() {
                   <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                     {error}
                     {error.includes('session has expired') && (
-                      <div className="mt-2 gap-y-2">
+                      <div className="mt-2 flex flex-col gap-y-2">
                         <Link href="/auth/forgot-password" className="block text-center underline font-medium">
                           Request a new password reset link
                         </Link>
@@ -272,8 +272,8 @@ function ResetPasswordForm() {
                     )}
                   </div>
                 )}
-                <form onSubmit={handleSubmit} className="gap-y-6">
-                  <div className="gap-y-2">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-y-6">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
                     <div className="relative">
                       <Input
@@ -302,7 +302,7 @@ function ResetPasswordForm() {
                     </div>
                   </div>
 
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm New Password</Label>
                     <div className="relative">
                       <Input
@@ -331,9 +331,9 @@ function ResetPasswordForm() {
                     </div>
                   </div>
 
-                  <div className="text-xs text-muted-foreground gap-y-1">
+                  <div className="text-xs text-muted-foreground flex flex-col gap-y-1">
                     <div>Password requirements:</div>
-                    <ul className="list-disc list-inside gap-y-1 ml-2">
+                    <ul className="list-disc list-inside flex flex-col gap-y-1 ml-2">
                       <li>At least 8 characters long</li>
                       <li>Contains uppercase and lowercase letters</li>
                       <li>Contains at least one number</li>
@@ -379,7 +379,7 @@ function ResetPasswordLoading() {
       <div className="flex-1 flex items-center justify-center container-padding py-8">
         <Card className="w-full max-w-md card-elevated">
           <CardContent className="pt-6 text-center">
-            <div className="animate-pulse gap-y-4">
+            <div className="animate-pulse flex flex-col gap-y-4">
               <div className="h-6 bg-muted rounded"></div>
               <div className="h-4 bg-muted rounded"></div>
               <div className="h-10 bg-muted rounded"></div>

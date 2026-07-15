@@ -161,7 +161,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div className="gap-y-6 sm:gap-y-8">
+          <div className="flex flex-col gap-y-6 sm:gap-y-8">
             {/* Top Section - Profile Picture and Information */}
             <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
               {/* Profile Picture */}
@@ -204,8 +204,8 @@ export default function ProfilePage() {
                     Update your personal details
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="gap-y-6">
-                  <div className="gap-y-2">
+                <CardContent className="flex flex-col gap-y-6">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
                     <Input
                       id="fullName"
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
                       id="email"
@@ -269,7 +269,7 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Plan</Label>
                     <p className="text-lg font-semibold">
                       {getPlanInfo().name}
@@ -278,11 +278,11 @@ export default function ProfilePage() {
                       {getPlanInfo().price}
                     </p>
                   </div>
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Member Since</Label>
                     <p className="text-lg font-semibold">{getJoinDate()}</p>
                   </div>
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>
                       {currentPlan === "Free Trial"
                         ? "Trial Status"

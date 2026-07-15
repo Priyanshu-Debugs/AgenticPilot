@@ -81,7 +81,7 @@ export function FeatureCard({ title, description, icon: Icon, href, badge, isAct
                 </Badge>
               )}
             </div>
-            <div className="flex-1 gap-y-2 min-w-0">
+            <div className="flex-1 flex flex-col gap-y-2 min-w-0">
               <CardTitle className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                 {title}
               </CardTitle>

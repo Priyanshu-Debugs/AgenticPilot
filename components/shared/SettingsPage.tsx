@@ -255,7 +255,7 @@ export function SettingsPage({
   };
 
   return (
-    <div className="gap-y-6">
+    <div className="flex flex-col gap-y-6">
       {/* Header */}
       <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between md:gap-y-0">
         <div className="flex items-center gap-x-3">
@@ -280,7 +280,7 @@ export function SettingsPage({
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="profile" className="gap-y-6">
+      <Tabs defaultValue="profile" className="flex flex-col gap-y-6">
         <TabsList className="grid w-full grid-cols-3 gap-2">
           <TabsTrigger value="profile" className="flex items-center gap-x-2">
             <User className="size-4" />
@@ -304,7 +304,7 @@ export function SettingsPage({
         </TabsList>
 
         {/* Profile Settings */}
-        <TabsContent value="profile" className="gap-y-6">
+        <TabsContent value="profile" className="flex flex-col gap-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-x-2">
@@ -315,9 +315,9 @@ export function SettingsPage({
                 Update your personal information and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-4">
+            <CardContent className="flex flex-col gap-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
@@ -331,7 +331,7 @@ export function SettingsPage({
                     }
                   />
                 </div>
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
@@ -342,7 +342,7 @@ export function SettingsPage({
                   />
                 </div>
               </div>
-              <div className="gap-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
@@ -352,7 +352,7 @@ export function SettingsPage({
                   className="bg-muted/50"
                 />
               </div>
-              <div className="gap-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="company">Company</Label>
                 <Input
                   id="company"
@@ -363,7 +363,7 @@ export function SettingsPage({
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
                   <Select
                     value={settings.profile.timezone}
@@ -391,7 +391,7 @@ export function SettingsPage({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="language">Language</Label>
                   <Select
                     value={settings.profile.language}
@@ -416,7 +416,7 @@ export function SettingsPage({
         </TabsContent>
 
         {/* Notification Settings */}
-        <TabsContent value="notifications" className="gap-y-6">
+        <TabsContent value="notifications" className="flex flex-col gap-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-x-2">
@@ -427,10 +427,10 @@ export function SettingsPage({
                 Choose how you want to be notified about important events
               </CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-6">
-              <div className="gap-y-4">
+            <CardContent className="flex flex-col gap-y-6">
+              <div className="flex flex-col gap-y-4">
                 <h4 className="font-medium">Delivery Methods</h4>
-                <div className="gap-y-3">
+                <div className="flex flex-col gap-y-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Email Notifications</Label>
@@ -488,9 +488,9 @@ export function SettingsPage({
                 </div>
               </div>
 
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 <h4 className="font-medium">Event Types</h4>
-                <div className="gap-y-3">
+                <div className="flex flex-col gap-y-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Task Completion</Label>
@@ -570,7 +570,7 @@ export function SettingsPage({
         </TabsContent>
 
         {/* Integrations */}
-        <TabsContent value="integrations" className="gap-y-6">
+        <TabsContent value="integrations" className="flex flex-col gap-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-x-2">
@@ -581,11 +581,11 @@ export function SettingsPage({
                 Manage your connected services and API access
               </CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-6">
+            <CardContent className="flex flex-col gap-y-6">
               {/* Connected Services */}
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 <h4 className="font-medium">Connected Services</h4>
-                <div className="gap-y-3">
+                <div className="flex flex-col gap-y-3">
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-x-3">
                       <Mail className="size-5" />
@@ -741,10 +741,10 @@ export function SettingsPage({
               </div>
 
               {/* API Configuration */}
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 <h4 className="font-medium">API Configuration</h4>
-                <div className="gap-y-4">
-                  <div className="gap-y-2">
+                <div className="flex flex-col gap-y-4">
+                  <div className="flex flex-col gap-y-2">
                     <Label>API Key</Label>
                     <div className="flex gap-x-2">
                       <Input
@@ -774,7 +774,7 @@ export function SettingsPage({
                       </Button>
                     </div>
                   </div>
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Webhook URL</Label>
                     <Input
                       value={settings.integrations.webhookUrl || ""}

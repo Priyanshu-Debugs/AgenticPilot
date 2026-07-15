@@ -144,7 +144,7 @@ export function AnimeCommandDeck({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="gap-y-3">
+      <div className="flex flex-col gap-y-3">
         {agents.map((agent) => {
           const Icon = agent.icon
 

@@ -464,7 +464,7 @@ function LinkedInAutomationContent() {
     // ============================================================
 
     return (
-        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 flex flex-col gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
             <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-x-3 sm:gap-x-4">
@@ -505,7 +505,7 @@ function LinkedInAutomationContent() {
                         <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
                     </span>
                 </summary>
-                <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-blue-500/20 ml-2">
+                <div className="mt-4 text-sm text-muted-foreground flex flex-col gap-y-2 pl-6 border-l-2 border-blue-500/20 ml-2">
                     <p>1. Go to <a href="https://www.linkedin.com/developers/apps" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">LinkedIn Developers</a> and create an App.</p>
                     <p>2. Go to the Products tab and add <strong className="text-foreground">Sign In with LinkedIn</strong> and <strong className="text-foreground">Share on LinkedIn</strong>.</p>
                     <p>3. Under Auth, set your OAuth 2.0 redirect URL to: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/linkedin/callback</code></p>
@@ -568,7 +568,7 @@ function LinkedInAutomationContent() {
 
             {/* Connected State */}
             {!connectionLoading && isConnected && !tokenExpired && (
-                <div className="gap-y-4 sm:gap-y-6">
+                <div className="flex flex-col gap-y-4 sm:gap-y-6">
                     {/* Profile Row */}
                     <Card className="card-elevated">
                         <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
@@ -626,9 +626,9 @@ function LinkedInAutomationContent() {
                                 Generate professional LinkedIn posts powered by Gemini AI
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="gap-y-4">
+                        <CardContent className="flex flex-col gap-y-4">
                             {/* Topic Input */}
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 <label className="text-sm font-medium" htmlFor="linkedin-topic">
                                     Topic
                                 </label>
@@ -643,7 +643,7 @@ function LinkedInAutomationContent() {
                             </div>
 
                             {/* Tone Selector */}
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 <label className="text-sm font-medium">Tone</label>
                                 <Select
                                     value={tone}
@@ -663,7 +663,7 @@ function LinkedInAutomationContent() {
                             </div>
 
                             {/* Image Upload */}
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 <label className="text-sm font-medium">Post Image (Optional)</label>
                                 {previewImage ? (
                                     <div className="relative group rounded-lg overflow-hidden border border-border/50 max-w-md bg-muted/20">
@@ -747,7 +747,7 @@ function LinkedInAutomationContent() {
 
                             {/* Post Preview / Editor */}
                             {generatedContent && (
-                                <div className="gap-y-3 pt-2">
+                                <div className="flex flex-col gap-y-3 pt-2">
                                     <div className="flex items-center justify-between">
                                         <h4 className="text-sm font-medium flex items-center gap-2">
                                             {isEditing ? (
@@ -782,7 +782,7 @@ function LinkedInAutomationContent() {
                                     </div>
 
                                     {isEditing ? (
-                                        <div className="gap-y-3">
+                                        <div className="flex flex-col gap-y-3">
                                             <Textarea
                                                 value={editContent}
                                                 onChange={(e) => setEditContent(e.target.value)}
@@ -800,7 +800,7 @@ function LinkedInAutomationContent() {
                                             )}
                                         </div>
                                     ) : (
-                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4 gap-y-3">
+                                        <div className="rounded-lg bg-muted/30 border border-border/50 p-4 flex flex-col gap-y-3">
                                             <p className="text-sm whitespace-pre-wrap leading-relaxed">
                                                 {generatedContent}
                                             </p>
@@ -874,11 +874,11 @@ function LinkedInAutomationContent() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="gap-y-3">
+                                <div className="flex flex-col gap-y-3">
                                     {posts.map((post) => (
                                         <div
                                             key={post.id}
-                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-2 transition-colors hover:bg-muted/30"
+                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 flex flex-col gap-y-2 transition-colors hover:bg-muted/30"
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <p className="text-sm leading-relaxed line-clamp-3 flex-1">

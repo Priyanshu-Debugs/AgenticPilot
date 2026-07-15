@@ -240,7 +240,7 @@ export default function SocialListeningPage() {
     ]
 
     return (
-        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 flex flex-col gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
             <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-x-3 sm:gap-x-4">
@@ -294,7 +294,7 @@ export default function SocialListeningPage() {
                         Configure keywords parsed by the LangGraph fetch node to gather targeted feed posts
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="gap-y-4 pb-4">
+                <CardContent className="flex flex-col gap-y-4 pb-4">
                     <div className="flex flex-col sm:flex-row gap-2">
                         <div className="flex-1">
                             <Input
@@ -334,12 +334,12 @@ export default function SocialListeningPage() {
             {/* Multi-step loading bar based on LangGraph nodes execution */}
             {scanning && (
                 <Card className="border-blue-500/20 bg-blue-500/5">
-                    <CardContent className="py-8 text-center gap-y-6">
+                    <CardContent className="py-8 text-center flex flex-col gap-y-6">
                         <div className="relative size-16 mx-auto">
                             <div className="size-16 rounded-full border-4 border-blue-500/10 border-t-blue-500 animate-spin" />
                             <Bot className="size-6 text-blue-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                         </div>
-                        <div className="gap-y-2">
+                        <div className="flex flex-col gap-y-2">
                             <h3 className="text-base font-semibold">LangGraph Execution In Progress</h3>
                             <p className="text-xs text-muted-foreground max-w-md mx-auto">
                                 The agent is currently transitioning through execution graph nodes. Please wait.
@@ -399,7 +399,7 @@ export default function SocialListeningPage() {
                 </div>
             ) : !data ? (
                 <Card className="border-dashed py-12 text-center">
-                    <CardContent className="gap-y-4">
+                    <CardContent className="flex flex-col gap-y-4">
                         <div className="size-16 mx-auto rounded-full bg-blue-500/10 flex items-center justify-center">
                             <Bot className="size-8 text-blue-500" />
                         </div>
@@ -416,7 +416,7 @@ export default function SocialListeningPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="gap-y-4 sm:gap-y-6">
+                <div className="flex flex-col gap-y-4 sm:gap-y-6">
                     {/* Executive Summary Card */}
                     <Card className="bg-muted/10 border-border/50">
                         <CardHeader className="py-4">
@@ -519,11 +519,11 @@ export default function SocialListeningPage() {
                     {/* Lower Detail panels & AI Post suggestions */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
                         {/* Topic list */}
-                        <div className="lg:col-span-5 gap-y-3">
+                        <div className="lg:col-span-5 flex flex-col gap-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground px-1">
                                 Identified Trends
                             </h3>
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 {data.trend_metrics.map((item) => (
                                     <div
                                         key={item.keyword}
@@ -554,12 +554,12 @@ export default function SocialListeningPage() {
                         </div>
 
                         {/* Suggested copy drafts for selected trend */}
-                        <div className="lg:col-span-7 gap-y-3">
+                        <div className="lg:col-span-7 flex flex-col gap-y-3">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground px-1">
                                 Suggested Post Drafts
                             </h3>
                             {selectedTrend ? (
-                                <div className="gap-y-3">
+                                <div className="flex flex-col gap-y-3">
                                     {data.suggested_posts.filter(p => p.trendKeyword === selectedTrend.keyword).length === 0 ? (
                                         <Card className="bg-muted/10 border-border/50 py-10 text-center">
                                             <CardContent className="text-xs text-muted-foreground">
@@ -572,7 +572,7 @@ export default function SocialListeningPage() {
                                             .map((post, idx) => (
                                                 <Card key={idx} className="bg-muted/10 border-border/50 overflow-hidden">
                                                     <CardHeader className="py-3 px-4 bg-muted/20 border-b border-border/50 flex flex-row items-center justify-between gap-2">
-                                                        <div className="gap-y-0.5">
+                                                        <div className="flex flex-col gap-y-0.5">
                                                             <CardTitle className="text-xs font-bold text-slate-200">
                                                                 {post.title}
                                                             </CardTitle>
@@ -581,7 +581,7 @@ export default function SocialListeningPage() {
                                                             {post.platform}
                                                         </Badge>
                                                     </CardHeader>
-                                                    <CardContent className="p-4 gap-y-4">
+                                                    <CardContent className="p-4 flex flex-col gap-y-4">
                                                         <div className="rounded bg-black/20 border border-border/40 p-3">
                                                             <p className="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">
                                                                 {post.contentDraft}

@@ -350,7 +350,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="gap-y-6 sm:gap-y-8 max-w-full overflow-x-hidden">
+    <div className="flex flex-col gap-y-6 sm:gap-y-8 max-w-full overflow-x-hidden">
       {/* Dashboard Header */}
       <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
@@ -407,9 +407,9 @@ export default function Dashboard() {
                     like to automate and we&apos;ll consider adding it.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="gap-y-4 pt-2">
+                <div className="flex flex-col gap-y-4 pt-2">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="gap-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <Label htmlFor="suggest-name">Your Name</Label>
                       <Input
                         id="suggest-name"
@@ -418,7 +418,7 @@ export default function Dashboard() {
                         onChange={(e) => setSuggestName(e.target.value)}
                       />
                     </div>
-                    <div className="gap-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <Label htmlFor="suggest-email">Email</Label>
                       <Input
                         id="suggest-email"
@@ -429,7 +429,7 @@ export default function Dashboard() {
                       />
                     </div>
                   </div>
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="suggest-text">Your Suggestion *</Label>
                     <Textarea
                       id="suggest-text"
@@ -482,7 +482,7 @@ export default function Dashboard() {
         id="dashboard-tabs"
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as typeof activeTab)}
-        className="gap-y-6"
+        className="flex flex-col gap-y-6"
       >
         <TabsList className="grid h-auto w-full grid-cols-3">
           <TabsTrigger value="automations">Automations</TabsTrigger>
@@ -490,11 +490,11 @@ export default function Dashboard() {
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="automations" className="gap-y-6">
+        <TabsContent value="automations" className="flex flex-col gap-y-6">
           <AutomationController tasks={automationTasks} />
         </TabsContent>
 
-        <TabsContent value="analytics" className="gap-y-6">
+        <TabsContent value="analytics" className="flex flex-col gap-y-6">
           <div className="grid gap-6">
             <Card className="card-elevated">
               <CardHeader>
@@ -606,7 +606,7 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="integrations" className="gap-y-6">
+        <TabsContent value="integrations" className="flex flex-col gap-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <ActionCard
               title="Gmail Integration"
@@ -670,7 +670,7 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="gap-y-4">
+          <div className="flex flex-col gap-y-4">
             {isLoadingStats ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="size-6 animate-spin mr-2" />

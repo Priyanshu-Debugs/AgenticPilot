@@ -438,7 +438,7 @@ function GmailAutomationContent() {
   };
 
   return (
-    <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 flex flex-col gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
       {/* Header - stacks vertically on mobile */}
       <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
         <div>
@@ -517,7 +517,7 @@ function GmailAutomationContent() {
             </svg>
           </span>
         </summary>
-        <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-primary/20 ml-2">
+        <div className="mt-4 text-sm text-muted-foreground flex flex-col gap-y-2 pl-6 border-l-2 border-primary/20 ml-2">
           <p>
             1. Click{" "}
             <strong className="text-foreground">Connect Your Gmail</strong> and
@@ -634,7 +634,7 @@ function GmailAutomationContent() {
 
       {/* Main Content */}
       {isConnected && (
-        <Tabs defaultValue="inbox" className="gap-y-4">
+        <Tabs defaultValue="inbox" className="flex flex-col gap-y-4">
           <TabsList className="w-full sm:w-auto">
             <TabsTrigger
               value="inbox"
@@ -652,7 +652,7 @@ function GmailAutomationContent() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inbox" className="gap-y-3">
+          <TabsContent value="inbox" className="flex flex-col gap-y-3">
             {/* Search and Filters - Clean mobile layout */}
             <Card className="border-border/50">
               <CardContent className="p-3">

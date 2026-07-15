@@ -178,7 +178,7 @@ export function GmailConnect({
 
                 {/* Automation Progress */}
                 {isAutomating && (
-                    <div className="gap-y-2 pt-2 border-t">
+                    <div className="flex flex-col gap-y-2 pt-2 border-t">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Loader2 className="size-4 animate-spin text-primary" />
                             <span>Analyzing emails and generating AI replies…</span>
@@ -189,7 +189,7 @@ export function GmailConnect({
 
                 {/* Automation Result */}
                 {automationResult && !isAutomating && (
-                    <div className="gap-y-3 pt-2 border-t">
+                    <div className="flex flex-col gap-y-3 pt-2 border-t">
                         <div className="flex items-center justify-between">
                             <p className="text-sm font-medium">{automationResult.message}</p>
                             <div className="flex gap-2">
@@ -208,7 +208,7 @@ export function GmailConnect({
 
                         {/* Show individual results */}
                         {automationResult.results && automationResult.results.length > 0 && (
-                            <div className="max-h-40 overflow-y-auto gap-y-2">
+                            <div className="max-h-40 overflow-y-auto flex flex-col gap-y-2">
                                 {automationResult.results.map((result, idx) => (
                                     <div
                                         key={idx}

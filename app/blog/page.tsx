@@ -111,9 +111,9 @@ export default async function BlogPage() {
         </div>
 
         <main className="relative z-10 container-padding py-32 lg:py-40">
-          <div className="max-w-5xl mx-auto gap-y-16">
+          <div className="max-w-5xl mx-auto flex flex-col gap-y-16">
             {/* Header Section */}
-            <div className="gap-y-6">
+            <div className="flex flex-col gap-y-6">
               <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
                 <BookOpen className="size-4 mr-2" />
                 Agentic Insights

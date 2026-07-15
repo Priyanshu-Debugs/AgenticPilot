@@ -75,7 +75,7 @@ export default function BillingPage() {
               <CardTitle>Current Plan</CardTitle>
               <CardDescription>Your active subscription details</CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-6">
+            <CardContent className="flex flex-col gap-y-6">
               <div className="flex items-center justify-between p-4 sm:p-6 bg-muted/50 rounded-lg">
                 <div>
                   <h3 className="text-lg sm:text-xl font-semibold">Pro Plan</h3>
@@ -93,9 +93,9 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 <h4 className="font-medium">Plan Features</h4>
-                <ul className="gap-y-2 text-sm">
+                <ul className="flex flex-col gap-y-2 text-sm">
                   <li className="flex items-center gap-x-2">
                     <CheckCircle className="size-4 text-emerald-500" />
                     <span>Unlimited Gmail automation</span>
@@ -132,7 +132,7 @@ export default function BillingPage() {
               <CardTitle>Payment Method</CardTitle>
               <CardDescription>Your default payment method</CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-4">
+            <CardContent className="flex flex-col gap-y-4">
               <div className="flex items-center gap-x-3 p-3 border border-border rounded-lg">
                 <CreditCard className="size-6 sm:h-8 sm:w-8 text-muted-foreground" />
                 <div className="flex-1">
@@ -152,7 +152,7 @@ export default function BillingPage() {
               <CardTitle>Next Billing</CardTitle>
               <CardDescription>Your upcoming payment</CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-4">
+            <CardContent className="flex flex-col gap-y-4">
               <div className="text-center p-4 bg-muted/50 rounded-lg">
                 <Calendar className="size-6 sm:h-8 sm:w-8 mx-auto mb-2 text-primary" />
                 <p className="font-medium">January 1, 2025</p>
@@ -168,7 +168,7 @@ export default function BillingPage() {
               <CardDescription>Your past invoices and payments</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 {invoices.map((invoice) => (
                   <div key={invoice.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-border rounded-lg gap-4">
                     <div className="flex items-center gap-x-4">

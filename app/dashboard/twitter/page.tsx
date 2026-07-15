@@ -266,7 +266,7 @@ function TwitterAutomationContent() {
     const charCount = currentContent.length
 
     return (
-        <div className="p-4 sm:p-6 gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 flex flex-col gap-y-4 sm:gap-y-6 max-w-7xl mx-auto">
             {/* Header */}
             <div className="gap-y-3 sm:gap-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-x-3 sm:gap-x-4">
@@ -301,7 +301,7 @@ function TwitterAutomationContent() {
                         <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
                     </span>
                 </summary>
-                <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-sky-500/20 ml-2">
+                <div className="mt-4 text-sm text-muted-foreground flex flex-col gap-y-2 pl-6 border-l-2 border-sky-500/20 ml-2">
                     <p>1. Go to the <a href="https://developer.twitter.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-sky-500 hover:underline">X Developer Portal</a> and create a Project and App.</p>
                     <p>2. Set up User authentication settings with OAuth 2.0. Type: Web App, App permissions: Read and write.</p>
                     <p>3. Set the Callback URI to <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/twitter/callback</code></p>
@@ -334,7 +334,7 @@ function TwitterAutomationContent() {
                         </div>
 
                         {/* Setup Instructions */}
-                        <div className="max-w-lg mx-auto gap-y-6">
+                        <div className="max-w-lg mx-auto flex flex-col gap-y-6">
                             <button
                                 onClick={() => setShowSetup(!showSetup)}
                                 className="w-full flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors text-sm font-medium"
@@ -347,8 +347,8 @@ function TwitterAutomationContent() {
                             </button>
 
                             {showSetup && (
-                                <div className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-3 text-sm">
-                                    <ol className="list-decimal list-inside gap-y-2 text-muted-foreground">
+                                <div className="rounded-lg border border-border/50 bg-muted/20 p-4 flex flex-col gap-y-3 text-sm">
+                                    <ol className="list-decimal list-inside flex flex-col gap-y-2 text-muted-foreground">
                                         <li>Go to <a href="https://developer.x.com" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline inline-flex items-center gap-1">developer.x.com <ExternalLink className="size-3" /></a> and create a Project + App</li>
                                         <li>In your App settings, go to <strong className="text-foreground">User Authentication Settings</strong> → Set up</li>
                                         <li>Set App permissions to <strong className="text-foreground">Read and Write</strong></li>
@@ -364,8 +364,8 @@ function TwitterAutomationContent() {
                             )}
 
                             {/* Credential Inputs */}
-                            <div className="gap-y-4">
-                                <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-4">
+                                <div className="flex flex-col gap-y-2">
                                     <Label htmlFor="x-client-id">Client ID</Label>
                                     <Input
                                         id="x-client-id"
@@ -375,7 +375,7 @@ function TwitterAutomationContent() {
                                         className="bg-muted/30 border-border/50"
                                     />
                                 </div>
-                                <div className="gap-y-2">
+                                <div className="flex flex-col gap-y-2">
                                     <Label htmlFor="x-client-secret">Client Secret</Label>
                                     <Input
                                         id="x-client-secret"
@@ -407,7 +407,7 @@ function TwitterAutomationContent() {
 
             {/* Connected State */}
             {!connectionLoading && isConnected && (
-                <div className="gap-y-4 sm:gap-y-6">
+                <div className="flex flex-col gap-y-4 sm:gap-y-6">
                     {/* Profile Row */}
                     <Card className="card-elevated">
                         <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4">
@@ -461,9 +461,9 @@ function TwitterAutomationContent() {
                                 Generate product tweets powered by Gemini AI
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="gap-y-4">
+                        <CardContent className="flex flex-col gap-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="gap-y-2">
+                                <div className="flex flex-col gap-y-2">
                                     <Label htmlFor="tweet-product-name">Product Name</Label>
                                     <Input
                                         id="tweet-product-name"
@@ -473,7 +473,7 @@ function TwitterAutomationContent() {
                                         className="bg-muted/30 border-border/50"
                                     />
                                 </div>
-                                <div className="gap-y-2">
+                                <div className="flex flex-col gap-y-2">
                                     <Label htmlFor="tweet-product-url">Product URL (optional)</Label>
                                     <Input
                                         id="tweet-product-url"
@@ -485,7 +485,7 @@ function TwitterAutomationContent() {
                                 </div>
                             </div>
 
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 <Label htmlFor="tweet-product-desc">Product Description</Label>
                                 <Textarea
                                     id="tweet-product-desc"
@@ -497,7 +497,7 @@ function TwitterAutomationContent() {
                                 />
                             </div>
 
-                            <div className="gap-y-2">
+                            <div className="flex flex-col gap-y-2">
                                 <Label>Tone</Label>
                                 <Select value={tone} onValueChange={(v) => setTone(v as TweetTone)}>
                                     <SelectTrigger className="w-full sm:w-64 bg-muted/30 border-border/50">
@@ -523,7 +523,7 @@ function TwitterAutomationContent() {
 
                             {/* Preview / Editor */}
                             {generatedContent && (
-                                <div className="gap-y-3 pt-2">
+                                <div className="flex flex-col gap-y-3 pt-2">
                                     <div className="flex items-center justify-between">
                                         <h4 className="text-sm font-medium flex items-center gap-2">
                                             {isEditing ? <><FileEdit className="size-4" /> Edit Tweet</> : <><Eye className="size-4" /> Tweet Preview</>}
@@ -594,11 +594,11 @@ function TwitterAutomationContent() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="gap-y-3">
+                                <div className="flex flex-col gap-y-3">
                                     {tweets.map((tweet) => (
                                         <div
                                             key={tweet.id}
-                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 gap-y-2 transition-colors hover:bg-muted/30"
+                                            className="rounded-lg border border-border/50 bg-muted/20 p-4 flex flex-col gap-y-2 transition-colors hover:bg-muted/30"
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <p className="text-sm leading-relaxed line-clamp-3 flex-1">{tweet.content}</p>

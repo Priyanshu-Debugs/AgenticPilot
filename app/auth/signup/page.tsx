@@ -134,16 +134,16 @@ export default function SignUp() {
 
       {/* Sign Up Form */}
       <div className="flex-1 flex items-center justify-center container-padding py-8 sm:py-12">
-        <div className="w-full max-w-md gap-y-6">
+        <div className="w-full max-w-md flex flex-col gap-y-6">
           {/* Header */}
-          <div className="text-center gap-y-2">
+          <div className="text-center flex flex-col gap-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Create account</h1>
             <p className="text-muted-foreground">Start automating your business today</p>
           </div>
 
           {/* Form Card */}
           <Card className="card-elevated p-6 sm:p-8">
-            <div className="gap-y-6">
+            <div className="flex flex-col gap-y-6">
               {error && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                   {error}
@@ -178,8 +178,8 @@ export default function SignUp() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="gap-y-4">
-                <div className="gap-y-2">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="name" className="text-sm font-medium">Full name</Label>
                   <Input
                     id="name"
@@ -193,7 +193,7 @@ export default function SignUp() {
                   />
                 </div>
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
                   <Input
                     id="email"
@@ -207,7 +207,7 @@ export default function SignUp() {
                   />
                 </div>
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                   <div className="relative">
                     <Input
@@ -237,7 +237,7 @@ export default function SignUp() {
                   </div>
                 </div>
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm password</Label>
                   <div className="relative">
                     <Input
@@ -267,9 +267,9 @@ export default function SignUp() {
                   </div>
                 </div>
 
-                <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg gap-y-2">
+                <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg flex flex-col gap-y-2">
                   <div className="font-medium">Password requirements:</div>
-                  <ul className="gap-y-1">
+                  <ul className="flex flex-col gap-y-1">
                     <li>• At least 8 characters long</li>
                     <li>• Contains uppercase and lowercase letters</li>
                     <li>• Contains at least one number</li>

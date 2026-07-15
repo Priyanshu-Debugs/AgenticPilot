@@ -51,7 +51,7 @@ export default function PrivacyPage() {
               </div>
             </div>
 
-            <section className="gap-y-6">
+            <section className="flex flex-col gap-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-3">1. Information We Collect</h2>
                 <p className="text-muted-foreground leading-relaxed">

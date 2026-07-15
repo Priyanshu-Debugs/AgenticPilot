@@ -244,7 +244,7 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
                   <span className="font-medium">Automation health</span>
                   <span className="text-muted-foreground">83%</span>
                 </div>
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   {[74, 92, 58].map((width, index) => (
                     <div
                       key={index}
@@ -260,7 +260,7 @@ function DashboardPreview({ isAuthenticated }: { isAuthenticated: boolean }) {
               </div>
               <div className="rounded-lg border border-border bg-card p-3">
                 <p className="mb-3 text-xs font-medium">Recent activity</p>
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   {["Gmail analyzed", "Caption drafted", "Thread queued"].map(
                     (item) => (
                       <div
@@ -419,7 +419,7 @@ export default function LandingPage() {
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <motion.div
-              className="gap-y-5"
+              className="flex flex-col gap-y-5"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -529,7 +529,7 @@ export default function LandingPage() {
       <section aria-label="Operating workflow" className="section-spacing">
         <div className="container-padding mx-auto max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="gap-y-4">
+            <div className="flex flex-col gap-y-4">
               <Badge variant="outline" className={`${neutralBadgeClass} mb-4`}>
                 <BarChart3 className="mr-1.5 size-3.5" />
                 Operating rhythm
@@ -643,7 +643,7 @@ export default function LandingPage() {
       <footer className="border-t border-border bg-muted/30">
         <div className="container-padding mx-auto max-w-6xl py-10">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="gap-y-3">
+            <div className="flex flex-col gap-y-3">
               <Link href="/" className="flex items-center gap-2">
                 <Bot className="size-6 text-primary" />
                 <span className="text-lg font-bold">AgenticPilot</span>
@@ -655,7 +655,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 className="mb-3 text-sm font-semibold">Product</h4>
-              <div className="gap-y-2 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-y-2 text-sm text-muted-foreground">
                 <Link
                   href="/dashboard/gmail"
                   className="block hover:text-primary"
@@ -684,7 +684,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 className="mb-3 text-sm font-semibold">Company</h4>
-              <div className="gap-y-2 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-y-2 text-sm text-muted-foreground">
                 <Link href="/about" className="block hover:text-primary">
                   About
                 </Link>

@@ -51,7 +51,7 @@ export default function TermsPage() {
               </div>
             </div>
 
-            <section className="gap-y-6">
+            <section className="flex flex-col gap-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-3">1. Acceptance of Terms</h2>
                 <p className="text-muted-foreground leading-relaxed">

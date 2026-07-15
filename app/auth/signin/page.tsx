@@ -159,24 +159,24 @@ function SignIn() {
 
       {/* Sign In Form */}
       <div className="flex-1 flex items-center justify-center container-padding py-8 sm:py-12">
-        <div className="w-full max-w-md gap-y-6">
+        <div className="w-full max-w-md flex flex-col gap-y-6">
           {/* Header */}
-          <div className="text-center gap-y-2">
+          <div className="text-center flex flex-col gap-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back</h1>
             <p className="text-muted-foreground">Sign in to your AgenticPilot account</p>
           </div>
 
           {/* Form Card */}
           <Card className="card-elevated p-6 sm:p-8">
-            <div className="gap-y-6">
+            <div className="flex flex-col gap-y-6">
               {error && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
                   {error}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="gap-y-4">
-                <div className="gap-y-2">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
                   <Input
                     id="email"
@@ -189,7 +189,7 @@ function SignIn() {
                   />
                 </div>
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                   <div className="relative">
                     <Input

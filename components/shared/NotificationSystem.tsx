@@ -117,7 +117,7 @@ export function NotificationSystem({
   const unreadCount = localNotifications.filter(n => !n.read).length
 
   return (
-    <div className="gap-y-6">
+    <div className="flex flex-col gap-y-6">
       {/* Header */}
       <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between md:gap-y-0">
         <div className="flex items-center gap-x-3">
@@ -175,7 +175,7 @@ export function NotificationSystem({
       </div>
 
       {/* Notifications List */}
-      <div className="gap-y-4">
+      <div className="flex flex-col gap-y-4">
         {filteredNotifications.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">

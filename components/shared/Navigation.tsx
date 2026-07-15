@@ -349,7 +349,7 @@ export function Navigation({
             {/* Drawer Content */}
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex-1 overflow-y-auto px-4 py-4">
-                <div className="gap-y-1">
+                <div className="flex flex-col gap-y-1">
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
                     Navigation
                   </h3>
@@ -379,7 +379,7 @@ export function Navigation({
                 </div>
 
                 {isAuthenticated && (
-                  <div className="mt-6 gap-y-1">
+                  <div className="mt-6 flex flex-col gap-y-1">
                     <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
                       Account
                     </h3>

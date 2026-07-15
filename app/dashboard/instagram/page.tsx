@@ -259,7 +259,7 @@ export default function InstagramAutomation() {
     ]
 
   return (
-    <div className="gap-y-6 sm:gap-y-8 max-w-full overflow-x-hidden">
+    <div className="flex flex-col gap-y-6 sm:gap-y-8 max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col gap-y-4 lg:flex-row lg:items-center lg:justify-between lg:gap-y-0">
         <div className="flex items-center gap-x-3 sm:gap-x-4">
@@ -316,7 +316,7 @@ export default function InstagramAutomation() {
             <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
           </span>
         </summary>
-        <div className="mt-4 text-sm text-muted-foreground gap-y-2 pl-6 border-l-2 border-pink-500/20 ml-2">
+        <div className="mt-4 text-sm text-muted-foreground flex flex-col gap-y-2 pl-6 border-l-2 border-pink-500/20 ml-2">
           <p>1. Go to the <strong className="text-foreground">Product Studio</strong> tab.</p>
           <p>2. Upload a raw product photo (JPEG, PNG, or WebP).</p>
           <p>3. Fill in the product details and select your desired photo styles (Studio, Lifestyle, etc.).</p>
@@ -347,7 +347,7 @@ export default function InstagramAutomation() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-y-6">
         <TabsList className="bg-muted">
           <TabsTrigger value="product-studio" className="flex items-center gap-1.5">
             <Wand2 className="size-3.5" />
@@ -360,7 +360,7 @@ export default function InstagramAutomation() {
         </TabsList>
 
         {/* ==================== PRODUCT STUDIO TAB ==================== */}
-        <TabsContent value="product-studio" className="gap-y-6">
+        <TabsContent value="product-studio" className="flex flex-col gap-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -368,7 +368,7 @@ export default function InstagramAutomation() {
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left: Upload & Product Details */}
-              <div className="gap-y-6">
+              <div className="flex flex-col gap-y-6">
                 {/* Upload Zone */}
                 <Card className="card-elevated">
                   <CardHeader>
@@ -466,8 +466,8 @@ export default function InstagramAutomation() {
                     </CardTitle>
                     <CardDescription>Tell AI about your product for better results</CardDescription>
                   </CardHeader>
-                  <CardContent className="gap-y-4">
-                    <div className="gap-y-2">
+                  <CardContent className="flex flex-col gap-y-4">
+                    <div className="flex flex-col gap-y-2">
                       <Label htmlFor="product-name">Product Name</Label>
                       <Input
                         id="product-name"
@@ -476,7 +476,7 @@ export default function InstagramAutomation() {
                         onChange={(e) => setProductName(e.target.value)}
                       />
                     </div>
-                    <div className="gap-y-2">
+                    <div className="flex flex-col gap-y-2">
                       <Label htmlFor="product-desc">Description</Label>
                       <Textarea
                         id="product-desc"
@@ -546,7 +546,7 @@ export default function InstagramAutomation() {
               </div>
 
               {/* Right: Generated Photos Gallery */}
-              <div className="gap-y-6">
+              <div className="flex flex-col gap-y-6">
                 <Card className="card-elevated min-h-[400px]">
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
@@ -688,7 +688,7 @@ export default function InstagramAutomation() {
                         </CardTitle>
                         <CardDescription>Generate an AI caption for your product</CardDescription>
                       </CardHeader>
-                      <CardContent className="gap-y-3">
+                      <CardContent className="flex flex-col gap-y-3">
                         <Textarea
                           value={caption}
                           onChange={(e) => setCaption(e.target.value)}
@@ -758,7 +758,7 @@ export default function InstagramAutomation() {
         </TabsContent>
 
         {/* ==================== POSTS TAB ==================== */}
-        <TabsContent value="posts" className="gap-y-6">
+        <TabsContent value="posts" className="flex flex-col gap-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Recent Posts</h2>
             <Button
@@ -800,7 +800,7 @@ export default function InstagramAutomation() {
                         />
                       </CardHeader>
                     )}
-                    <CardContent className="p-4 gap-y-4">
+                    <CardContent className="p-4 flex flex-col gap-y-4">
                       <div className="flex items-center justify-between">
                         <Badge className={getStatusColor(post.status)}>
                           {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
@@ -850,17 +850,17 @@ export default function InstagramAutomation() {
         </TabsContent>
 
         {/* ==================== CREATE POST TAB ==================== */}
-        <TabsContent value="create" className="gap-y-6">
+        <TabsContent value="create" className="flex flex-col gap-y-6">
           <Card className="card-elevated">
             <CardHeader>
               <CardTitle>Create New Post</CardTitle>
               <CardDescription>Upload media and create engaging content with AI assistance</CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-6">
-              <div className="gap-y-4">
+            <CardContent className="flex flex-col gap-y-6">
+              <div className="flex flex-col gap-y-4">
                 {/* Show selected product photo if available */}
                 {productPhotos.length > 0 && (
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Selected Product Photo</Label>
                     <div className="flex gap-3 overflow-x-auto pb-2">
                       {productPhotos.map((photo, i) => (
@@ -875,7 +875,7 @@ export default function InstagramAutomation() {
                   </div>
                 )}
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="caption">Caption</Label>
                   <Textarea
                     id="caption"
@@ -899,7 +899,7 @@ export default function InstagramAutomation() {
                   </Button>
                 </div>
 
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                   <Label htmlFor="hashtags">Hashtags</Label>
                   <Input
                     id="hashtags"
@@ -923,7 +923,7 @@ export default function InstagramAutomation() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Post Date</Label>
                     <Input
                       type="date"
@@ -931,7 +931,7 @@ export default function InstagramAutomation() {
                       onChange={(e) => setPostDate(e.target.value)}
                     />
                   </div>
-                  <div className="gap-y-2">
+                  <div className="flex flex-col gap-y-2">
                     <Label>Post Time</Label>
                     <Input
                       type="time"
@@ -961,14 +961,14 @@ export default function InstagramAutomation() {
         </TabsContent>
 
         {/* ==================== SCHEDULE TAB ==================== */}
-        <TabsContent value="schedule" className="gap-y-6">
+        <TabsContent value="schedule" className="flex flex-col gap-y-6">
           <Card className="card-elevated">
             <CardHeader>
               <CardTitle>Optimal Posting Times</CardTitle>
               <CardDescription>AI-recommended times based on your audience engagement</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="gap-y-4">
+              <div className="flex flex-col gap-y-4">
                 {bestTimes.map((time, index) => (
                   <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-x-3">
@@ -987,15 +987,15 @@ export default function InstagramAutomation() {
         </TabsContent>
 
         {/* ==================== SETTINGS TAB ==================== */}
-        <TabsContent value="settings" className="gap-y-6">
+        <TabsContent value="settings" className="flex flex-col gap-y-6">
           <Card className="card-elevated">
             <CardHeader>
               <CardTitle>Instagram Automation Settings</CardTitle>
               <CardDescription>Configure your Instagram posting automation</CardDescription>
             </CardHeader>
-            <CardContent className="gap-y-6">
+            <CardContent className="flex flex-col gap-y-6">
               <div className="flex items-center justify-between">
-                <div className="gap-y-0.5">
+                <div className="flex flex-col gap-y-0.5">
                   <Label className="text-base">Auto Posting</Label>
                   <div className="text-sm text-muted-foreground">
                     Automatically post scheduled content
@@ -1005,7 +1005,7 @@ export default function InstagramAutomation() {
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="gap-y-0.5">
+                <div className="flex flex-col gap-y-0.5">
                   <Label className="text-base">AI-Generated Captions</Label>
                   <div className="text-sm text-muted-foreground">
                     Use AI to generate engaging captions
@@ -1014,7 +1014,7 @@ export default function InstagramAutomation() {
                 <Switch checked={aiCaptionsEnabled} onCheckedChange={setAiCaptionsEnabled} />
               </div>
 
-              <div className="gap-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="posting-frequency">Posting Frequency</Label>
                 <Select defaultValue="daily">
                   <SelectTrigger>
@@ -1029,7 +1029,7 @@ export default function InstagramAutomation() {
                 </Select>
               </div>
 
-              <div className="gap-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="content-style">Content Style</Label>
                 <Select defaultValue="professional">
                   <SelectTrigger>

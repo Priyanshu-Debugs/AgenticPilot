@@ -53,7 +53,7 @@ export function EmailList({
     }
 
     return (
-        <div className="gap-y-2 max-h-[calc(100vh-350px)] overflow-y-auto">
+        <div className="flex flex-col gap-y-2 max-h-[calc(100vh-350px)] overflow-y-auto">
             {emails.map((email) => (
                 <Card
                     key={email.id}

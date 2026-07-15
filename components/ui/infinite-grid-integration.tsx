@@ -112,7 +112,7 @@ const InfiniteGrid = () => {
 
             {/* Grid Density Control Panel */}
             <div className="absolute bottom-10 right-10 z-30 pointer-events-auto">
-                <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl gap-y-3 min-w-[200px]">
+                <div className="bg-background/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-2xl flex flex-col gap-y-3 min-w-[200px]">
                     <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                         <Settings2 className="size-4" />
                         Grid Density
@@ -134,7 +134,7 @@ const InfiniteGrid = () => {
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto gap-y-6 pointer-events-none">
-                <div className="gap-y-2">
+                <div className="flex flex-col gap-y-2">
                     <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-foreground drop-shadow-sm">
                         The Infinite Grid
                     </h1>

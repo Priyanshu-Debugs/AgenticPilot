@@ -19,7 +19,7 @@ interface AutomationControllerProps {
 }
 export function AutomationController({ tasks }: AutomationControllerProps) {
   return (
-    <div className="gap-y-6">
+    <div className="flex flex-col gap-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-3">
           <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">

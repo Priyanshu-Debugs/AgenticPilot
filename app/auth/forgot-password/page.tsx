@@ -121,13 +121,13 @@ export default function ForgotPassword() {
           </CardHeader>
           <CardContent>
             {success ? (
-              <div className="text-center gap-y-6">
+              <div className="text-center flex flex-col gap-y-6">
                 <CheckCircle className="size-12 sm:h-16 sm:w-16 text-emerald-500 mx-auto" />
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Please check your email and click the reset link to continue.
                   If you don&apos;t see the email, check your spam folder.
                 </p>
-                <div className="gap-y-3">
+                <div className="flex flex-col gap-y-3">
                   <Button
                     onClick={() => {
                       setSuccess(false)
@@ -160,8 +160,8 @@ export default function ForgotPassword() {
                     {error}
                   </div>
                 )}
-                <form onSubmit={handleSubmit} className="gap-y-6">
-                  <div className="gap-y-2">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-y-6">
+                  <div className="flex flex-col gap-y-2">
                     <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                     <Input
                       id="email"

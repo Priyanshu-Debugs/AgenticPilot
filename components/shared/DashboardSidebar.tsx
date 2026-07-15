@@ -100,9 +100,9 @@ export function DashboardSidebar({
 
         {/* Sidebar Content */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="gap-y-6">
+          <div className="flex flex-col gap-y-6">
             {/* Overview Section */}
-            <div className="gap-y-1">
+            <div className="flex flex-col gap-y-1">
               <Link
                 href={overviewItem.href}
                 onClick={handleNavClick}
@@ -128,7 +128,7 @@ export function DashboardSidebar({
             </div>
 
             {/* Agents Section */}
-            <div className="gap-y-1">
+            <div className="flex flex-col gap-y-1">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-3 mb-3">
                 AI Agents
               </h3>

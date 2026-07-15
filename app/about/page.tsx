@@ -73,10 +73,10 @@ export default function AboutPage() {
       </div>
 
       <main className="relative z-10 container-padding py-32 lg:py-40">
-        <div className="max-w-4xl mx-auto gap-y-16">
+        <div className="max-w-4xl mx-auto flex flex-col gap-y-16">
           {/* Header Section */}
           <motion.div
-            className="text-center gap-y-6"
+            className="text-center flex flex-col gap-y-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
