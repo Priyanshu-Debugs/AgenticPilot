@@ -9,7 +9,7 @@ let cachedModel: ChatGoogleGenerativeAI | null = null
  * Get a shared ChatGoogleGenerativeAI model instance.
  * Caches the model at module scope to avoid repeated construction.
  */
-export function getModel(model = 'gemini-2.5-flash'): ChatGoogleGenerativeAI {
+export function getModel(model = 'gemini-3.1-flash-lite'): ChatGoogleGenerativeAI {
     if (!cachedModel) {
         const apiKey = process.env.GEMINI_API_KEY
         if (!apiKey) {

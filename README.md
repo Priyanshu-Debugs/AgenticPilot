@@ -35,7 +35,7 @@
 
 ## 📌 Overview
 
-**AgenticPilot** is a production-ready SaaS suite designed to automate time-consuming business processes. Powered by Next.js 15, Supabase, Google's Gemini 2.5 Flash, and LangGraph, it acts as a virtual workforce. It reads incoming customer inquiries, evaluates sentiment, automatically crafts and sends email replies, designs social media schedules, optimizes marketing product photographs, and suggests trendy articles.
+**AgenticPilot** is a production-ready SaaS suite designed to automate time-consuming business processes. Powered by Next.js 15, Supabase, Google's Gemini 3.1 Flash Lite, and LangGraph, it acts as a virtual workforce. It reads incoming customer inquiries, evaluates sentiment, automatically crafts and sends email replies, designs social media schedules, optimizes marketing product photographs, and suggests trendy articles.
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -96,7 +96,7 @@ AgenticPilot is built using a modern, type-safe development framework:
 | **Animations** | Framer Motion, Anime.js, Three.js | Premium visuals, micro-interactions |
 | **Database & Auth** | Supabase (PostgreSQL + RLS) | Real-time listeners, Row-Level Security |
 | **AI Framework** | LangGraph & LangChain | Structured workflows and state-graph definitions |
-| **Foundation LLM** | Google Gemini 2.5 Flash | Fast inference and high-context capabilities |
+| **Foundation LLM** | Google Gemini 3.1 Flash Lite | Fast inference and high-context capabilities |
 | **APIs Integrated** | Google Gmail API, LinkedIn, Twitter | Native OAuth integrations |
 | **Validation** | Zod | Robust runtime schemas |
 
